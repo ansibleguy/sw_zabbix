@@ -1,0 +1,9 @@
+---
+
+- name: Zabbix | Debian | Configure | All | Creating private directory
+  ansible.builtin.file:
+    state: directory
+    path: "{{ ZABBIX_CONFIG.path_private }}"
+    owner: "{{ ZABBIX_HC.user }}"
+    group: "{{ ZABBIX_HC.group }}"
+    mode: 0750

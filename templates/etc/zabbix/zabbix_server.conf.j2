@@ -1,0 +1,31 @@
+# {{ ansible_managed }}
+# ansibleguy.sw_zabbix
+
+{% for setting, value in ZABBIX_CONFIG.server.settings.items() %}
+{%   if value not in NONE_VALUES and setting not in SETTING_GRAYLIST %}
+{{ setting }}={{ value }}
+{%   endif %}
+{% endfor %}
+
+{% if ZABBIX_CONFIG.manage.db %}
+# ansibleguy.infra_mariadb - db settings
+{%   if 'DBUser' not in ZABBIX_CONFIG.proxy.settings %}
+DBUser={{ ZABBIX_CONFIG.database.user.server_proxy }}
+{%   endif %}
+{%   if 'DBPassword' not in ZABBIX_CONFIG.proxy.settings %}
+DBPassword={{ ZABBIX_CONFIG.database.pwd.server_proxy }}
+{%   endif %}
+{%   if 'DBSocket' not in ZABBIX_CONFIG.proxy.settings %}
+DBSocket={{ ZABBIX_MARIADB_INSTANCE.socket }}
+{%   endif %}
+{%   if 'DBName' not in ZABBIX_CONFIG.proxy.settings %}
+DBName={{ ZABBIX_CONFIG.database.name }}
+{%   endif %}
+{% endif %}
+
+# tls config
+{% if ZABBIX_CONFIG.server.tls_ca_copy not in NONE_VALUES and ZABBIX_CONFIG.server.tls_cert_copy not in NONE_VALUES and ZABBIX_CONFIG.server.tls_key_copy not in NONE_VALUES %}
+TLSCAFile={{ ZABBIX_CONFIG.path_private }}/server_ca.crt
+TLSCertFile={{ ZABBIX_CONFIG.path_private }}/server_cert.crt
+TLSKeyFile={{ ZABBIX_CONFIG.path_private }}/server_cert.key
+{% endif %}

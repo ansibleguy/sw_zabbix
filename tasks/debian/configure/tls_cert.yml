@@ -1,0 +1,28 @@
+---
+
+- name: Zabbix | Debian | Configure | TLS-Cert | Copying ca certificate
+  ansible.builtin.copy:
+    src: "files/certs/{{ config.tls_ca_copy }}"
+    dest: "{{ ZABBIX_CONFIG.path_private }}/{{ prefix }}_ca.crt"
+    owner: 'root'
+    group: "{{ ZABBIX_HC.group }}"
+    mode: 0640
+  register: zbx_cert_ca_raw
+
+- name: Zabbix | Debian | Configure | TLS-Cert | Copying public key
+  ansible.builtin.copy:
+    src: "files/certs/{{ config.tls_cert_copy }}"
+    dest: "{{ ZABBIX_CONFIG.path_private }}/{{ prefix }}_cert.crt"
+    owner: 'root'
+    group: "{{ ZABBIX_HC.group }}"
+    mode: 0640
+  register: zbx_cert_pub_raw
+
+- name: Zabbix | Debian | Configure | TLS-Cert | Copying private key
+  ansible.builtin.copy:
+    src: "files/certs/{{ config.tls_key_copy }}"
+    dest: "{{ ZABBIX_CONFIG.path_private }}/{{ prefix }}_cert.key"
+    owner: 'root'
+    group: "{{ ZABBIX_HC.group }}"
+    mode: 0640
+  register: zbx_cert_key_raw

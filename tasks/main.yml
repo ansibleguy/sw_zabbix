@@ -1,0 +1,17 @@
+---
+
+- name: Zabbix | Checking for needed config
+  ansible.builtin.fail:
+    msg: "The role did not get all the config needed! 
+    It needs: 'zabbix', 'zabbix.version' and matching 'zabbix.release', 
+    'zabbix.server.nginx.domain' if it's a server,"
+  when:
+    - zabbix is undefined
+    - ZABBIX_CONFIG.version not in ZABBIX_CONFIG.release
+    - ZABBIX_CONFIG.manage.server and ZABBIX_CONFIG.server.nginx.domain is undefined
+
+- name: Zabbix | Processing debian config
+  ansible.builtin.import_tasks: debian/main.yml
+  when:
+    - "ansible_distribution|lower in ['debian', 'ubuntu']"
+    - zabbix is defined

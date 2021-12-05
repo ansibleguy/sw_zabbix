@@ -1,0 +1,16 @@
+---
+
+- name: Zabbix | Debian | Install | All | Getting installed packages
+  ansible.builtin.package_facts:
+    manager: auto
+
+- name: Zabbix | Debian | Install | All | Installing zabbix repository
+  ansible.builtin.apt:
+    deb: "{{ ZABBIX_HC.repo_deb.1 }}{{ ZABBIX_CONFIG.version }}{{ ZABBIX_HC.repo_deb.2 }}{{ ZABBIX_CONFIG.release }}{{ ZABBIX_HC.repo_deb.3 }}"
+  when: >
+    'zabbix-release' not in ansible_facts.packages or
+    ZABBIX_CONFIG.release not in ansible_facts.packages['zabbix-release'][0]['version'] 
+
+- name: Zabbix | Debian | Install | All | Updating apt
+  ansible.builtin.apt:
+    update_cache: yes

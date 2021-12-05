@@ -1,0 +1,39 @@
+# {{ ansible_managed }}
+# ansibleguy.sw_zabbix
+
+{% for setting, value in ZABBIX_CONFIG.proxy.settings.items() %}
+{%   if value not in NONE_VALUES and setting not in SETTING_GRAYLIST %}
+{{ setting }}={{ value }}
+{%   endif %}
+{% endfor %}
+
+{% if 'ServerActive' not in ZABBIX_CONFIG.proxy.settings or ZABBIX_CONFIG.proxy.settings['ServerActive'] in NONE_VALUES %}
+ServerActive=ZABBIX_CONFIG.proxy.settings['Server']
+{% endif %}
+
+# tls config
+{% if ZABBIX_CONFIG.proxy.tls_psk not in NONE_VALUES %}
+TLSPSKFile={{ ZABBIX_CONFIG.path_private }}/proxy_psk.txt
+{% endif %}
+
+{% if ZABBIX_CONFIG.proxy.tls_ca_copy not in NONE_VALUES and ZABBIX_CONFIG.proxy.tls_cert_copy not in NONE_VALUES and ZABBIX_CONFIG.proxy.tls_key_copy not in NONE_VALUES %}
+TLSCAFile={{ ZABBIX_CONFIG.path_private }}/proxy_ca.crt
+TLSCertFile={{ ZABBIX_CONFIG.path_private }}/proxy_cert.crt
+TLSKeyFile={{ ZABBIX_CONFIG.path_private }}/proxy_cert.key
+{% endif %}
+
+{% if ZABBIX_CONFIG.manage.db %}
+# ansibleguy.infra_mariadb - db settings
+{%   if 'DBUser' not in ZABBIX_CONFIG.proxy.settings %}
+DBUser={{ ZABBIX_CONFIG.database.user.server_proxy }}
+{%   endif %}
+{%   if 'DBPassword' not in ZABBIX_CONFIG.proxy.settings %}
+DBPassword={{ ZABBIX_CONFIG.database.pwd.server_proxy }}
+{%   endif %}
+{%   if 'DBSocket' not in ZABBIX_CONFIG.proxy.settings %}
+DBSocket={{ ZABBIX_MARIADB_INSTANCE.socket }}
+{%   endif %}
+{%   if 'DBName' not in ZABBIX_CONFIG.proxy.settings %}
+DBName={{ ZABBIX_CONFIG.database.name }}
+{%   endif %}
+{% endif %}

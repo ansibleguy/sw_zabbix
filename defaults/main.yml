@@ -1,0 +1,226 @@
+---
+
+ZABBIX_HC:  # paths that are 'hardcoded' by zabbix itself
+  path_externalscripts: '/usr/lib/zabbix/externalscripts'
+  path_alertscripts: '/usr/lib/zabbix/alertscripts'
+  path_config: '/etc/zabbix'
+  path_userparameters: '/etc/zabbix/zabbix_agentd.d/'
+  user: 'zabbix'
+  group: 'zabbix'
+  file_config_agent: 'zabbix_agent.conf'
+  file_config_proxy: 'zabbix_proxy.conf'
+  file_config_server: 'zabbix_server.conf'
+  file_mysql_schema: '/usr/share/doc/zabbix-sql-scripts/mysql/create.sql.gz'
+  repo_deb:
+    1: 'https://repo.zabbix.com/zabbix/'
+    # version (p.e. '5.4')
+    2: '/debian/pool/main/z/zabbix-release/zabbix-release_'
+    # release (p.e. '5.4-1')
+    3: "+{{ ansible_distribution|lower }}{{ ansible_distribution_major_version }}_all.deb"
+  packages:
+    agent: ['zabbix-agent']
+    proxy: ['zabbix-proxy-mysql', 'zabbix-sql-scripts']
+    server: ['zabbix-server-mysql', 'zabbix-frontend-php', 'zabbix-sql-scripts', 'zabbix-apache-conf']
+    mysql: ['mariadb-client', 'python3-pymysql']
+
+  service:
+    agent: 'zabbix-agent.service'
+    proxy: 'zabbix-proxy.service'
+    server: 'zabbix-server.service'
+
+  port:
+    passive: 10050
+    active: 10051
+
+default_zabbix_config:
+  version: '5.4'
+  release: '5.4-1'  # must exist in zabbix repository; per example: https://repo.zabbix.com/zabbix/5.4/debian/pool/main/z/zabbix-release
+  php_version: '7.4'
+
+  state: 'present'
+
+  manage:
+    agent: true
+    server: false
+    proxy: false
+    db: true  # if enabled => will use 'ansibleguy.infra_mariadb' role to install and configure mariadb-database to use with zabbix server and/or proxy
+    webserver: true  # if enabled => will use 'ansibleguy.infra_nginx' role to install and configure the needed webserver to use with zabbix server
+
+  path_private: "{{ ZABBIX_HC.path_config }}/private"
+  mode_scripts: '0750'  # owner=root, group=zabbix; zabbix should not have write-privileges
+
+  database:
+    name: 'zabbix'
+    user:
+      server_proxy: 'zabbix_service'
+      agent: 'zabbix_agent'
+
+    pwd:  # default => random pwd will be generated
+      server_proxy: "{{ lookup('password', '/dev/null chars=ascii_letters,digits length=30') }}"
+      agent: "{{ lookup('password', '/dev/null chars=ascii_letters,digits length=30') }}"
+      # todo: fix random pwd usage; will always fail to connect to db (?!)
+
+    update_password: 'always'  # or 'on_create'
+    settings:
+      innodb_log_file_size: 1G
+
+  server:
+    tls_cert_copy:  # local tls-certificate to copy to the target system (from 'files/certs'); must be for server-authentication
+    tls_key_copy:  # local tls-certificate-key to copy to the target system (from 'files/certs'); must be for server-authentication
+    tls_ca_copy:  # local tls-ca-certificate to copy to the target system (from 'files/certs')
+    settings:
+      # must be defined manually !!
+      # if db is not managed by role:
+      #   DBPort:
+      #   DBSocket:
+      #   DBHost:
+      # defaults
+      ListenPort: "{{ ZABBIX_HC.port.active }}"
+      ListenIP: '0.0.0.0'  # any
+      #   SourceIP:
+      Timeout: 10
+      # server
+      ProxyDataFrequency: 10
+      ProxyConfigFrequency: 300
+      #   SSHKeyLocation:
+      # logging
+      LogType: 'system'
+      LogFileSize: 30
+      DebugLevel: 3
+      # security
+      AllowRoot: 0
+      User: "{{ ZABBIX_HC.user }}"
+      #   TLSCAFile:
+      #   TLSCertFile:
+      #   TLSKeyFile:
+
+    php:
+      date.timezone: 'Asia/Jakarta'
+      max_execution_time: 600
+      max_input_time: 600
+      memory_limit: '256M'
+      post_max_size: '32M'
+      upload_max_filesize: '16M'
+
+    nginx:  # see: https://github.com/ansibleguy/infra_nginx
+      mode: 'proxy'
+      proxy:
+        ip: '127.0.0.1'
+        port: 8080
+
+      ssl:
+        mode: 'selfsigned'
+        cert:
+          cn: 'Zabbix Server'
+          org: 'AnsibleGuy'
+          email: 'zabbix@template.ansibleguy.net'
+
+      # DO NOT CHANGE
+      config_additions:
+        - 'location = / {'
+        - '  return 301 /zabbix;'
+        - '}'
+      security:
+        restrict_methods: false
+
+  proxy:
+    tls_psk:  # tls-psk to add on the target system; must only be containing hexdigits (0-9 & a-f)
+    tls_cert_copy:  # local tls-certificate to copy to the target system (from 'files/certs'); must be for client-authentication
+    tls_key_copy:  # local tls-certificate-key to copy to the target system (from 'files/certs'); must be for client-authentication
+    tls_ca_copy:  # local tls-ca-certificate to copy to the target system (from 'files/certs')
+    settings:
+      # must be defined manually !!
+      Server:
+      TLSPSKIdentity:
+      # if db is not managed by role:
+      #   DBPort:
+      #   DBSocket:
+      #   DBHost:
+      # defaults
+      ServerPort: "{{ ZABBIX_HC.port.active }}"
+      ListenPort: "{{ ZABBIX_HC.port.active }}"
+      ListenIP: '0.0.0.0'  # any
+      #   SourceIP:
+      Hostname: "{{ ansible_hostname }}"
+      Timeout: 10
+      # proxy
+      ConfigFrequency: 300
+      # logging
+      LogType: 'system'
+      LogFileSize: 30
+      DebugLevel: 3
+      # security
+      EnableRemoteCommands: 0
+      AllowRoot: 0
+      UnsafeUserParameters: 0
+      User: "{{ ZABBIX_HC.user }}"
+      TLSConnect: 'psk'  # or cert => you should never use 'unencrypted'
+      TLSAccept: 'psk'  # or cert => you should never use 'unencrypted'
+      #   TLSCAFile:
+      #   TLSCertFile:
+      #   TLSKeyFile:
+
+  agent:
+    tls_psk:  # tls-psk to add on the target system; must only be containing hexdigits (0-9 & a-f)
+    tls_cert_copy:  # local tls-certificate to copy to the target system (from 'files/certs'); must be for client-authentication
+    tls_key_copy:  # local tls-certificate-key to copy to the target system (from 'files/certs'); must be for client-authentication
+    tls_ca_copy:  # local tls-ca-certificate to copy to the target system (from 'files/certs')
+    path_scripts: '/usr/local/sbin/zabbix'
+    settings:
+      # must be defined manually !!
+      Server:
+      TLSPSKIdentity:
+      # defaults
+      ServerPort: "{{ ZABBIX_HC.port.active }}"
+      ListenPort: "{{ ZABBIX_HC.port.passive }}"
+      ListenIP: '0.0.0.0'  # any
+      #   SourceIP:
+      Hostname: "{{ ansible_hostname }}"
+      Timeout: 10
+      Include: "{{ ZABBIX_HC.path_userparameters }}/*.conf"
+      # logging
+      LogType: 'system'
+      LogFileSize: 10
+      DebugLevel: 3
+      # secueScDgJ!hBr_0csrity
+      EnableRemoteCommands: 0
+      AllowRoot: 0
+      UnsafeUserParameters: 0
+      User: "{{ ZABBIX_HC.user }}"
+      TLSConnect: 'psk'  # or cert => you should never use 'unencrypted'
+      TLSAccept: 'psk'  # or cert => you should never use 'unencrypted'
+      #   TLSCAFile:
+      #   TLSCertFile:
+      #   TLSKeyFile:
+
+ZABBIX_CONFIG: "{{ default_zabbix_config | combine(zabbix, recursive=true) }}"
+
+#zbx_db: &db Z
+#zbx_db_u1: &db_user_proxyserver
+#zbx_db_u2: &db_user_agent
+
+ZABBIX_MARIADB_INSTANCE: "{{ {
+    'dbs': {
+      ZABBIX_CONFIG.database.name: {
+        'encoding': 'utf8',
+        'collation': 'utf8_bin'
+      },
+    },
+    'users': {
+      ZABBIX_CONFIG.database.user.server_proxy: {
+        'priv': ZABBIX_CONFIG.database.name + '.*:ALL',
+        'pwd': ZABBIX_CONFIG.database.pwd.server_proxy,
+        'update_pwd': ZABBIX_CONFIG.database.update_password
+      },
+      ZABBIX_CONFIG.database.user.agent: {
+        'priv': '*.*:PROCESS,SHOW DATABASES,BINLOG MONITOR,SHOW VIEW',
+        'pwd': ZABBIX_CONFIG.database.pwd.agent,
+        'update_pwd': ZABBIX_CONFIG.database.update_password
+      },
+    },
+    'settings': ZABBIX_CONFIG.database.settings,
+    'socket': '/run/mysqld/mysqld_zabbix.sock'
+  } }}"  # DO NOT CHANGE!
+
+NONE_VALUES: [none, '', ' ']
+SETTING_GRAYLIST: ['tls_psk']

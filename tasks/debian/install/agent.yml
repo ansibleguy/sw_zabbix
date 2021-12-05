@@ -1,0 +1,13 @@
+---
+
+- name: Zabbix | Debian | Install | Agent | Installing
+  ansible.builtin.apt:
+    name: "{{ ZABBIX_HC.packages.agent }}"
+    state: latest
+
+- name: Zabbix | Debian | Install | Agent | Enabling service
+  ansible.builtin.systemd:
+    name: "{{ ZABBIX_HC.service.agent }}"
+    state: started
+    enabled: true
+    daemon_reload: yes

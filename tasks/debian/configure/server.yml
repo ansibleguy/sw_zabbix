@@ -1,0 +1,83 @@
+---
+
+# /etc/apache/ports.conf => remove port 80; add port 8080
+
+- name: Zabbix | Debian | Configure | Server | Copying provided external-scripts
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "{{ ZABBIX_HC.path_externalscripts }}/"
+    owner: 'root'
+    group: "{{ ZABBIX_HC.group }}"
+    mode: "{{ ZABBIX_CONFIG.mode_scripts }}"
+  with_fileglob: "files/server+proxy/externalscripts/*"
+
+- name: Zabbix | Debian | Configure | Server | Copying provided alert-scripts
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "{{ ZABBIX_HC.path_alertscripts }}/"
+    owner: 'root'
+    group: "{{ ZABBIX_HC.group }}"
+    mode: "{{ ZABBIX_CONFIG.mode_scripts }}"
+  with_fileglob: "files/server+proxy/alertscripts/*"
+
+- name: Zabbix | Debian | Configure | Server | Deploying tls certificate
+  ansible.builtin.import_tasks: tls_cert.yml
+  vars:
+    config: "{{ ZABBIX_CONFIG.server }}"
+    prefix: 'server'
+  when:
+    - ZABBIX_CONFIG.server.tls_ca_copy not in NONE_VALUES
+    - ZABBIX_CONFIG.server.tls_cert_copy not in NONE_VALUES
+    - ZABBIX_CONFIG.server.tls_key_copy not in NONE_VALUES
+
+- name: Zabbix | Debian | Configure | Server | Deploying config
+  ansible.builtin.template:
+    src: 'templates/etc/zabbix/zabbix_server.conf.j2'
+    dest: "{{ ZABBIX_HC.file_config_server }}"
+    owner: 'root'
+    group: "{{ ZABBIX_HC.group }}"
+    mode: 0640
+  register: zbx_server_config_raw
+
+- name: Zabbix | Debian | Configure | Server | Configuring php settings
+  ansible.builtin.lineinfile:
+    path: "/etc/php/{{ ZABBIX_CONFIG.php_version }}/apache2/php.ini"
+    line: "{{ item.key }} = {{ item.value }}"
+    regexp: "^{{ item.key }}"
+  with_dict: "{{ ZABBIX_CONFIG.server.php }}"
+  register: zbx_server_php_config_raw
+
+# directory does not exist (?)
+#- name: Zabbix | Debian | Configure | Server | Copying db-monitoring credentials
+#  ansible.builtin.template:
+#    src: 'templates/var/lib/zabbix/agent_my.cnf.j2'
+#    dest: '/var/lib/zabbix/my.cnf'
+#    owner: 'root'
+#    group: "{{ ZABBIX_HC.group }}"
+#    mode: 0640
+
+- name: Zabbix | Debian | Configure | Server | Configuring apache2 listen-port
+  ansible.builtin.lineinfile:
+    path: '/etc/apache2/ports.conf'
+    line: "Listen {{ ZABBIX_CONFIG.server.nginx.proxy.port }}"
+    regexp: '^Listen\s80$'
+  register: zbx_server_a2port_raw
+
+- name: Zabbix | Debian | Configure | Server | Restarting Zabbix-Server service
+  ansible.builtin.systemd:
+    name: "{{ ZABBIX_HC.service.server }}"
+    state: restarted
+  when: >
+    zbx_server_config_raw.changed or
+    zbx_cert_ca_raw.changed or
+    zbx_cert_pub_raw.changed or
+    zbx_cert_key_raw.changed or
+    zbx_server_php_config_raw.changed
+
+- name: Zabbix | Debian | Configure | Server | Restarting Apache2 service
+  ansible.builtin.systemd:
+    name: 'apache2.service'
+    state: restarted
+  when: >
+    zbx_server_a2port_raw.changed or
+    zbx_server_php_config_raw.changed

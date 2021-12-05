@@ -1,0 +1,29 @@
+---
+
+- name: Zabbix | Debian | Install | Server | Checking if is installed
+  ansible.builtin.apt:
+    name: "{{ ZABBIX_HC.packages.server }}"
+    state: present
+  check_mode: true
+  register: zbx_pkg_init_raw
+
+- name: Zabbix | Debian | Install | Server | Installing
+  ansible.builtin.apt:
+    name: "{{ ZABBIX_HC.packages.server }}"
+    state: latest
+
+- name: Zabbix | Debian | Install | Server | Database tasks
+  ansible.builtin.import_tasks: db.yml
+
+- name: Zabbix | Debian | Install | Server | Enabling Zabbix service
+  ansible.builtin.systemd:
+    name: "{{ ZABBIX_HC.service.server }}"
+    state: started
+    enabled: true
+    daemon_reload: yes
+
+- name: Zabbix | Debian | Install | Server | Enabling apache2 service
+  ansible.builtin.systemd:
+    name: 'apache2.service'
+    state: started
+    enabled: true

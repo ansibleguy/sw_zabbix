@@ -1,0 +1,51 @@
+---
+
+- name: Zabbix | Debian | Configure | Proxy | Copying provided scripts
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "{{ ZABBIX_HC.path_externalscripts }}/"
+    owner: 'root'
+    group: "{{ ZABBIX_HC.group }}"
+    mode: "{{ ZABBIX_CONFIG.mode_scripts }}"
+  with_fileglob: "files/server+proxy/externalscripts/*"
+
+- name: Zabbix | Debian | Configure | Proxy | Deploying tls-psk
+  ansible.builtin.copy:
+    content: "{{ ZABBIX_CONFIG.proxy.tls_psk }}"
+    dest: "{{ ZABBIX_CONFIG.path_private }}/proxy_psk.txt"
+    owner: 'root'
+    group: "{{ ZABBIX_HC.group }}"
+    mode: 0640
+  when: ZABBIX_CONFIG.proxy.tls_psk not in NONE_VALUES
+
+- name: Zabbix | Debian | Configure | Proxy | Deploying tls certificate
+  ansible.builtin.import_tasks: tls_cert.yml
+  vars:
+    config: "{{ ZABBIX_CONFIG.proxy }}"
+    prefix: 'proxy'
+  when:
+    - ZABBIX_CONFIG.proxy.tls_ca_copy not in NONE_VALUES
+    - ZABBIX_CONFIG.proxy.tls_cert_copy not in NONE_VALUES
+    - ZABBIX_CONFIG.proxy.tls_key_copy not in NONE_VALUES
+
+- name: Zabbix | Debian | Configure | Proxy | Deploying config
+  ansible.builtin.template:
+    src: 'templates/etc/zabbix/zabbix_proxy.conf.j2'
+    dest: "{{ ZABBIX_HC.file_config_proxy }}"
+    owner: 'root'
+    group: "{{ ZABBIX_HC.group }}"
+    mode: 0640
+
+#- name: Zabbix | Debian | Configure | Proxy | Copying db-monitoring credentials
+#  ansible.builtin.template:
+#    src: 'templates/var/lib/zabbix/agent_my.cnf.j2'
+#    dest: '/var/lib/zabbix/my.cnf'
+#    owner: 'root'
+#    group: "{{ ZABBIX_HC.group }}"
+#    mode: 0640
+
+- name: Zabbix | Debian | Configure | Proxy | Restarting service
+  ansible.builtin.systemd:
+    name: "{{ ZABBIX_HC.service.proxy }}"
+    state: restarted
+  changed_when: false

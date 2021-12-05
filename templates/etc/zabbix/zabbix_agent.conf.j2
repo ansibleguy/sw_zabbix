@@ -1,0 +1,23 @@
+# {{ ansible_managed }}
+# ansibleguy.sw_zabbix
+
+{% for setting, value in ZABBIX_CONFIG.agent.settings.items() %}
+{%   if value not in NONE_VALUES and setting not in SETTING_GRAYLIST %}
+{{ setting }}={{ value }}
+{%   endif %}
+{% endfor %}
+
+{% if 'ServerActive' not in ZABBIX_CONFIG.agent.settings or ZABBIX_CONFIG.agent.settings['ServerActive'] in NONE_VALUES %}
+ServerActive=ZABBIX_CONFIG.agent.settings['Server']
+{% endif %}
+
+# tls config
+{% if ZABBIX_CONFIG.agent.tls_psk not in NONE_VALUES %}
+TLSPSKFile={{ ZABBIX_CONFIG.path_private }}/agent_psk.txt
+{% endif %}
+
+{% if ZABBIX_CONFIG.agent.tls_ca_copy not in NONE_VALUES and ZABBIX_CONFIG.agent.tls_cert_copy not in NONE_VALUES and ZABBIX_CONFIG.agent.tls_key_copy not in NONE_VALUES %}
+TLSCAFile={{ ZABBIX_CONFIG.path_private }}/agent_ca.crt
+TLSCertFile={{ ZABBIX_CONFIG.path_private }}/agent_cert.crt
+TLSKeyFile={{ ZABBIX_CONFIG.path_private }}/agent_cert.key
+{% endif %}

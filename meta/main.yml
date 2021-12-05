@@ -1,0 +1,19 @@
+---
+
+galaxy_info:
+  author: 'AnsibleGuy <guy@ansibleguy.net>'
+  readme: 'README.md'
+  license: 'MIT'
+  repository: 'https://github.com/ansibleguy/sw_zabbix'
+  issue_tracker_url: 'https://github.com/ansibleguy/sw_zabbix/issues'
+  github_branch: 'stable'
+  min_ansible_version: 2.9.0
+  description: 'Role to install Zabbix-Agent/Proxy/server on linux servers'
+  platforms:
+    - name: Debian
+      versions:
+        - bullseye
+        - buster
+  galaxy_tags:
+    - 'zabbix'
+    - 'monitoring'

@@ -1,0 +1,48 @@
+---
+
+- name: Zabbix | Debian | Install | DB | Installing mariadb-client
+  ansible.builtin.apt:
+    name: "{{ ZABBIX_HC.packages.mysql }}"
+    state: latest
+
+- name: Zabbix | Debian | Install | DB | Testing database connection (read)
+  community.mysql.mysql_query:
+    login_db: "{{ ZABBIX_CONFIG.database.name }}"
+    query: 'SHOW TABLES'
+    login_unix_socket: "{{ ZABBIX_MARIADB_INSTANCE.socket }}"
+    login_user: "{{ ZABBIX_CONFIG.database.user.server_proxy }}"
+    login_password: "{{ ZABBIX_CONFIG.database.pwd.server_proxy }}"
+  ignore_errors: true
+  register: zbx_db_conn_test
+  when: ZABBIX_CONFIG.manage.db
+
+- name: Zabbix | Debian | Install | DB | DB Connection-Test failed!
+  ansible.builtin.fail:
+    msg: "The role was unable to connect to the database! 
+    Try setting a 'static' password in your configuration."
+  when:
+    - zbx_db_conn_test.failed is defined
+    - zbx_db_conn_test.failed
+
+- name: Zabbix | Debian | Install | DB | Importing database schema
+  community.mysql.mysql_db:
+    name: "{{ ZABBIX_CONFIG.database.name }}"
+    state: import
+    force: true
+    single_transaction: true
+    target: "{{ ZABBIX_HC.file_mysql_schema }}"
+    login_unix_socket: "{{ ZABBIX_MARIADB_INSTANCE.socket }}"
+    login_user: "{{ ZABBIX_CONFIG.database.user.server_proxy }}"
+    login_password: "{{ ZABBIX_CONFIG.database.pwd.server_proxy }}"
+  when:
+    - ZABBIX_CONFIG.manage.db
+    - zbx_pkg_init_raw.changed
+
+- name: Zabbix | Debian | Install | DB | Unmanaged DB
+  ansible.builtin.pause:
+    prompt: "Since this role is not managing the zabbix-database, you will need to import the database schema initially! 
+    This can be done like this when using a local database: 'zcat /usr/share/doc/zabbix-sql-scripts/mysql/create.sql.gz | mysql --socket /run/mysqld/mysqld.sock -uroot -p zabbix'. 
+    Make sure the schema is imported before continuing!"
+  when:
+    - not ZABBIX_CONFIG.manage.db
+    - zbx_pkg_init_raw.changed

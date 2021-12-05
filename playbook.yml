@@ -1,0 +1,12 @@
+---
+
+# ansible-playbook -K -D -i inventory/hosts.yml playbook.yml --ask-vault-pass
+
+- hosts: all
+  become: yes
+  gather_facts: yes
+  vars:
+    zabbix:
+
+  roles:
+    - ansibleguy.sw_zabbix

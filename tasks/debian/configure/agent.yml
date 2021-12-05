@@ -1,0 +1,52 @@
+---
+
+- name: Zabbix | Debian | Configure | Agent | Copying provided scripts
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "{{ ZABBIX_CONFIG.agent.path_scripts }}/"
+    owner: 'root'
+    group: "{{ ZABBIX_HC.group }}"
+    mode: "{{ ZABBIX_CONFIG.mode_scripts }}"
+  with_fileglob: "files/agent/scripts/*"
+
+- name: Zabbix | Debian | Configure | Agent | Copying provided userparameters
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "{{ ZABBIX_HC.path_userparameters }}/"
+    owner: 'root'
+    group: "{{ ZABBIX_HC.group }}"
+    mode: 0640
+  with_fileglob: "files/agent/userparameters/*"
+
+- name: Zabbix | Debian | Configure | Agent | Deploying tls-psk
+  ansible.builtin.copy:
+    content: "{{ ZABBIX_CONFIG.agent.tls_psk }}"
+    dest: "{{ ZABBIX_CONFIG.path_private }}/agent_psk.txt"
+    owner: 'root'
+    group: "{{ ZABBIX_HC.group }}"
+    mode: 0640
+  when: ZABBIX_CONFIG.agent.tls_psk not in NONE_VALUES
+
+- name: Zabbix | Debian | Configure | Agent | Deploying tls certificate
+  ansible.builtin.import_tasks: tls_cert.yml
+  vars:
+    config: "{{ ZABBIX_CONFIG.agent }}"
+    prefix: 'agent'
+  when:
+    - ZABBIX_CONFIG.agent.tls_ca_copy not in NONE_VALUES
+    - ZABBIX_CONFIG.agent.tls_cert_copy not in NONE_VALUES
+    - ZABBIX_CONFIG.agent.tls_key_copy not in NONE_VALUES
+
+- name: Zabbix | Debian | Configure | Agent | Deploying config
+  ansible.builtin.template:
+    src: 'templates/etc/zabbix/zabbix_agent.conf.j2'
+    dest: "{{ ZABBIX_HC.file_config_agent }}"
+    owner: 'root'
+    group: "{{ ZABBIX_HC.group }}"
+    mode: 0640
+
+- name: Zabbix | Debian | Configure | Agent | Restarting service
+  ansible.builtin.systemd:
+    name: "{{ ZABBIX_HC.service.agent }}"
+    state: restarted
+  changed_when: false

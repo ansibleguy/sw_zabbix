@@ -1,0 +1,30 @@
+---
+
+- name: Zabbix | Debian | Agent | Uninstalling
+  ansible.builtin.import_tasks: uninstall/agent.yml
+  when: ZABBIX_CONFIG.state != 'present'
+  tags: [uninstall, agent]
+
+- name: Zabbix | Debian | Agent | Verifying config
+  ansible.builtin.fail:
+    msg: "Not all needed settings were provided! Zabbix-Agent cannot be configured! 
+    We need: 'Server', 'TLSPSKIdentity or TLSCertFile', 'tls_psk or TLSKeyFile'!
+    Also: unencrypted connections are not allowed!"
+  when: >
+    ZABBIX_CONFIG.state == 'present' and
+    cnf.Server in NONE_VALUES or
+    (cnf.TLSPSKIdentity in NONE_VALUES and cnf.TLSCertFile in NONE_VALUES) or
+    (ZABBIX_CONFIG.agent.tls_psk in NONE_VALUES and (ZABBIX_CONFIG.agent.tls_cert_copy in NONE_VALUES or
+    ZABBIX_CONFIG.agent.tls_key_copy in NONE_VALUES or ZABBIX_CONFIG.agent.tls_ca_copy in NONE_VALUES) or
+    (TLSConnect == 'unencrypted' or TLSAccept == 'unencrypted')
+  vars:
+    cnf: ZABBIX_CONFIG.agent.settings
+
+- name: Zabbix | Debian | Agent | Installing
+  ansible.builtin.import_tasks: install/agent.yml
+  when: ZABBIX_CONFIG.state == 'present'
+  tags: [install, agent]
+
+- name: Zabbix | Debian | Agent | Configuring
+  ansible.builtin.import_tasks: configure/agent.yml
+  when: ZABBIX_CONFIG.state == 'present'

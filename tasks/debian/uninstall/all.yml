@@ -1,0 +1,6 @@
+---
+
+- name: Zabbix | Debian | Uninstall | All | Removing repository
+  ansible.builtin.apt:
+    name: 'zabbix-release=*'
+    state: absent
