@@ -76,6 +76,8 @@ Else incompatibilities would break future setups if Zabbix changes their config-
 * **Info:** If the server installation fails for some reason you might want to uninstall the 'zabbix-server-mysql' package before re-running this role!
 
 
+* **Warning:** Not every setting/variable you provide will be checked for validity. Bad config might break the role!
+
 ## Setup
 For this role to work - you must install its dependencies first:
 

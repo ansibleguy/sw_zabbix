@@ -34,7 +34,6 @@
     name: ansibleguy.infra_nginx
   vars:
     nginx:
-      config: "{{ "
       sites:
         zabbix: "{{ ZABBIX_CONFIG.server.nginx }}"
   when:

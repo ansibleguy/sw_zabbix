@@ -8,7 +8,7 @@
 {% endfor %}
 
 {% if 'ServerActive' not in ZABBIX_CONFIG.agent.settings or ZABBIX_CONFIG.agent.settings['ServerActive'] in NONE_VALUES %}
-ServerActive=ZABBIX_CONFIG.agent.settings['Server']
+ServerActive={{ ZABBIX_CONFIG.agent.settings['Server'] }}
 {% endif %}
 
 # tls config

@@ -110,6 +110,7 @@
   ansible.builtin.systemd:
     name: "{{ ZABBIX_HC.service.server }}"
     state: restarted
+    no_block: true
   when: >
     zbx_server_config_raw.changed or
     zbx_cert_ca_raw.changed or

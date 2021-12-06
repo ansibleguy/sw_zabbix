@@ -7,10 +7,6 @@
 {%   endif %}
 {% endfor %}
 
-{% if 'ServerActive' not in ZABBIX_CONFIG.proxy.settings or ZABBIX_CONFIG.proxy.settings['ServerActive'] in NONE_VALUES %}
-ServerActive=ZABBIX_CONFIG.proxy.settings['Server']
-{% endif %}
-
 # tls config
 {% if ZABBIX_CONFIG.proxy.tls_psk not in NONE_VALUES %}
 TLSPSKFile={{ ZABBIX_CONFIG.path_private }}/proxy_psk.txt

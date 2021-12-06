@@ -142,6 +142,9 @@ default_zabbix_config:
       config:
         large_client_header_buffers: '4 16k'
 
+      headers:
+        Content-Security-Policy: ''  # not supported
+
   proxy:
     tls_psk: ''  # tls-psk to add on the target system; must only be containing hexdigits (0-9 & a-f)
     tls_cert_copy: ''  # local tls-certificate to copy to the target system (from 'files/certs'); must be for client-authentication
@@ -190,7 +193,6 @@ default_zabbix_config:
       Server:
       TLSPSKIdentity:
       # defaults
-      ServerPort: "{{ ZABBIX_HC.port.active }}"
       ListenPort: "{{ ZABBIX_HC.port.passive }}"
       ListenIP: '0.0.0.0'  # any
       #   SourceIP:

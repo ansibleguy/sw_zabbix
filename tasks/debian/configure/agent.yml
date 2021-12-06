@@ -61,4 +61,5 @@
   ansible.builtin.systemd:
     name: "{{ ZABBIX_HC.service.agent }}"
     state: restarted
+    no_block: true
   changed_when: false
