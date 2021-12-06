@@ -12,16 +12,31 @@
     db managed by role or 'DBName' and 'DBSocket' for a local database or 'DBHost' and 'DBPort' for a remote database!
     Also: unencrypted connections are not allowed!"
   when: >
-    ZABBIX_CONFIG.state == 'present' and
-    cnf.Server in NONE_VALUES or
-    (cnf.TLSPSKIdentity in NONE_VALUES and cnf.TLSCertFile in NONE_VALUES) or
-    (ZABBIX_CONFIG.proxy.tls_psk in NONE_VALUES and (ZABBIX_CONFIG.proxy.tls_cert_copy in NONE_VALUES or
-    ZABBIX_CONFIG.proxy.tls_key_copy in NONE_VALUES or ZABBIX_CONFIG.proxy.tls_ca_copy in NONE_VALUES) or
-    (not ZABBIX_CONFIG.manage.db and (cnf.DBSocket in NONE_VALUES or (cnf.DBHost in NONE_VALUES and cnf.DBPort in NONE_VALUES))) or
-    (not ZABBIX_CONFIG.manage.db and cnf.DBName in NONE_VALUES) or
-    (TLSConnect == 'unencrypted' or TLSAccept == 'unencrypted')
-  vars:
-    cnf: ZABBIX_CONFIG.proxy.settings
+    ZABBIX_CONFIG.state == 'present' and (
+      ZABBIX_CONFIG.proxy.settings.Server in NONE_VALUES or (
+        ZABBIX_CONFIG.proxy.settings.TLSPSKIdentity in NONE_VALUES and 
+        ZABBIX_CONFIG.proxy.settings.TLSCertFile in NONE_VALUES
+      ) or (
+        ZABBIX_CONFIG.proxy.tls_psk in NONE_VALUES and (
+          ZABBIX_CONFIG.proxy.tls_cert_copy in NONE_VALUES or 
+          ZABBIX_CONFIG.proxy.tls_key_copy in NONE_VALUES or 
+          ZABBIX_CONFIG.proxy.tls_ca_copy in NONE_VALUES
+        ) or (
+          not ZABBIX_CONFIG.manage.db and (
+            ZABBIX_CONFIG.proxy.settings.DBSocket in NONE_VALUES or (
+              ZABBIX_CONFIG.proxy.settings.DBHost in NONE_VALUES and 
+              ZABBIX_CONFIG.proxy.settings.DBPort in NONE_VALUES
+            )
+          )
+        ) or (
+          not ZABBIX_CONFIG.manage.db and 
+          ZABBIX_CONFIG.proxy.settings.DBName in NONE_VALUES
+        ) or (
+          ZABBIX_CONFIG.proxy.settings.TLSConnect == 'unencrypted' or 
+          ZABBIX_CONFIG.proxy.settings.TLSAccept == 'unencrypted'
+        )
+      )
+    )
 
 - name: Zabbix | Debian | Proxy | Installing
   ansible.builtin.import_tasks: install/proxy.yml

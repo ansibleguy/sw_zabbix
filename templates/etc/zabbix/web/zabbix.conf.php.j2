@@ -1,0 +1,43 @@
+// {{ ansible_managed }}
+// ansibleguy.sw_zabbix
+
+<?php
+$ZBX_SERVER = '{{ ZABBIX_CONFIG.server.php_settings.ZBX_SERVER | default('localhost') }}';
+$ZBX_SERVER_PORT = '{{ ZABBIX_HC.port.active }}';
+$ZBX_SERVER_NAME = '{{ ZABBIX_CONFIG.server.php_settings.ZBX_SERVER_NAME }}';
+
+$DB['TYPE'] = 'MYSQL';
+{% if "DB['SERVER']" not in ZABBIX_CONFIG.server.php_settings %}
+$DB['SERVER'] = 'localhost';
+{% endif %}
+{% if "DB['PORT']" not in ZABBIX_CONFIG.server.php_settings %}
+{%   if 'port' in ZABBIX_CONFIG.database.settings %}
+$DB['PORT'] = '{{ ZABBIX_CONFIG.database.settings.port }}';
+{%   elif mariadb_port_raw is defined and mariadb_port_raw.stdout is defined %}
+$DB['PORT'] = '{{ mariadb_port_raw.stdout }}';
+{%   else %}
+$DB['PORT'] = '3306';
+{%   endif %}
+{% endif %}
+{% if "DB['DATABASE']" not in ZABBIX_CONFIG.server.php_settings %}
+$DB['DATABASE'] = '{{ ZABBIX_CONFIG.database.name }}';
+{% endif %}
+{% if "DB['USER']" not in ZABBIX_CONFIG.server.php_settings %}
+$DB['USER'] = '{{ ZABBIX_CONFIG.database.user.server_proxy }}';
+{% endif %}
+{% if "DB['PASSWORD']" not in ZABBIX_CONFIG.server.php_settings %}
+$DB['PASSWORD'] = '{{ ZABBIX_CONFIG.database.pwd.server_proxy }}';
+{% endif %}
+$DB['SCHEMA'] = '';
+$DB['ENCRYPTION'] = {{ ZABBIX_CONFIG.server.php_settings.ENCRYPTION | default('false') }};
+$DB['KEY_FILE'] = '{{ ZABBIX_CONFIG.server.php_settings.KEY_FILE | default('') }}';
+$DB['CERT_FILE'] = '{{ ZABBIX_CONFIG.server.php_settings.CERT_FILE | default('') }}';
+$DB['CA_FILE'] = '{{ ZABBIX_CONFIG.server.php_settings.CA_FILE | default('') }}';
+$DB['VERIFY_HOST'] = {{ ZABBIX_CONFIG.server.php_settings.ENCRYPTION | default('false') }};
+$DB['CIPHER_LIST'] = '{{ ZABBIX_CONFIG.server.php_settings.CIPHER_LIST | default('') }}';
+$DB['VAULT_URL'] = '{{ ZABBIX_CONFIG.server.php_settings.VAULT_URL | default('') }}';
+$DB['VAULT_DB_PATH'] = '{{ ZABBIX_CONFIG.server.php_settings.VAULT_DB_PATH | default('') }}';
+$DB['VAULT_TOKEN'] = '{{ ZABBIX_CONFIG.server.php_settings.VAULT_TOKEN | default('') }}';
+$DB['DOUBLE_IEEE754'] = {{ ZABBIX_CONFIG.server.php_settings.DOUBLE_IEEE754 | default('true') }};
+
+$IMAGE_FORMAT_DEFAULT = IMAGE_FORMAT_PNG;

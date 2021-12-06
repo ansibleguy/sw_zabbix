@@ -1,5 +1,10 @@
 ---
 
+- name: Zabbix | Debian | Getting installed packages
+  ansible.builtin.package_facts:
+    manager: auto
+  tags: [config, install, uninstall, agent, proxy, server]
+
 - name: Zabbix | Debian | Installing basics
   ansible.builtin.import_tasks: install/all.yml
   tags: [install, agent, proxy, server]
@@ -7,19 +12,8 @@
 
 - name: Zabbix | Debian | Configuring basics
   ansible.builtin.import_tasks: configure/all.yml
+  when: ZABBIX_CONFIG.state == 'present'
   tags: [config, install, agent, proxy, server]
-
-- name: Zabbix | Debian | Configuring MariaDB database
-  ansible.builtin.import_role:
-    name: ansibleguy.infra_mariadb
-  vars:
-    mariadb:
-      instances:
-        zabbix: "{{ ZABBIX_MARIADB_INSTANCE }}"
-  when:
-    - ZABBIX_CONFIG.manage.db
-    - ZABBIX_CONFIG.manage.server or ZABBIX_CONFIG.manage.proxy
-  tags: [install, server, proxy]
 
 - name: Zabbix | Debian | Processing Zabbix Server
   ansible.builtin.import_tasks: server.yml

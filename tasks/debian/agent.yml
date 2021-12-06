@@ -11,14 +11,21 @@
     We need: 'Server', 'TLSPSKIdentity or TLSCertFile', 'tls_psk or TLSKeyFile'!
     Also: unencrypted connections are not allowed!"
   when: >
-    ZABBIX_CONFIG.state == 'present' and
-    cnf.Server in NONE_VALUES or
-    (cnf.TLSPSKIdentity in NONE_VALUES and cnf.TLSCertFile in NONE_VALUES) or
-    (ZABBIX_CONFIG.agent.tls_psk in NONE_VALUES and (ZABBIX_CONFIG.agent.tls_cert_copy in NONE_VALUES or
-    ZABBIX_CONFIG.agent.tls_key_copy in NONE_VALUES or ZABBIX_CONFIG.agent.tls_ca_copy in NONE_VALUES) or
-    (TLSConnect == 'unencrypted' or TLSAccept == 'unencrypted')
-  vars:
-    cnf: ZABBIX_CONFIG.agent.settings
+    ZABBIX_CONFIG.state == 'present' and (
+      ZABBIX_CONFIG.agent.settings.Server in NONE_VALUES or (
+        ZABBIX_CONFIG.agent.settings.TLSPSKIdentity in NONE_VALUES and 
+        ZABBIX_CONFIG.agent.settings.TLSCertFile in NONE_VALUES
+      ) or (
+        ZABBIX_CONFIG.agent.tls_psk in NONE_VALUES and (
+          ZABBIX_CONFIG.agent.tls_cert_copy in NONE_VALUES or 
+          ZABBIX_CONFIG.agent.tls_key_copy in NONE_VALUES or 
+          ZABBIX_CONFIG.agent.tls_ca_copy in NONE_VALUES
+        )
+      ) or (
+        ZABBIX_CONFIG.agent.settings.TLSConnect == 'unencrypted' or 
+        ZABBIX_CONFIG.agent.settings.TLSAccept == 'unencrypted'
+      )
+    )
 
 - name: Zabbix | Debian | Agent | Installing
   ansible.builtin.import_tasks: install/agent.yml

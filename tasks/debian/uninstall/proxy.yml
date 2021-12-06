@@ -1,3 +1,46 @@
 ---
 
+- name: Zabbix | Debian | Uninstall | Proxy | Disabling service
+  ansible.builtin.systemd:
+    name: "{{ ZABBIX_HC.service.proxy }}"
+    state: stopped
+    enabled: false
+  ignore_errors: true
+  failed_when: false
 
+- name: Zabbix | Debian | Uninstall | Proxy | Removing packages
+  ansible.builtin.apt:
+    name: "{{ ZABBIX_HC.packages.proxy }}"
+    state: absent
+    purge: true
+
+- name: Zabbix | Debian | Uninstall | Proxy | Removing files
+  ansible.builtin.file:
+    dest: "{{ item }}"
+    state: absent
+  loop:
+    - "{{ ZABBIX_HC.file_config_proxy }}"
+    - "{{ ZABBIX_CONFIG.path_private }}/proxy_psk.txt"
+    - "{{ ZABBIX_CONFIG.path_private }}/proxy_ca.crt"
+    - "{{ ZABBIX_CONFIG.path_private }}/proxy_cert.crt"
+    - "{{ ZABBIX_CONFIG.path_private }}/proxy_cert.key"
+
+- name: Zabbix | Debian | Uninstall | Proxy | Ask user
+  ansible.builtin.pause:
+    prompt: "Do you want to remove the scripts directories? ({{ ZABBIX_HC.path_externalscripts }}, {{ ZABBIX_HC.path_alertscripts }}) [yes/NO]!"
+  register: zbx_proxy_removal_prompt
+
+- name: Zabbix | Debian | Uninstall | Proxy | Removing directories
+  ansible.builtin.file:
+    dest: "{{ item }}"
+    state: absent
+    force: true
+  loop:
+    - "{{ ZABBIX_HC.path_externalscripts }}"
+    - "{{ ZABBIX_HC.path_alertscripts }}"
+  when: >
+    force_removal or
+    zbx_proxy_removal_prompt.user_input == 'yes'
+
+- name: Zabbix | Debian | Uninstall | Proxy | Database tasks
+  ansible.builtin.import_tasks: db.yml

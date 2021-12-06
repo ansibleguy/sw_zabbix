@@ -6,6 +6,10 @@ roles:
     version: 'stable'
     name: 'ansibleguy.infra_nginx'
 
+  - src: 'https://github.com/ansibleguy/infra_certs.git'
+    version: 'stable'
+    name: 'ansibleguy.infra_certs'
+
   - src: 'https://github.com/ansibleguy/infra_mariadb.git'
     version: 'stable'
     name: 'ansibleguy.infra_mariadb'

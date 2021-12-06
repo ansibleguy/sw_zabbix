@@ -1,5 +1,16 @@
 ---
 
+- name: Zabbix | Debian | Configure | Agent | Creating agent directories
+  ansible.builtin.file:
+    state: directory
+    path: "{{ item }}"
+    owner: 'root'
+    group: 'root'
+    mode: 0755
+  loop:
+    - "{{ ZABBIX_HC.path_userparameters }}"
+    - "{{ ZABBIX_CONFIG.agent.path_scripts }}"
+
 - name: Zabbix | Debian | Configure | Agent | Copying provided scripts
   ansible.builtin.copy:
     src: "{{ item }}"
@@ -44,6 +55,7 @@
     owner: 'root'
     group: "{{ ZABBIX_HC.group }}"
     mode: 0640
+  no_log: true  # since passwords are written to the file
 
 - name: Zabbix | Debian | Configure | Agent | Restarting service
   ansible.builtin.systemd:

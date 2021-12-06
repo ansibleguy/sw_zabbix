@@ -9,16 +9,16 @@
 
 {% if ZABBIX_CONFIG.manage.db %}
 # ansibleguy.infra_mariadb - db settings
-{%   if 'DBUser' not in ZABBIX_CONFIG.proxy.settings %}
+{%   if 'DBUser' not in ZABBIX_CONFIG.server.settings %}
 DBUser={{ ZABBIX_CONFIG.database.user.server_proxy }}
 {%   endif %}
-{%   if 'DBPassword' not in ZABBIX_CONFIG.proxy.settings %}
+{%   if 'DBPassword' not in ZABBIX_CONFIG.server.settings %}
 DBPassword={{ ZABBIX_CONFIG.database.pwd.server_proxy }}
 {%   endif %}
-{%   if 'DBSocket' not in ZABBIX_CONFIG.proxy.settings %}
+{%   if 'DBSocket' not in ZABBIX_CONFIG.server.settings %}
 DBSocket={{ ZABBIX_MARIADB_INSTANCE.socket }}
 {%   endif %}
-{%   if 'DBName' not in ZABBIX_CONFIG.proxy.settings %}
+{%   if 'DBName' not in ZABBIX_CONFIG.server.settings %}
 DBName={{ ZABBIX_CONFIG.database.name }}
 {%   endif %}
 {% endif %}

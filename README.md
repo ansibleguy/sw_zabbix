@@ -70,6 +70,12 @@ Else incompatibilities would break future setups if Zabbix changes their config-
 * **Info:** Zabbix-Server apache2 config is stored at: /etc/zabbix/apache.conf (_default_)
 
 
+* **Info:** The default login for the Zabbix server is: Admin/zabbix
+
+
+* **Info:** If the server installation fails for some reason you might want to uninstall the 'zabbix-server-mysql' package before re-running this role!
+
+
 ## Setup
 For this role to work - you must install its dependencies first:
 
@@ -171,3 +177,11 @@ Run the playbook:
 ```bash
 ansible-playbook -K -D -i inventory/hosts.yml playbook.yml --ask-vault-pass
 ```
+
+There are also some useful **tags** available:
+* config
+* install
+* uninstall
+* agent
+* proxy
+* server

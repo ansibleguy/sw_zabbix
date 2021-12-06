@@ -2,10 +2,9 @@
 
 - name: Zabbix | Debian | Install | Server | Checking if is installed
   ansible.builtin.apt:
-    name: "{{ ZABBIX_HC.packages.server }}"
+    name: 'zabbix-server-mysql'
     state: present
   check_mode: true
-  register: zbx_pkg_init_raw
 
 - name: Zabbix | Debian | Install | Server | Installing
   ansible.builtin.apt:
@@ -14,6 +13,8 @@
 
 - name: Zabbix | Debian | Install | Server | Database tasks
   ansible.builtin.import_tasks: db.yml
+  vars:
+    file_schema: "{{ ZABBIX_HC.file_mysql_server }}"
 
 - name: Zabbix | Debian | Install | Server | Enabling Zabbix service
   ansible.builtin.systemd:
@@ -27,3 +28,16 @@
     name: 'apache2.service'
     state: started
     enabled: true
+
+- name: Zabbix | Debian | Install | Server | Configuring Nginx webserver (proxy)
+  ansible.builtin.include_role:
+    name: ansibleguy.infra_nginx
+  vars:
+    nginx:
+      config: "{{ "
+      sites:
+        zabbix: "{{ ZABBIX_CONFIG.server.nginx }}"
+  when:
+    - ZABBIX_CONFIG.manage.webserver
+    - ZABBIX_CONFIG.manage.server
+  tags: [ install, server ]

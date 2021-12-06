@@ -37,7 +37,50 @@
     owner: 'root'
     group: "{{ ZABBIX_HC.group }}"
     mode: 0640
+  no_log: true  # since passwords are written to the file
   register: zbx_server_config_raw
+
+- name: Zabbix | Debian | Configure | Server | Deploying php-config
+  ansible.builtin.template:
+    src: 'templates/etc/zabbix/web/zabbix.conf.php.j2'
+    dest: "{{ ZABBIX_HC.file_config_php }}"
+    owner: "{{ ZABBIX_HC.user_web }}"
+    group: "{{ ZABBIX_HC.group_web }}"
+    mode: 0640
+  no_log: true  # since passwords are written to the file
+  register: zbx_php_config_raw
+  when: ZABBIX_CONFIG.server.php_conf
+
+- name: Zabbix | Debian | Configure | Server | Getting local timezone
+  ansible.builtin.shell: "timedatectl | grep 'Time zone' | cut -d':' -f2 | cut -d' ' -f2"
+  register: controller_tz
+  delegate_to: localhost
+  changed_when: false
+  check_mode: false
+  become: false
+  when: "'date.timezone' not in ZABBIX_CONFIG.server.php"
+
+- name: Zabbix | Debian | Configure | Server | Configuring php timezone to locally used one
+  ansible.builtin.lineinfile:
+    path: "/etc/php/{{ ZABBIX_CONFIG.php_version }}/apache2/php.ini"
+    line: "date.timezone = {{ controller_tz.stdout }}"
+    regexp: "^date.timezone"
+  register: zbx_server_php_tz_raw
+  when: "'date.timezone' not in ZABBIX_CONFIG.server.php"
+
+- name: Zabbix | Debian | Configure | Server | Configuring database socket
+  ansible.builtin.lineinfile:
+    path: "/etc/php/{{ ZABBIX_CONFIG.php_version }}/apache2/php.ini"
+    line: "{{ item.line }}"
+    regexp: "{{ item.reg }}"
+  loop:
+    - line: "mysqli.default_socket = {{ ZABBIX_CONFIG.database.socket | default(ZABBIX_MARIADB_INSTANCE.socket) }}"
+      reg: '^mysqli.default_socket'
+    - line: "pdo_mysql.default_socket = {{ ZABBIX_CONFIG.database.socket | default(ZABBIX_MARIADB_INSTANCE.socket) }}"
+      reg: '^pdo_mysql.default_socket'
+  when: >
+    ZABBIX_CONFIG.manage.db or
+    'socket' in ZABBIX_CONFIG.database
 
 - name: Zabbix | Debian | Configure | Server | Configuring php settings
   ansible.builtin.lineinfile:
@@ -72,7 +115,8 @@
     zbx_cert_ca_raw.changed or
     zbx_cert_pub_raw.changed or
     zbx_cert_key_raw.changed or
-    zbx_server_php_config_raw.changed
+    zbx_server_php_config_raw.changed or
+    zbx_php_config_raw.changed
 
 - name: Zabbix | Debian | Configure | Server | Restarting Apache2 service
   ansible.builtin.systemd:
@@ -80,4 +124,5 @@
     state: restarted
   when: >
     zbx_server_a2port_raw.changed or
-    zbx_server_php_config_raw.changed
+    zbx_server_php_config_raw.changed or
+    zbx_php_config_raw.changed

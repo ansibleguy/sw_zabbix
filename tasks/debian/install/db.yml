@@ -1,28 +1,37 @@
 ---
 
-- name: Zabbix | Debian | Install | DB | Installing mariadb-client
+- name: Zabbix | Debian | Install | DB | Setting up MariaDB instance
+  ansible.builtin.include_role:
+    name: ansibleguy.infra_mariadb
+  vars:
+    mariadb:
+      instances:
+        zabbix: "{{ ZABBIX_MARIADB_INSTANCE }}"
+  when: ZABBIX_CONFIG.manage.db
+
+- name: Zabbix | Debian | Install | DB | Installing client
   ansible.builtin.apt:
     name: "{{ ZABBIX_HC.packages.mysql }}"
     state: latest
 
-- name: Zabbix | Debian | Install | DB | Testing database connection (read)
+- name: Zabbix | Debian | Install | DB | Checking if schema is initialized
   community.mysql.mysql_query:
     login_db: "{{ ZABBIX_CONFIG.database.name }}"
-    query: 'SHOW TABLES'
+    query: "SELECT count(*) FROM information_schema.TABLES WHERE (TABLE_SCHEMA = '{{ ZABBIX_CONFIG.database.name }}') AND (TABLE_NAME = 'users')"
     login_unix_socket: "{{ ZABBIX_MARIADB_INSTANCE.socket }}"
     login_user: "{{ ZABBIX_CONFIG.database.user.server_proxy }}"
     login_password: "{{ ZABBIX_CONFIG.database.pwd.server_proxy }}"
   ignore_errors: true
-  register: zbx_db_conn_test
+  register: zbx_db_schema_init
   when: ZABBIX_CONFIG.manage.db
 
-- name: Zabbix | Debian | Install | DB | DB Connection-Test failed!
+- name: Zabbix | Debian | Install | DB | Connection failed!
   ansible.builtin.fail:
     msg: "The role was unable to connect to the database! 
-    Try setting a 'static' password in your configuration."
+    Try setting a 'static' password in your configuration. (zabbix.database.pwd.server_proxy)"
   when:
-    - zbx_db_conn_test.failed is defined
-    - zbx_db_conn_test.failed
+    - zbx_db_schema_init.failed is defined
+    - zbx_db_schema_init.failed
 
 - name: Zabbix | Debian | Install | DB | Importing database schema
   community.mysql.mysql_db:
@@ -30,13 +39,14 @@
     state: import
     force: true
     single_transaction: true
-    target: "{{ ZABBIX_HC.file_mysql_schema }}"
+    use_shell: true  # else it will fail
+    target: "{{ file_schema }}"
     login_unix_socket: "{{ ZABBIX_MARIADB_INSTANCE.socket }}"
     login_user: "{{ ZABBIX_CONFIG.database.user.server_proxy }}"
     login_password: "{{ ZABBIX_CONFIG.database.pwd.server_proxy }}"
   when:
     - ZABBIX_CONFIG.manage.db
-    - zbx_pkg_init_raw.changed
+    - not zbx_db_schema_init['query_result'][0][0]['count(*)'] | bool
 
 - name: Zabbix | Debian | Install | DB | Unmanaged DB
   ansible.builtin.pause:
@@ -45,4 +55,4 @@
     Make sure the schema is imported before continuing!"
   when:
     - not ZABBIX_CONFIG.manage.db
-    - zbx_pkg_init_raw.changed
+    - not zbx_db_schema_init['query_result'][0][0]['count(*)'] | bool

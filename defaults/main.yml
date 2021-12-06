@@ -1,16 +1,22 @@
 ---
 
+force_removal: false  # don't prompt for removal
+
 ZABBIX_HC:  # paths that are 'hardcoded' by zabbix itself
   path_externalscripts: '/usr/lib/zabbix/externalscripts'
   path_alertscripts: '/usr/lib/zabbix/alertscripts'
   path_config: '/etc/zabbix'
-  path_userparameters: '/etc/zabbix/zabbix_agentd.d/'
+  path_userparameters: '/etc/zabbix/zabbix_agentd.d'
   user: 'zabbix'
   group: 'zabbix'
-  file_config_agent: 'zabbix_agent.conf'
-  file_config_proxy: 'zabbix_proxy.conf'
-  file_config_server: 'zabbix_server.conf'
-  file_mysql_schema: '/usr/share/doc/zabbix-sql-scripts/mysql/create.sql.gz'
+  user_web: 'www-data'
+  group_web: 'www-data'
+  file_config_agent: '/etc/zabbix/zabbix_agentd.conf'
+  file_config_proxy: '/etc/zabbix/zabbix_proxy.conf'
+  file_config_server: '/etc/zabbix/zabbix_server.conf'
+  file_config_php: '/usr/share/zabbix/conf/zabbix.conf.php'  # since the nice path is not working for the setup: '/etc/zabbix/web/zabbix.conf.php'
+  file_mysql_proxy: '/usr/share/doc/zabbix-sql-scripts/mysql/schema.sql.gz'
+  file_mysql_server: '/usr/share/doc/zabbix-sql-scripts/mysql/create.sql.gz'
   repo_deb:
     1: 'https://repo.zabbix.com/zabbix/'
     # version (p.e. '5.4')
@@ -22,6 +28,8 @@ ZABBIX_HC:  # paths that are 'hardcoded' by zabbix itself
     proxy: ['zabbix-proxy-mysql', 'zabbix-sql-scripts']
     server: ['zabbix-server-mysql', 'zabbix-frontend-php', 'zabbix-sql-scripts', 'zabbix-apache-conf']
     mysql: ['mariadb-client', 'python3-pymysql']
+    remove_mariadb: ['mariadb-server']
+    remove_nginx: ['nginx']
 
   service:
     agent: 'zabbix-agent.service'
@@ -63,11 +71,12 @@ default_zabbix_config:
     update_password: 'always'  # or 'on_create'
     settings:
       innodb_log_file_size: 1G
+      wait_timeout: 600
 
   server:
-    tls_cert_copy:  # local tls-certificate to copy to the target system (from 'files/certs'); must be for server-authentication
-    tls_key_copy:  # local tls-certificate-key to copy to the target system (from 'files/certs'); must be for server-authentication
-    tls_ca_copy:  # local tls-ca-certificate to copy to the target system (from 'files/certs')
+    tls_cert_copy: ''  # local tls-certificate to copy to the target system (from 'files/certs'); must be for server-authentication
+    tls_key_copy: ''  # local tls-certificate-key to copy to the target system (from 'files/certs'); must be for server-authentication
+    tls_ca_copy: ''  # local tls-ca-certificate to copy to the target system (from 'files/certs')
     settings:
       # must be defined manually !!
       # if db is not managed by role:
@@ -95,12 +104,19 @@ default_zabbix_config:
       #   TLSKeyFile:
 
     php:
-      date.timezone: 'Asia/Jakarta'
+      # date.timezone: 'Europe/Vienna'  # if not defined => local timezone will be pulled from client
       max_execution_time: 600
       max_input_time: 600
       memory_limit: '256M'
       post_max_size: '32M'
       upload_max_filesize: '16M'
+
+    php_conf: true
+      # if the php-config file should be deployed => /usr/share/zabbix/conf/zabbix.conf.php
+      # you might need to add the database config if you manage it by yourself
+    php_settings:
+      ZBX_SERVER_NAME: 'Monitoring'
+      # you could set the php key-value pairs here!
 
     nginx:  # see: https://github.com/ansibleguy/infra_nginx
       mode: 'proxy'
@@ -123,11 +139,14 @@ default_zabbix_config:
       security:
         restrict_methods: false
 
+      config:
+        large_client_header_buffers: '4 16k'
+
   proxy:
-    tls_psk:  # tls-psk to add on the target system; must only be containing hexdigits (0-9 & a-f)
-    tls_cert_copy:  # local tls-certificate to copy to the target system (from 'files/certs'); must be for client-authentication
-    tls_key_copy:  # local tls-certificate-key to copy to the target system (from 'files/certs'); must be for client-authentication
-    tls_ca_copy:  # local tls-ca-certificate to copy to the target system (from 'files/certs')
+    tls_psk: ''  # tls-psk to add on the target system; must only be containing hexdigits (0-9 & a-f)
+    tls_cert_copy: ''  # local tls-certificate to copy to the target system (from 'files/certs'); must be for client-authentication
+    tls_key_copy: ''  # local tls-certificate-key to copy to the target system (from 'files/certs'); must be for client-authentication
+    tls_ca_copy: ''  # local tls-ca-certificate to copy to the target system (from 'files/certs')
     settings:
       # must be defined manually !!
       Server:
@@ -161,10 +180,10 @@ default_zabbix_config:
       #   TLSKeyFile:
 
   agent:
-    tls_psk:  # tls-psk to add on the target system; must only be containing hexdigits (0-9 & a-f)
-    tls_cert_copy:  # local tls-certificate to copy to the target system (from 'files/certs'); must be for client-authentication
-    tls_key_copy:  # local tls-certificate-key to copy to the target system (from 'files/certs'); must be for client-authentication
-    tls_ca_copy:  # local tls-ca-certificate to copy to the target system (from 'files/certs')
+    tls_psk: ''  # tls-psk to add on the target system; must only be containing hexdigits (0-9 & a-f)
+    tls_cert_copy: ''  # local tls-certificate to copy to the target system (from 'files/certs'); must be for client-authentication
+    tls_key_copy: ''  # local tls-certificate-key to copy to the target system (from 'files/certs'); must be for client-authentication
+    tls_ca_copy: ''  # local tls-ca-certificate to copy to the target system (from 'files/certs')
     path_scripts: '/usr/local/sbin/zabbix'
     settings:
       # must be defined manually !!
@@ -182,7 +201,7 @@ default_zabbix_config:
       LogType: 'system'
       LogFileSize: 10
       DebugLevel: 3
-      # secueScDgJ!hBr_0csrity
+      # security
       EnableRemoteCommands: 0
       AllowRoot: 0
       UnsafeUserParameters: 0

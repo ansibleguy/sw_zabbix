@@ -1,2 +1,43 @@
 ---
 
+- name: Zabbix | Debian | Uninstall | Agent | Disabling service
+  ansible.builtin.systemd:
+    name: "{{ ZABBIX_HC.service.agent }}"
+    state: stopped
+    enabled: false
+  ignore_errors: true
+  failed_when: false
+
+- name: Zabbix | Debian | Uninstall | Agent | Removing package
+  ansible.builtin.apt:
+    name: "{{ ZABBIX_HC.packages.agent }}"
+    state: absent
+    purge: true
+
+- name: Zabbix | Debian | Uninstall | Agent | Removing files
+  ansible.builtin.file:
+    dest: "{{ item }}"
+    state: absent
+  loop:
+    - "{{ ZABBIX_HC.file_config_agent }}"
+    - "{{ ZABBIX_CONFIG.path_private }}/agent_psk.txt"
+    - "{{ ZABBIX_CONFIG.path_private }}/agent_ca.crt"
+    - "{{ ZABBIX_CONFIG.path_private }}/agent_cert.crt"
+    - "{{ ZABBIX_CONFIG.path_private }}/agent_cert.key"
+
+- name: Zabbix | Debian | Uninstall | Agent | Ask user
+  ansible.builtin.pause:
+    prompt: "Do you want to remove the scripts and userparameters directories? ({{ ZABBIX_CONFIG.agent.path_scripts }}, {{ ZABBIX_HC.path_userparameters }}) [yes/NO]!"
+  register: zbx_agent_removal_prompt
+
+- name: Zabbix | Debian | Uninstall | Agent | Removing directories
+  ansible.builtin.file:
+    dest: "{{ item }}"
+    state: absent
+    force: true
+  loop:
+    - "{{ ZABBIX_CONFIG.agent.path_scripts }}"
+    - "{{ ZABBIX_HC.path_userparameters }}"
+  when: >
+    force_removal or
+    zbx_agent_removal_prompt.user_input == 'yes'

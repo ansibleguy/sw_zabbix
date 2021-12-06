@@ -11,11 +11,17 @@
     We need: db managed by role or 'DBName' and 'DBSocket' for a local database or 'DBHost' and 'DBPort' for a remote database!
     Also: unencrypted connections are not allowed!"
   when: >
-    ZABBIX_CONFIG.state == 'present' and
-    (not ZABBIX_CONFIG.manage.db and (cnf.DBSocket in NONE_VALUES or (cnf.DBHost in NONE_VALUES and cnf.DBPort in NONE_VALUES))) or
-    (not ZABBIX_CONFIG.manage.db and cnf.DBName in NONE_VALUES)
-  vars:
-    cnf: ZABBIX_CONFIG.proxy.settings
+    ZABBIX_CONFIG.state == 'present' and (
+      not ZABBIX_CONFIG.manage.db and (
+        ZABBIX_CONFIG.server.settings.DBSocket in NONE_VALUES or (
+          ZABBIX_CONFIG.server.settings.DBHost in NONE_VALUES and 
+          ZABBIX_CONFIG.server.settings.DBPort in NONE_VALUES
+        )
+      ) or (
+        not ZABBIX_CONFIG.manage.db and 
+        ZABBIX_CONFIG.server.settings.DBName in NONE_VALUES
+      )
+    )
 
 - name: Zabbix | Debian | Server | Installing
   ansible.builtin.import_tasks: install/server.yml
@@ -26,15 +32,3 @@
   ansible.builtin.import_tasks: configure/server.yml
   when: ZABBIX_CONFIG.state == 'present'
   tags: [config, server]
-
-- name: Zabbix | Debian | Server | Configuring Nginx webserver (proxy)
-  ansible.builtin.import_role:
-    name: ansibleguy.infra_nginx
-  vars:
-    nginx:
-      sites:
-        zabbix: "{{ ZABBIX_CONFIG.server.nginx }}"
-  when:
-    - ZABBIX_CONFIG.manage.webserver
-    - ZABBIX_CONFIG.manage.server
-  tags: [ install, server ]
