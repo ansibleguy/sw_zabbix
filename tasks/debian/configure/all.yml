@@ -18,3 +18,11 @@
     owner: "{{ ZABBIX_HC.user }}"
     group: "{{ ZABBIX_HC.group }}"
     mode: 0750
+
+- name: Zabbix | Debian | Configure | All | Creating run directory
+  ansible.builtin.file:
+    state: directory
+    path: "{{ ZABBIX_HC.path_run }}"
+    owner: "{{ ZABBIX_HC.user }}"
+    group: "{{ ZABBIX_HC.group }}"
+    mode: 0755

@@ -2,7 +2,16 @@
 
 - name: Zabbix | Debian | Agent | Uninstalling
   ansible.builtin.import_tasks: uninstall/agent.yml
-  when: ZABBIX_CONFIG.state != 'present'
+  when: >
+    ZABBIX_CONFIG.state != 'present' or
+    ZABBIX_CONFIG.manage.agent2
+  tags: [uninstall, agent]
+
+- name: Zabbix | Debian | Agent | Uninstalling Agent2
+  ansible.builtin.import_tasks: uninstall/agent2.yml
+  when: >
+    ZABBIX_CONFIG.state != 'present' or
+    not ZABBIX_CONFIG.manage.agent2
   tags: [uninstall, agent]
 
 - name: Zabbix | Debian | Agent | Verifying config
@@ -12,26 +21,48 @@
     Also: unencrypted connections are not allowed!"
   when: >
     ZABBIX_CONFIG.state == 'present' and (
-      ZABBIX_CONFIG.agent.settings.Server in NONE_VALUES or (
-        ZABBIX_CONFIG.agent.settings.TLSPSKIdentity in NONE_VALUES and 
-        ZABBIX_CONFIG.agent.settings.TLSCertFile in NONE_VALUES
+      agent.settings.Server in NONE_VALUES or (
+        agent.settings.TLSPSKIdentity in NONE_VALUES and 
+        agent.settings.TLSCertFile in NONE_VALUES
       ) or (
-        ZABBIX_CONFIG.agent.tls_psk in NONE_VALUES and (
-          ZABBIX_CONFIG.agent.tls_cert_copy in NONE_VALUES or 
-          ZABBIX_CONFIG.agent.tls_key_copy in NONE_VALUES or 
-          ZABBIX_CONFIG.agent.tls_ca_copy in NONE_VALUES
+        agent.tls_psk in NONE_VALUES and (
+          agent.tls_cert_copy in NONE_VALUES or 
+          agent.tls_key_copy in NONE_VALUES or 
+          agent.tls_ca_copy in NONE_VALUES
         )
       ) or (
-        ZABBIX_CONFIG.agent.settings.TLSConnect == 'unencrypted' or 
-        ZABBIX_CONFIG.agent.settings.TLSAccept == 'unencrypted'
+        agent.settings.TLSConnect == 'unencrypted' or 
+        agent.settings.TLSAccept == 'unencrypted'
       )
     )
+  tags: [config, install, agent]
 
 - name: Zabbix | Debian | Agent | Installing
   ansible.builtin.import_tasks: install/agent.yml
-  when: ZABBIX_CONFIG.state == 'present'
+  when:
+    - ZABBIX_CONFIG.state == 'present'
+    - ZABBIX_CONFIG.manage.agent
+    - not ZABBIX_CONFIG.manage.agent2
   tags: [install, agent]
 
 - name: Zabbix | Debian | Agent | Configuring
   ansible.builtin.import_tasks: configure/agent.yml
-  when: ZABBIX_CONFIG.state == 'present'
+  tags: [config, install, agent]
+  when:
+    - ZABBIX_CONFIG.state == 'present'
+    - ZABBIX_CONFIG.manage.agent
+    - not ZABBIX_CONFIG.manage.agent2
+
+- name: Zabbix | Debian | Agent | Installing Agent2
+  ansible.builtin.import_tasks: install/agent2.yml
+  tags: [install, agent]
+  when:
+    - ZABBIX_CONFIG.state == 'present'
+    - ZABBIX_CONFIG.manage.agent2
+
+- name: Zabbix | Debian | Agent | Configuring Agent2
+  ansible.builtin.import_tasks: configure/agent2.yml
+  tags: [config, install, agent]
+  when:
+    - ZABBIX_CONFIG.state == 'present'
+    - ZABBIX_CONFIG.manage.agent2

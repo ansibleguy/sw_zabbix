@@ -28,6 +28,7 @@
   ansible.builtin.pause:
     prompt: "Do you want to remove the scripts directories? ({{ ZABBIX_HC.path_externalscripts }}, {{ ZABBIX_HC.path_alertscripts }}) [yes/NO]!"
   register: zbx_server_removal_prompt
+  when: not force_removal
 
 - name: Zabbix | Debian | Uninstall | Server | Removing directories
   ansible.builtin.file:
@@ -48,7 +49,9 @@
   ansible.builtin.pause:
     prompt: "Do you want to uninstall the MariaDB database completely? [yes/NO]!"
   register: zbx_mariadb_removal_prompt
-  when: "'mariadb-server' in ansible_facts.packages"
+  when:
+    - not force_removal
+    - "'mariadb-server' in ansible_facts.packages"
 
 - name: Zabbix | Debian | Uninstall | Server | Removing packages
   ansible.builtin.apt:
@@ -75,7 +78,9 @@
   ansible.builtin.pause:
     prompt: "Do you want to uninstall the NGINX web server completely? [yes/NO]!"
   register: zbx_nginx_removal_prompt
-  when: "'nginx' in ansible_facts.packages"
+  when:
+    - not force_removal
+    - "'nginx' in ansible_facts.packages"
 
 - name: Zabbix | Debian | Uninstall | Server | Disabling nginx service
   ansible.builtin.systemd:

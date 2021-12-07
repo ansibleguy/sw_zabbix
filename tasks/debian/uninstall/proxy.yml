@@ -29,6 +29,7 @@
   ansible.builtin.pause:
     prompt: "Do you want to remove the scripts directories? ({{ ZABBIX_HC.path_externalscripts }}, {{ ZABBIX_HC.path_alertscripts }}) [yes/NO]!"
   register: zbx_proxy_removal_prompt
+  when: not force_removal
 
 - name: Zabbix | Debian | Uninstall | Proxy | Removing directories
   ansible.builtin.file:

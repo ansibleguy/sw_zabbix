@@ -15,6 +15,7 @@
   ansible.builtin.pause:
     prompt: "Do you want to remove the private directory? ({{ ZABBIX_CONFIG.path_private }}) [yes/NO]!"
   register: zbx_all_removal_prompt
+  when: not force_removal
 
 - name: Zabbix | Debian | Uninstall | All | Removing private directory
   ansible.builtin.file:

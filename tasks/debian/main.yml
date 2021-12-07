@@ -26,8 +26,19 @@
   tags: [config, install, uninstall, proxy]
 
 - name: Zabbix | Debian | Processing Zabbix Agent
-  ansible.builtin.import_tasks: agent.yml
-  when: ZABBIX_CONFIG.manage.agent
+  ansible.builtin.include_tasks: agent.yml
+  vars:
+    agent: "{{ ZABBIX_CONFIG.agent }}"
+  when:
+    - ZABBIX_CONFIG.manage.agent
+    - not ZABBIX_CONFIG.manage.agent2
+  tags: [config, install, uninstall, agent]
+
+- name: Zabbix | Debian | Processing Zabbix Agent2
+  ansible.builtin.include_tasks: agent.yml
+  vars:
+    agent: "{{ ZABBIX_CONFIG.agent2 }}"
+  when: ZABBIX_CONFIG.manage.agent2
   tags: [config, install, uninstall, agent]
 
 - name: Zabbix | Debian | Uninstalling basics

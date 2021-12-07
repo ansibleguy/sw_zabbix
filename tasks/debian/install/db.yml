@@ -51,7 +51,7 @@
 - name: Zabbix | Debian | Install | DB | Unmanaged DB
   ansible.builtin.pause:
     prompt: "Since this role is not managing the zabbix-database, you will need to import the database schema initially! 
-    This can be done like this when using a local database: 'zcat /usr/share/doc/zabbix-sql-scripts/mysql/create.sql.gz | mysql --socket /run/mysqld/mysqld.sock -uroot -p zabbix'. 
+    This can be done like this when using a local database: 'zcat {{ file_schema }} | mysql --socket /run/mysqld/mysqld.sock -uroot -p zabbix'. 
     Make sure the schema is imported before continuing!"
   when:
     - not ZABBIX_CONFIG.manage.db

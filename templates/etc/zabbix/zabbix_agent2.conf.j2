@@ -13,11 +13,11 @@ ServerActive={{ agent.settings['Server'] }}
 
 # tls config
 {% if agent.tls_psk not in NONE_VALUES %}
-TLSPSKFile={{ ZABBIX_CONFIG.path_private }}/agent_psk.txt
+TLSPSKFile={{ ZABBIX_CONFIG.path_private }}/agent2_psk.txt
 {% endif %}
 
 {% if agent.tls_ca_copy not in NONE_VALUES and agent.tls_cert_copy not in NONE_VALUES and agent.tls_key_copy not in NONE_VALUES %}
-TLSCAFile={{ ZABBIX_CONFIG.path_private }}/agent_ca.crt
-TLSCertFile={{ ZABBIX_CONFIG.path_private }}/agent_cert.crt
-TLSKeyFile={{ ZABBIX_CONFIG.path_private }}/agent_cert.key
+TLSCAFile={{ ZABBIX_CONFIG.path_private }}/agent2_ca.crt
+TLSCertFile={{ ZABBIX_CONFIG.path_private }}/agent2_cert.crt
+TLSKeyFile={{ ZABBIX_CONFIG.path_private }}/agent2_cert.key
 {% endif %}

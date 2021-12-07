@@ -95,7 +95,7 @@ Example for a zabbix server:
 ```yaml
 zabbix: 
   manage:
-    agent: true
+    agent2: true
     server: true
   
   server:
@@ -133,7 +133,7 @@ Example for a zabbix proxy:
 ```yaml
 zabbix:
   manage:
-    agent: true
+    agent2: true
     proxy: true
   
   proxy:
@@ -156,7 +156,22 @@ zabbix:
       ListenIP: '172.18.15.7'
 ```
 
-Example for a zabbix agent:
+Example for zabbix agent V2:
+```yaml
+zabbix:
+  manage:
+    agent2: true
+
+  agent2:
+    tls_psk: !vault ...  # plain key may only contain hexdigits (0-9 & a-f)
+
+    settings:
+      Server: '172.16.0.54'
+      TLSPSKIdentity: 'RandomIdentity_lUF(o3s4kjh3o'
+      ListenIP: '172.16.0.80'
+```
+
+Example for the older zabbix agent:
 ```yaml
 zabbix:
   agent:

@@ -6,12 +6,13 @@ ZABBIX_HC:  # paths that are 'hardcoded' by zabbix itself
   path_externalscripts: '/usr/lib/zabbix/externalscripts'
   path_alertscripts: '/usr/lib/zabbix/alertscripts'
   path_config: '/etc/zabbix'
-  path_userparameters: '/etc/zabbix/zabbix_agentd.d'
+  path_run: '/run/zabbix'
   user: 'zabbix'
   group: 'zabbix'
   user_web: 'www-data'
   group_web: 'www-data'
   file_config_agent: '/etc/zabbix/zabbix_agentd.conf'
+  file_config_agent2: '/etc/zabbix/zabbix_agent2.conf'
   file_config_proxy: '/etc/zabbix/zabbix_proxy.conf'
   file_config_server: '/etc/zabbix/zabbix_server.conf'
   file_config_php: '/usr/share/zabbix/conf/zabbix.conf.php'  # since the nice path is not working for the setup: '/etc/zabbix/web/zabbix.conf.php'
@@ -25,6 +26,7 @@ ZABBIX_HC:  # paths that are 'hardcoded' by zabbix itself
     3: "+{{ ansible_distribution|lower }}{{ ansible_distribution_major_version }}_all.deb"
   packages:
     agent: ['zabbix-agent']
+    agent2: ['zabbix-agent2']
     proxy: ['zabbix-proxy-mysql', 'zabbix-sql-scripts']
     server: ['zabbix-server-mysql', 'zabbix-frontend-php', 'zabbix-sql-scripts', 'zabbix-apache-conf']
     mysql: ['mariadb-client', 'python3-pymysql']
@@ -33,12 +35,17 @@ ZABBIX_HC:  # paths that are 'hardcoded' by zabbix itself
 
   service:
     agent: 'zabbix-agent.service'
+    agent2: 'zabbix-agent2.service'
     proxy: 'zabbix-proxy.service'
     server: 'zabbix-server.service'
 
   port:
     passive: 10050
     active: 10051
+
+shared_settings:
+  timeout: 10
+  logfile_size: 30  # MB
 
 default_zabbix_config:
   version: '5.4'
@@ -49,6 +56,7 @@ default_zabbix_config:
 
   manage:
     agent: true
+    agent2: false
     server: false
     proxy: false
     db: true  # if enabled => will use 'ansibleguy.infra_mariadb' role to install and configure mariadb-database to use with zabbix server and/or proxy
@@ -87,14 +95,14 @@ default_zabbix_config:
       ListenPort: "{{ ZABBIX_HC.port.active }}"
       ListenIP: '0.0.0.0'  # any
       #   SourceIP:
-      Timeout: 10
+      Timeout: "{{ shared_settings.timeout }}"
       # server
       ProxyDataFrequency: 10
       ProxyConfigFrequency: 300
       #   SSHKeyLocation:
       # logging
       LogType: 'system'
-      LogFileSize: 30
+      LogFileSize: "{{ shared_settings.logfile_size }}"
       DebugLevel: 3
       # security
       AllowRoot: 0
@@ -164,12 +172,12 @@ default_zabbix_config:
       ListenIP: '0.0.0.0'  # any
       #   SourceIP:
       Hostname: "{{ ansible_hostname }}"
-      Timeout: 10
+      Timeout: "{{ shared_settings.timeout }}"
       # proxy
       ConfigFrequency: 300
       # logging
       LogType: 'system'
-      LogFileSize: 30
+      LogFileSize: "{{ shared_settings.logfile_size }}"
       DebugLevel: 3
       # security
       EnableRemoteCommands: 0
@@ -182,12 +190,13 @@ default_zabbix_config:
       #   TLSCertFile:
       #   TLSKeyFile:
 
-  agent:
+  agent2:  # as the newer agent takes some other settings..
     tls_psk: ''  # tls-psk to add on the target system; must only be containing hexdigits (0-9 & a-f)
     tls_cert_copy: ''  # local tls-certificate to copy to the target system (from 'files/certs'); must be for client-authentication
     tls_key_copy: ''  # local tls-certificate-key to copy to the target system (from 'files/certs'); must be for client-authentication
     tls_ca_copy: ''  # local tls-ca-certificate to copy to the target system (from 'files/certs')
-    path_scripts: '/usr/local/sbin/zabbix'
+    path_scripts: '/usr/local/sbin/zabbix2'
+    path_userparameters: '/etc/zabbix/zabbix_agent2.d'
     settings:
       # must be defined manually !!
       Server:
@@ -197,11 +206,43 @@ default_zabbix_config:
       ListenIP: '0.0.0.0'  # any
       #   SourceIP:
       Hostname: "{{ ansible_hostname }}"
-      Timeout: 10
-      Include: "{{ ZABBIX_HC.path_userparameters }}/*.conf"
+      Timeout: "{{ shared_settings.timeout }}"
+      Include: '/etc/zabbix/zabbix_agent2.d/*.conf'
+      ControlSocket: "{{ ZABBIX_HC.path_run }}/agent2.sock"
       # logging
       LogType: 'system'
-      LogFileSize: 10
+      LogFileSize: "{{ shared_settings.logfile_size }}"
+      DebugLevel: 3
+      # security
+      Plugins.SystemRun.LogRemoteCommands: 1
+      UnsafeUserParameters: 0
+      TLSConnect: 'psk'  # or cert => you should never use 'unencrypted'
+      TLSAccept: 'psk'  # or cert => you should never use 'unencrypted'
+      #   TLSCAFile:
+      #   TLSCertFile:
+      #   TLSKeyFile:
+
+  agent:
+    tls_psk: ''  # tls-psk to add on the target system; must only be containing hexdigits (0-9 & a-f)
+    tls_cert_copy: ''  # local tls-certificate to copy to the target system (from 'files/certs'); must be for client-authentication
+    tls_key_copy: ''  # local tls-certificate-key to copy to the target system (from 'files/certs'); must be for client-authentication
+    tls_ca_copy: ''  # local tls-ca-certificate to copy to the target system (from 'files/certs')
+    path_scripts: '/usr/local/sbin/zabbix'
+    path_userparameters: '/etc/zabbix/zabbix_agentd.d'
+    settings:
+      # must be defined manually !!
+      Server:
+      TLSPSKIdentity:
+      # defaults
+      ListenPort: "{{ ZABBIX_HC.port.passive }}"
+      ListenIP: '0.0.0.0'  # any
+      #   SourceIP:
+      Hostname: "{{ ansible_hostname }}"
+      Timeout: "{{ shared_settings.timeout }}"
+      Include: '/etc/zabbix/zabbix_agentd.d/*.conf'
+      # logging
+      LogType: 'system'
+      LogFileSize: "{{ shared_settings.logfile_size }}"
       DebugLevel: 3
       # security
       EnableRemoteCommands: 0
