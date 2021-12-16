@@ -106,6 +106,20 @@
     regexp: '^Listen\s80$'
   register: zbx_server_a2port_raw
 
+- name: Zabbix | Debian | Configure | Server | Removing apache2 status page
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - '/etc/apache2/sites-enabled/status.conf'
+    - '/etc/apache2/sites-available/status.conf'
+  register: zbx_server_a2status_rm
+  when: ZABBIX_CONFIG.apache.status_page.state != 'present'
+
+- name: Zabbix | Debian | Configure | Server | Adding apache2 status page
+  ansible.builtin.import_tasks: apache_add_status.yml
+  when: ZABBIX_CONFIG.apache.status_page.state == 'present'
+
 - name: Zabbix | Debian | Configure | Server | Restarting Zabbix-Server service
   ansible.builtin.systemd:
     name: "{{ ZABBIX_HC.service.server }}"
@@ -126,4 +140,7 @@
   when: >
     zbx_server_a2port_raw.changed or
     zbx_server_php_config_raw.changed or
-    zbx_php_config_raw.changed
+    zbx_php_config_raw.changed or
+    (zbx_server_a2status_conf.changed is defined and zbx_server_a2status_conf.changed) or
+    (zbx_server_a2status_add.changed is defined and zbx_server_a2status_add.changed) or
+    (zbx_server_a2status_rm.changed is defined and zbx_server_a2status_rm.changed)

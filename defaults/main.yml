@@ -130,7 +130,7 @@ default_zabbix_config:
       mode: 'proxy'
       proxy:
         ip: '127.0.0.1'
-        port: 8080
+        port: 8080  # may not be 80 and/or 443 !
 
       ssl:
         mode: 'selfsigned'
@@ -152,6 +152,17 @@ default_zabbix_config:
 
       headers:
         Content-Security-Policy: ''  # not supported
+
+  apache:
+    log:
+      syslog: true
+      path: '/var/log/apache2'
+
+    status_page:
+      state: 'present'
+      bind: '127.0.0.1'
+      port: 8080  # may not be 80 and/or 443 !
+      path: 'server-status'
 
   proxy:
     tls_psk: ''  # tls-psk to add on the target system; must only be containing hexdigits (0-9 & a-f)

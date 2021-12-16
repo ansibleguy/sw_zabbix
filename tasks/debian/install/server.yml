@@ -24,6 +24,11 @@
     daemon_reload: yes
     no_block: true
 
+- name: Zabbix | Debian | Install | Server | Removing default apache2 site
+  ansible.builtin.file:
+    dest: '000-default.conf'
+    state: absent
+
 - name: Zabbix | Debian | Install | Server | Enabling apache2 service
   ansible.builtin.systemd:
     name: 'apache2.service'

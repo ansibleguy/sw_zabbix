@@ -1,0 +1,19 @@
+# {{ ansible_managed }}
+# ansibleguy.sw_zabbix
+
+<VirtualHost {{ ZABBIX_CONFIG.apache.status_page.bind }}:{{ ZABBIX_CONFIG.apache.status_page.port }}>
+  # log config
+{% if ZABBIX_CONFIG.apache.log.syslog %}
+  ErrorLog "| /usr/bin/logger -p local1.error -t apache2_status"
+  CustomLog "| /usr/bin/logger -p local1.info -t apache2_status" combined
+{% else %}
+  ErrorLog {{ ZABBIX_CONFIG.apache.log.path }}/error.log
+  CustomLog {{ ZABBIX_CONFIG.apache.log.path }}/access.log combined
+{% endif %}
+
+  # status page handling
+  <Location "/{{ ZABBIX_CONFIG.apache.status_page.path }}">
+    SetHandler server-status
+  </Location>
+
+</VirtualHost>
