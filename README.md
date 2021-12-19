@@ -1,5 +1,5 @@
 # Ansible Role - Zabbix deployment
-Ansible Role to setup and manage Zabbix Servers, Proxies and Agents.
+Ansible Role to deploy Zabbix Server/Proxy/Agent components on a linux server.
 
 This roles target is it to **configure the Zabbix components foundational**.
 
