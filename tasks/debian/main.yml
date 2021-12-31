@@ -45,3 +45,11 @@
   ansible.builtin.import_tasks: uninstall/all.yml
   when: ZABBIX_CONFIG.state != 'present'
   tags: [uninstall, agent, server, proxy]
+
+- name: Zabbix | Debian | Cleaning up temporary password files
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "{{ tmp_pwd_file_prefix }}_ps"
+    - "{{ tmp_pwd_file_prefix }}_agent"

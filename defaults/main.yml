@@ -1,6 +1,8 @@
 ---
 
 force_removal: false  # don't prompt for removal
+random_pwd_length: '50'  # must be string-type
+tmp_pwd_file_prefix: '/tmp/.ansibleguy.sw_zabbix_'
 
 ZABBIX_HC:  # paths that are 'hardcoded' by zabbix itself
   path_externalscripts: '/usr/lib/zabbix/externalscripts'
@@ -72,9 +74,8 @@ default_zabbix_config:
       agent: 'zabbix_agent'
 
     pwd:  # default => random pwd will be generated
-      server_proxy: "{{ lookup('password', '/dev/null chars=ascii_letters,digits length=30') }}"
-      agent: "{{ lookup('password', '/dev/null chars=ascii_letters,digits length=30') }}"
-      # todo: fix random pwd usage; will always fail to connect to db (?!)
+      server_proxy: "{{ lookup('password', tmp_pwd_file_prefix + '_ps chars=ascii_letters,digits length=' + random_pwd_length) }}"
+      agent: "{{ lookup('password', tmp_pwd_file_prefix + '_agent chars=ascii_letters,digits length=' + random_pwd_length) }}"
 
     update_password: 'always'  # or 'on_create'
     settings:
