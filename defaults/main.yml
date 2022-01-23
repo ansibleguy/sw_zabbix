@@ -111,6 +111,7 @@ default_zabbix_config:
       #   TLSCAFile:
       #   TLSCertFile:
       #   TLSKeyFile:
+      StartPollersUnreachable: 20
 
     php:
       # date.timezone: 'Europe/Vienna'  # if not defined => local timezone will be pulled from client

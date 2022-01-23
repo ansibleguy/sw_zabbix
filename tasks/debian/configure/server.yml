@@ -42,11 +42,11 @@
 
 - name: Zabbix | Debian | Configure | Server | Deploying php-config
   ansible.builtin.template:
-    src: 'templates/etc/zabbix/web/zabbix.conf.php.j2'
+    src: 'templates/usr/share/zabbix/conf/zabbix.conf.php.j2'
     dest: "{{ ZABBIX_HC.file_config_php }}"
     owner: "{{ ZABBIX_HC.user_web }}"
     group: "{{ ZABBIX_HC.group_web }}"
-    mode: 0640
+    mode: 0750
   no_log: true  # since passwords are written to the file
   register: zbx_php_config_raw
   when: ZABBIX_CONFIG.server.php_conf
