@@ -1,3 +1,5 @@
+[![Zabbix](https://assets.zabbix.com/img/logo/zabbix_logo_313x82.png)](https://www.zabbix.com)
+
 # Ansible Role - Zabbix deployment
 Ansible Role to deploy Zabbix Server/Proxy/Agent components on a linux server.
 

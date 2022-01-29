@@ -57,8 +57,8 @@ default_zabbix_config:
   state: 'present'
 
   manage:
-    agent: true
-    agent2: false
+    agent: false
+    agent2: true
     server: false
     proxy: false
     db: true  # if enabled => will use 'ansibleguy.infra_mariadb' role to install and configure mariadb-database to use with zabbix server and/or proxy
