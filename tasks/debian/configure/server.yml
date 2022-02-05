@@ -90,15 +90,6 @@
   with_dict: "{{ ZABBIX_CONFIG.server.php }}"
   register: zbx_server_php_config_raw
 
-# directory does not exist (?)
-#- name: Zabbix | Debian | Configure | Server | Copying db-monitoring credentials
-#  ansible.builtin.template:
-#    src: 'templates/var/lib/zabbix/agent_my.cnf.j2'
-#    dest: '/var/lib/zabbix/my.cnf'
-#    owner: 'root'
-#    group: "{{ ZABBIX_HC.group }}"
-#    mode: 0640
-
 - name: Zabbix | Debian | Configure | Server | Configuring apache2 listen-port
   ansible.builtin.lineinfile:
     path: '/etc/apache2/ports.conf'

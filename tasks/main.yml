@@ -2,8 +2,8 @@
 
 - name: Zabbix | Checking for needed config
   ansible.builtin.fail:
-    msg: "The role did not get all the config needed! 
-    It needs: 'zabbix', 'zabbix.version' and matching 'zabbix.release', 
+    msg: "The role did not get all the config needed!
+    It needs: 'zabbix', 'zabbix.version' and matching 'zabbix.release',
     'zabbix.server.nginx.domain' if it's a server,"
   when:
     - zabbix is undefined

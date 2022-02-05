@@ -20,10 +20,10 @@ You will need to manage the zabbix-agent integration(s) into your systems on you
     * Apache2 => configured by Zabbix-Server package
     * Nginx => using [THIS Role](https://github.com/ansibleguy/infra_nginx)
     * MariaDB => using [THIS Role](https://github.com/ansibleguy/infra_mariadb)
-    
+
   * Zabbix proxy
     * MariaDB => using [THIS Role](https://github.com/ansibleguy/infra_mariadb)
-    
+
   * Zabbix agent
 
 
@@ -33,7 +33,7 @@ You will need to manage the zabbix-agent integration(s) into your systems on you
       * scripts (_agent scripts, externalscripts, alertscripts_)
       * userparameters
       * certificates
-    
+
     * .. to the target system; just put them in the prepared 'files' directory of this role!
   * **Default config**:
     * Using ansible-hostnames as Zabbix hostnames
@@ -42,29 +42,29 @@ You will need to manage the zabbix-agent integration(s) into your systems on you
     * not running as root
     * Webserver best-practices => see: [THIS Role](https://github.com/ansibleguy/infra_nginx)
     * Agent/Proxy/Server listening on all interfaces
-    
+
   * **Default opt-ins**:
     * Logging to syslog
     * Zabbix agent installation
     * MariaDB setup for Zabbix proxy and server
     * Nginx setup for Zabbix server
-    
+
   * **Default opt-outs**:
     * Zabbix proxy and server installation
     * Settings: UnsafeUserParameters, EnableRemoteCommands
-    
+
   * **Security**:
     * Traffic encryption per PSK or Certificate is **ENFORCED**
 
 ## Info
 
-* **Warning:** The target server/os for the Zabbix server-component should host only this service! Else you might possibly run into configuration/compatibility issues! 
+* **Warning:** The target server/os for the Zabbix server-component should host only this service! Else you might possibly run into configuration/compatibility issues!
 
 
 * **Note:** this role currently only supports debian-based systems
 
 
-* **Info:** We chose to use Nginx and Apache2 so that the configuration managed by Zabbix (_Apache2_) and the one we manage using this role (_Nginx_) can co-exist safely. 
+* **Info:** We chose to use Nginx and Apache2 so that the configuration managed by Zabbix (_Apache2_) and the one we manage using this role (_Nginx_) can co-exist safely.
 This may be important in the future.
 Else incompatibilities would break future setups if Zabbix changes their config-handling.
 
@@ -95,16 +95,16 @@ Define the zabbix dictionary as needed.
 
 Example for a zabbix server:
 ```yaml
-zabbix: 
+zabbix:
   manage:
     agent2: true
     server: true
-  
+ 
   server:
     nginx:  # configure the webserver settings => see: https://github.com/ansibleguy/infra_nginx
       domain: 'zabbix.template.ansibleguy.net'
       aliases: ['zbx.template.ansibleguy.net']
-  
+ 
       ssl:
         mode: 'letsencrypt'  # or selfsigned
         #  if you use 'selfsigned':
@@ -137,7 +137,7 @@ zabbix:
   manage:
     agent2: true
     proxy: true
-  
+ 
   proxy:
     tls_cert_copy: 'proxy01.crt'  # will be copied from the roles 'files/certs' directory to the target system
     tls_key_copy: 'proxy01.key'  # must be configured for client-authentication
@@ -149,7 +149,7 @@ zabbix:
       TLSAccept: 'cert'
       ConfigFrequency: 600
       ListenIP: '172.18.15.7'
-  
+ 
   agent:
     tls_psk: !vault ...  # plain key may only contain hexdigits (0-9 & a-f)
 

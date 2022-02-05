@@ -61,7 +61,8 @@ default_zabbix_config:
     agent2: true
     server: false
     proxy: false
-    db: true  # if enabled => will use 'ansibleguy.infra_mariadb' role to install and configure mariadb-database to use with zabbix server and/or proxy
+    db: true  # if enabled => will use 'ansibleguy.infra_mariadb' role
+    # to install and configure mariadb-database to use with zabbix server and/or proxy
     webserver: true  # if enabled => will use 'ansibleguy.infra_nginx' role to install and configure the needed webserver to use with zabbix server
 
   path_private: "{{ ZABBIX_HC.path_config }}/private"
@@ -122,8 +123,8 @@ default_zabbix_config:
       upload_max_filesize: '16M'
 
     php_conf: true
-      # if the php-config file should be deployed => /usr/share/zabbix/conf/zabbix.conf.php
-      # you might need to add the database config if you manage it by yourself
+    # if the php-config file should be deployed => /usr/share/zabbix/conf/zabbix.conf.php
+    # you might need to add the database config if you manage it by yourself
     php_settings:
       ZBX_SERVER_NAME: 'Monitoring'
       # you could set the php key-value pairs here!
@@ -269,10 +270,6 @@ default_zabbix_config:
       #   TLSKeyFile:
 
 ZABBIX_CONFIG: "{{ default_zabbix_config | combine(zabbix, recursive=true) }}"
-
-#zbx_db: &db Z
-#zbx_db_u1: &db_user_proxyserver
-#zbx_db_u2: &db_user_agent
 
 ZABBIX_MARIADB_INSTANCE: "{{ {
     'dbs': {

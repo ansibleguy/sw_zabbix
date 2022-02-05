@@ -45,4 +45,4 @@
   when:
     - ZABBIX_CONFIG.manage.webserver
     - ZABBIX_CONFIG.manage.server
-  tags: [ install, server ]
+  tags: [install, server]

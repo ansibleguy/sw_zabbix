@@ -7,32 +7,32 @@
 
 - name: Zabbix | Debian | Proxy | Verifying config
   ansible.builtin.fail:
-    msg: "Not all needed settings were provided! Zabbix-Proxy cannot be configured! 
-    We need: 'Server', 'TLSPSKIdentity or TLSCertFile', 'tls_psk or TLSKeyFile', 
+    msg: "Not all needed settings were provided! Zabbix-Proxy cannot be configured!
+    We need: 'Server', 'TLSPSKIdentity or TLSCertFile', 'tls_psk or TLSKeyFile',
     db managed by role or 'DBName' and 'DBSocket' for a local database or 'DBHost' and 'DBPort' for a remote database!
     Also: unencrypted connections are not allowed!"
   when: >
     ZABBIX_CONFIG.state == 'present' and (
       ZABBIX_CONFIG.proxy.settings.Server in NONE_VALUES or (
-        ZABBIX_CONFIG.proxy.settings.TLSPSKIdentity in NONE_VALUES and 
+        ZABBIX_CONFIG.proxy.settings.TLSPSKIdentity in NONE_VALUES and
         ZABBIX_CONFIG.proxy.settings.TLSCertFile in NONE_VALUES
       ) or (
         ZABBIX_CONFIG.proxy.tls_psk in NONE_VALUES and (
-          ZABBIX_CONFIG.proxy.tls_cert_copy in NONE_VALUES or 
-          ZABBIX_CONFIG.proxy.tls_key_copy in NONE_VALUES or 
+          ZABBIX_CONFIG.proxy.tls_cert_copy in NONE_VALUES or
+          ZABBIX_CONFIG.proxy.tls_key_copy in NONE_VALUES or
           ZABBIX_CONFIG.proxy.tls_ca_copy in NONE_VALUES
         ) or (
           not ZABBIX_CONFIG.manage.db and (
             ZABBIX_CONFIG.proxy.settings.DBSocket in NONE_VALUES or (
-              ZABBIX_CONFIG.proxy.settings.DBHost in NONE_VALUES and 
+              ZABBIX_CONFIG.proxy.settings.DBHost in NONE_VALUES and
               ZABBIX_CONFIG.proxy.settings.DBPort in NONE_VALUES
             )
           )
         ) or (
-          not ZABBIX_CONFIG.manage.db and 
+          not ZABBIX_CONFIG.manage.db and
           ZABBIX_CONFIG.proxy.settings.DBName in NONE_VALUES
         ) or (
-          ZABBIX_CONFIG.proxy.settings.TLSConnect == 'unencrypted' or 
+          ZABBIX_CONFIG.proxy.settings.TLSConnect == 'unencrypted' or
           ZABBIX_CONFIG.proxy.settings.TLSAccept == 'unencrypted'
         )
       )

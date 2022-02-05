@@ -37,14 +37,6 @@
     mode: 0640
   no_log: true  # since passwords are written to the file
 
-#- name: Zabbix | Debian | Configure | Proxy | Copying db-monitoring credentials
-#  ansible.builtin.template:
-#    src: 'templates/var/lib/zabbix/agent_my.cnf.j2'
-#    dest: '/var/lib/zabbix/my.cnf'
-#    owner: 'root'
-#    group: "{{ ZABBIX_HC.group }}"
-#    mode: 0640
-
 - name: Zabbix | Debian | Configure | Proxy | Restarting service
   ansible.builtin.systemd:
     name: "{{ ZABBIX_HC.service.proxy }}"
