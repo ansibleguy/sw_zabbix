@@ -12,7 +12,7 @@
 - name: Zabbix | Debian | Install | DB | Installing client
   ansible.builtin.apt:
     name: "{{ ZABBIX_HC.packages.mysql }}"
-    state: latest
+    state: present
 
 - name: Zabbix | Debian | Install | DB | Checking if schema is initialized
   community.mysql.mysql_query:

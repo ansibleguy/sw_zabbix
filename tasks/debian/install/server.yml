@@ -9,7 +9,7 @@
 - name: Zabbix | Debian | Install | Server | Installing
   ansible.builtin.apt:
     name: "{{ ZABBIX_HC.packages.server }}"
-    state: latest
+    state: present
 
 - name: Zabbix | Debian | Install | Server | Database tasks
   ansible.builtin.import_tasks: db.yml

@@ -27,10 +27,10 @@ ZABBIX_HC:  # paths that are 'hardcoded' by zabbix itself
     # release (p.e. '5.4-1')
     3: "+{{ ansible_distribution|lower }}{{ ansible_distribution_major_version }}_all.deb"
   packages:
-    agent: ['zabbix-agent']
-    agent2: ['zabbix-agent2']
-    proxy: ['zabbix-proxy-mysql', 'zabbix-sql-scripts']
-    server: ['zabbix-server-mysql', 'zabbix-frontend-php', 'zabbix-sql-scripts', 'zabbix-apache-conf']
+    agent: ['systemd', 'zabbix-agent']
+    agent2: ['systemd', 'zabbix-agent2']
+    proxy: ['systemd', 'zabbix-proxy-mysql', 'zabbix-sql-scripts']
+    server: ['systemd', 'zabbix-server-mysql', 'zabbix-frontend-php', 'zabbix-sql-scripts', 'zabbix-apache-conf']
     mysql: ['mariadb-client', 'python3-pymysql']
     remove_mariadb: ['mariadb-server']
     remove_nginx: ['nginx']
