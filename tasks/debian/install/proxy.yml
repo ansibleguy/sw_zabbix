@@ -8,13 +8,14 @@
 
 - name: Zabbix | Debian | Install | Proxy | Installing
   ansible.builtin.apt:
-    name: "{{ ZABBIX_HC.packages.proxy }}"
+    name: "{{ ZABBIX_HC.packages.proxy[ZABBIX_CONFIG.proxy.database] }}"
     state: present
 
 - name: Zabbix | Debian | Install | Proxy | Database tasks
   ansible.builtin.import_tasks: db.yml
   vars:
     file_schema: "{{ ZABBIX_HC.file_mysql_proxy }}"
+  when: ZABBIX_CONFIG.proxy.database == 'mysql'
 
 - name: Zabbix | Debian | Install | Proxy | Enabling service
   ansible.builtin.systemd:

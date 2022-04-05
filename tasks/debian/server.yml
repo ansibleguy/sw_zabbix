@@ -2,7 +2,9 @@
 
 - name: Zabbix | Debian | Server | Uninstalling
   ansible.builtin.import_tasks: uninstall/server.yml
-  when: ZABBIX_CONFIG.state != 'present'
+  when:
+    - ZABBIX_CONFIG.state != 'present'
+    - "'zabbix-server-mysql' in ansible_facts.packages or 'zabbix-frontend-php' in ansible_facts.packages"
   tags: [uninstall, server]
 
 - name: Zabbix | Debian | Server | Verifying config

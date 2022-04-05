@@ -10,7 +10,7 @@
 
 - name: Zabbix | Debian | Uninstall | Proxy | Removing packages
   ansible.builtin.apt:
-    name: "{{ ZABBIX_HC.packages.proxy }}"
+    name: "{{ ZABBIX_HC.packages.proxy[ZABBIX_CONFIG.proxy.database] }}"
     state: absent
     purge: true
 

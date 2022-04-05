@@ -3,15 +3,17 @@
 - name: Zabbix | Debian | Agent | Uninstalling
   ansible.builtin.import_tasks: uninstall/agent.yml
   when: >
-    ZABBIX_CONFIG.state != 'present' or
-    ZABBIX_CONFIG.manage.agent2
+    (ZABBIX_CONFIG.state != 'present' or
+    ZABBIX_CONFIG.manage.agent2) and
+    'zabbix-agent' in ansible_facts.packages
   tags: [uninstall, agent]
 
 - name: Zabbix | Debian | Agent | Uninstalling Agent2
   ansible.builtin.import_tasks: uninstall/agent2.yml
   when: >
-    ZABBIX_CONFIG.state != 'present' or
-    not ZABBIX_CONFIG.manage.agent2
+    (ZABBIX_CONFIG.state != 'present' or
+    not ZABBIX_CONFIG.manage.agent2) and
+    'zabbix-agent2' in ansible_facts.packages
   tags: [uninstall, agent]
 
 - name: Zabbix | Debian | Agent | Verifying config

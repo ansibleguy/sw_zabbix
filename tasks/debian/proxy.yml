@@ -2,7 +2,9 @@
 
 - name: Zabbix | Debian | Proxy | Uninstalling
   ansible.builtin.import_tasks: uninstall/proxy.yml
-  when: ZABBIX_CONFIG.state != 'present'
+  when:
+    - ZABBIX_CONFIG.state != 'present'
+    - "'zabbix-proxy-mysql' in ansible_facts.packages"
   tags: [uninstall, proxy]
 
 - name: Zabbix | Debian | Proxy | Verifying config

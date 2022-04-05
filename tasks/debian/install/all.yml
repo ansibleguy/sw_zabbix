@@ -11,3 +11,8 @@
   ansible.builtin.apt:
     update_cache: yes
   changed_when: false
+
+- name: Zabbix | Debian | Install | All | Dependencies
+  ansible.builtin.apt:
+    name: "{{ ZABBIX_HC.packages.dependencies_all }}"
+    state: present
