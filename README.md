@@ -114,7 +114,8 @@ zabbix:
         #      cn: 'Zabbix Server'
         #      org: 'AnsibleGuy'
         #      email: 'zabbix@template.ansibleguy.net'
-
+      letsencrypt:
+        email: 'zabbix@template.ansibleguy.net'
 
     tls_cert_copy: 'server.crt'  # will be copied from the roles 'files/certs' directory to the target system
     tls_key_copy: 'server.key'  # must be configured for server-authentication
