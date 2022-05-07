@@ -11,10 +11,17 @@
     name: "{{ ZABBIX_HC.packages.server }}"
     state: present
 
-- name: Zabbix | Debian | Install | Server | Database tasks
+- name: Zabbix | Debian | Install | Server | Database tasks (<V6)
   ansible.builtin.import_tasks: db.yml
   vars:
-    file_schema: "{{ ZABBIX_HC.file_mysql_server }}"
+    file_schema: "{{ ZABBIX_HC.file_mysql_server_lt6 }}"
+  when: ZABBIX_CONFIG.version[0]|int < 6
+
+- name: Zabbix | Debian | Install | Server | Database tasks (V6+)
+  ansible.builtin.import_tasks: db.yml
+  vars:
+    file_schema: "{{ ZABBIX_HC.file_mysql_server_ge6 }}"
+  when: ZABBIX_CONFIG.version[0]|int >= 6
 
 - name: Zabbix | Debian | Install | Server | Enabling Zabbix service
   ansible.builtin.systemd:
@@ -32,7 +39,6 @@
 - name: Zabbix | Debian | Install | Server | Enabling apache2 service
   ansible.builtin.systemd:
     name: 'apache2.service'
-    state: started
     enabled: true
 
 - name: Zabbix | Debian | Install | Server | Configuring Nginx webserver (proxy)

@@ -11,11 +11,17 @@
     name: "{{ ZABBIX_HC.packages.proxy[ZABBIX_CONFIG.proxy.database] }}"
     state: present
 
-- name: Zabbix | Debian | Install | Proxy | Database tasks
+- name: Zabbix | Debian | Install | Proxy | Database tasks (<V6)
   ansible.builtin.import_tasks: db.yml
   vars:
-    file_schema: "{{ ZABBIX_HC.file_mysql_proxy }}"
-  when: ZABBIX_CONFIG.proxy.database == 'mysql'
+    file_schema: "{{ ZABBIX_HC.file_mysql_proxy_lt6 }}"
+  when: ZABBIX_CONFIG.version[0]|int < 6
+
+- name: Zabbix | Debian | Install | Proxy | Database tasks (V6+)
+  ansible.builtin.import_tasks: db.yml
+  vars:
+    file_schema: "{{ ZABBIX_HC.file_mysql_proxy_ge6 }}"
+  when: ZABBIX_CONFIG.version[0]|int >= 6
 
 - name: Zabbix | Debian | Install | Proxy | Enabling service
   ansible.builtin.systemd:

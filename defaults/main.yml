@@ -18,8 +18,10 @@ ZABBIX_HC:  # paths that are 'hardcoded' by zabbix itself
   file_config_proxy: '/etc/zabbix/zabbix_proxy.conf'
   file_config_server: '/etc/zabbix/zabbix_server.conf'
   file_config_php: '/usr/share/zabbix/conf/zabbix.conf.php'  # since the nice path is not working for the setup: '/etc/zabbix/web/zabbix.conf.php'
-  file_mysql_proxy: '/usr/share/doc/zabbix-sql-scripts/mysql/schema.sql.gz'
-  file_mysql_server: '/usr/share/doc/zabbix-sql-scripts/mysql/create.sql.gz'
+  file_mysql_proxy_lt6: '/usr/share/doc/zabbix-sql-scripts/mysql/schema.sql.gz'
+  file_mysql_server_lt6: '/usr/share/doc/zabbix-sql-scripts/mysql/schema.sql.gz'
+  file_mysql_proxy_ge6: '/usr/share/doc/zabbix-sql-scripts/mysql/proxy.sql.gz'
+  file_mysql_server_ge6: '/usr/share/doc/zabbix-sql-scripts/mysql/server.sql.gz'
   repo_deb:
     1: 'https://repo.zabbix.com/zabbix/'
     # version (p.e. '5.4')
@@ -53,8 +55,8 @@ shared_settings:
   logfile_size: 30  # MB
 
 default_zabbix_config:
-  version: '5.4'
-  release: '5.4-1'  # must exist in zabbix repository; per example: https://repo.zabbix.com/zabbix/5.4/debian/pool/main/z/zabbix-release
+  version: '6.0'
+  release: '6.0-1'  # must exist in zabbix repository; per example: https://repo.zabbix.com/zabbix/5.4/debian/pool/main/z/zabbix-release
   php_version: '7.4'
 
   state: 'present'
