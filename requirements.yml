@@ -7,8 +7,6 @@ roles:
   - src: 'ansibleguy.infra_certs'
   - src: 'ansibleguy.infra_mariadb'
 
+collections:
   - name: 'community.mysql'
-    source: 'https://galaxy.ansible.com'
-
   - name: 'ansible.posix'
-    source: 'https://galaxy.ansible.com'
