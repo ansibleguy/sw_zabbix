@@ -1,6 +1,6 @@
 ---
 
-- name: Zabbix | Debian | Configure | Agent2 | Creating agent directories
+- name: Zabbix | Debian | Configure | Agent V2 | Creating agent directories
   ansible.builtin.file:
     state: directory
     path: "{{ item }}"
@@ -11,7 +11,7 @@
     - "{{ agent.path_userparameters }}"
     - "{{ agent.path_scripts }}"
 
-- name: Zabbix | Debian | Configure | Agent2 | Copying provided scripts
+- name: Zabbix | Debian | Configure | Agent V2 | Copying provided scripts
   ansible.builtin.copy:
     src: "{{ item }}"
     dest: "{{ agent.path_scripts }}/"
@@ -20,7 +20,7 @@
     mode: "{{ ZABBIX_CONFIG.mode_scripts }}"
   with_fileglob: "files/agent2/scripts/*"
 
-- name: Zabbix | Debian | Configure | Agent2 | Copying provided userparameters
+- name: Zabbix | Debian | Configure | Agent V2 | Copying provided userparameters
   ansible.builtin.copy:
     src: "{{ item }}"
     dest: "{{ agent.path_userparameters }}/"
@@ -29,7 +29,7 @@
     mode: 0640
   with_fileglob: "files/agent2/userparameters/*"
 
-- name: Zabbix | Debian | Configure | Agent2 | Deploying tls-psk
+- name: Zabbix | Debian | Configure | Agent V2 | Deploying tls-psk
   ansible.builtin.copy:
     content: "{{ agent.tls_psk }}"
     dest: "{{ ZABBIX_CONFIG.path_private }}/agent2_psk.txt"
@@ -38,7 +38,7 @@
     mode: 0640
   when: agent.tls_psk not in NONE_VALUES
 
-- name: Zabbix | Debian | Configure | Agent2 | Deploying tls certificate
+- name: Zabbix | Debian | Configure | Agent V2 | Deploying tls certificate
   ansible.builtin.import_tasks: tls_cert.yml
   vars:
     config: "{{ agent }}"
@@ -48,7 +48,7 @@
     - agent.tls_cert_copy not in NONE_VALUES
     - agent.tls_key_copy not in NONE_VALUES
 
-- name: Zabbix | Debian | Configure | Agent2 | Deploying config
+- name: Zabbix | Debian | Configure | Agent V2 | Deploying config
   ansible.builtin.template:
     src: 'templates/etc/zabbix/zabbix_agent2.conf.j2'
     dest: "{{ ZABBIX_HC.file_config_agent2 }}"
@@ -57,7 +57,7 @@
     mode: 0640
   no_log: true  # since passwords are written to the file
 
-- name: Zabbix | Debian | Configure | Agent2 | Restarting service
+- name: Zabbix | Debian | Configure | Agent V2 | Restarting service
   ansible.builtin.systemd:
     name: "{{ ZABBIX_HC.service.agent2 }}"
     state: restarted

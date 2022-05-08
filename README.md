@@ -74,7 +74,7 @@ Else incompatibilities would break future setups if Zabbix changes their config-
 * **Info:** Zabbix-Server apache2 config is stored at: /etc/zabbix/apache.conf (_default_)
 
 
-* **Info:** The default login for the Zabbix server is: Admin/zabbix
+* **Info:** The default login for the Zabbix server is: **User = Admin | Password = zabbix**
 
 
 * **Info:** If the server installation fails for some reason you might want to uninstall the 'zabbix-server-mysql' package before re-running this role!
@@ -126,7 +126,7 @@ zabbix:
       ProxyConfigFrequency: 600
       SSHKeyLocation: '/etc/zabbix/private/id_rsa'
 
-  agent:
+  agent2:
     tls_psk: !vault ...
 
     settings:
@@ -153,7 +153,7 @@ zabbix:
       ConfigFrequency: 600
       ListenIP: '172.18.15.7'
  
-  agent:
+  agent2:
     tls_psk: !vault ...  # plain key may only contain hexdigits (0-9 & a-f)
 
     settings:
@@ -164,9 +164,10 @@ zabbix:
 Example for zabbix agent V2:
 ```yaml
 zabbix:
-  manage:
-    agent2: true
-
+  # agent version 2 is enabled by default
+  #  manage:
+  #    agent2: true
+  
   agent2:
     tls_psk: !vault ...  # plain key may only contain hexdigits (0-9 & a-f)
 
@@ -179,7 +180,10 @@ zabbix:
 Example for the older zabbix agent:
 ```yaml
 zabbix:
-  agent:
+  manage:
+    agent1: true
+
+  agent1:
     tls_psk: !vault ...  # plain key may only contain hexdigits (0-9 & a-f)
 
     settings:

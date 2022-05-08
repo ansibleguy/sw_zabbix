@@ -36,10 +36,17 @@
     dest: '000-default.conf'
     state: absent
 
+- name: Zabbix | Debian | Install | Server | Configuring apache2 listen-port
+  ansible.builtin.lineinfile:
+    path: '/etc/apache2/ports.conf'
+    line: "Listen {{ ZABBIX_CONFIG.server.nginx.proxy.port }}"
+    regexp: '^Listen\s80$'
+
 - name: Zabbix | Debian | Install | Server | Enabling apache2 service
   ansible.builtin.systemd:
     name: 'apache2.service'
     enabled: true
+    state: restarted
 
 - name: Zabbix | Debian | Install | Server | Configuring Nginx webserver (proxy)
   ansible.builtin.include_role:

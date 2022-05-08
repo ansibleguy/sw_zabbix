@@ -28,17 +28,20 @@
 - name: Zabbix | Debian | Processing Zabbix Agent
   ansible.builtin.include_tasks: agent.yml
   vars:
-    agent: "{{ ZABBIX_CONFIG.agent }}"
+    agent: "{{ ZABBIX_CONFIG.agent1 }}"
+    vers: 1
   when:
-    - ZABBIX_CONFIG.manage.agent
-    - not ZABBIX_CONFIG.manage.agent2
+    - ZABBIX_CONFIG.manage.agent1
   tags: [config, install, uninstall, agent]
 
 - name: Zabbix | Debian | Processing Zabbix Agent2
   ansible.builtin.include_tasks: agent.yml
   vars:
     agent: "{{ ZABBIX_CONFIG.agent2 }}"
-  when: ZABBIX_CONFIG.manage.agent2
+    vers: 2
+  when:
+    - ZABBIX_CONFIG.manage.agent2
+    - not ZABBIX_CONFIG.manage.agent1
   tags: [config, install, uninstall, agent]
 
 - name: Zabbix | Debian | Uninstalling basics

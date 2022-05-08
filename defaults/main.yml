@@ -30,8 +30,8 @@ ZABBIX_HC:  # paths that are 'hardcoded' by zabbix itself
     3: "+{{ ansible_distribution|lower }}{{ ansible_distribution_major_version }}_all.deb"
   packages:
     dependencies_all: ['systemd']
-    agent: ['zabbix-agent']
-    agent2: ['zabbix-agent2']
+    agent1: 'zabbix-agent'
+    agent2: 'zabbix-agent2'
     proxy:
       mysql: ['zabbix-proxy-mysql', 'zabbix-sql-scripts']
       sqlite: ['zabbix-proxy-sqlite3', 'zabbix-sql-scripts']
@@ -41,7 +41,7 @@ ZABBIX_HC:  # paths that are 'hardcoded' by zabbix itself
     remove_nginx: ['nginx']
 
   service:
-    agent: 'zabbix-agent.service'
+    agent1: 'zabbix-agent.service'
     agent2: 'zabbix-agent2.service'
     proxy: 'zabbix-proxy.service'
     server: 'zabbix-server.service'
@@ -62,7 +62,7 @@ default_zabbix_config:
   state: 'present'
 
   manage:
-    agent: false
+    agent1: false
     agent2: true
     server: false
     proxy: false
@@ -169,7 +169,7 @@ default_zabbix_config:
     status_page:
       state: 'present'
       bind: '127.0.0.1'
-      port: 8080  # may not be 80 and/or 443 !
+      port: 8888  # may not be 80 and/or 443 !
       path: 'server-status'
 
   proxy:
@@ -242,7 +242,7 @@ default_zabbix_config:
       #   TLSCertFile:
       #   TLSKeyFile:
 
-  agent:
+  agent1:
     tls_psk: ''  # tls-psk to add on the target system; must only be containing hexdigits (0-9 & a-f)
     tls_cert_copy: ''  # local tls-certificate to copy to the target system (from 'files/certs'); must be for client-authentication
     tls_key_copy: ''  # local tls-certificate-key to copy to the target system (from 'files/certs'); must be for client-authentication

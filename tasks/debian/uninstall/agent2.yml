@@ -1,6 +1,6 @@
 ---
 
-- name: Zabbix | Debian | Uninstall | Agent2 | Disabling service
+- name: Zabbix | Debian | Uninstall | Agent V2 | Disabling service
   ansible.builtin.systemd:
     name: "{{ ZABBIX_HC.service.agent2 }}"
     state: stopped
@@ -8,13 +8,13 @@
   ignore_errors: true
   failed_when: false
 
-- name: Zabbix | Debian | Uninstall | Agent2 | Removing package
+- name: Zabbix | Debian | Uninstall | Agent V2 | Removing package
   ansible.builtin.apt:
     name: "{{ ZABBIX_HC.packages.agent2 }}"
     state: absent
     purge: true
 
-- name: Zabbix | Debian | Uninstall | Agent2 | Removing files
+- name: Zabbix | Debian | Uninstall | Agent V2 | Removing files
   ansible.builtin.file:
     dest: "{{ item }}"
     state: absent
@@ -25,33 +25,33 @@
     - "{{ ZABBIX_CONFIG.path_private }}/agent2_cert.crt"
     - "{{ ZABBIX_CONFIG.path_private }}/agent2_cert.key"
 
-- name: Zabbix | Debian | Uninstall | Agent2 | Checking for script directory
+- name: Zabbix | Debian | Uninstall | Agent V2 | Checking for script directory
   ansible.builtin.stat:
-    path: "{{ ZABBIX_CONFIG.agent.path_scripts }}"
+    path: "{{ ZABBIX_CONFIG.agent2.path_scripts }}"
   register: zbx2_agent_dir_script
 
-- name: Zabbix | Debian | Uninstall | Agent2 | Checking for userparameter directory
+- name: Zabbix | Debian | Uninstall | Agent V2 | Checking for userparameter directory
   ansible.builtin.stat:
-    path: "{{ ZABBIX_CONFIG.agent.path_userparameters }}"
+    path: "{{ ZABBIX_CONFIG.agent2.path_userparameters }}"
   register: zbx2_agent_dir_up
 
-- name: Zabbix | Debian | Uninstall | Agent2 | Ask user
+- name: Zabbix | Debian | Uninstall | Agent V2 | Ask user
   ansible.builtin.pause:
     prompt: "Do you want to remove the scripts and userparameters directories?
-    ({{ ZABBIX_CONFIG.agent.path_scripts }}, {{ ZABBIX_CONFIG.agent.path_userparameters }}) [yes/NO]!"
+    ({{ ZABBIX_CONFIG.agent2.path_scripts }}, {{ ZABBIX_CONFIG.agent2.path_userparameters }}) [yes/NO]!"
   register: zbx_agent_removal_prompt
   when:
     - not force_removal
     - zbx2_agent_dir_script.stat.exists or zbx2_agent_dir_up.stat.exists
 
-- name: Zabbix | Debian | Uninstall | Agent2 | Removing directories
+- name: Zabbix | Debian | Uninstall | Agent V2 | Removing directories
   ansible.builtin.file:
     dest: "{{ item }}"
     state: absent
     force: true
   loop:
-    - "{{ ZABBIX_CONFIG.agent.path_scripts }}"
-    - "{{ ZABBIX_CONFIG.agent.path_userparameters }}"
+    - "{{ ZABBIX_CONFIG.agent2.path_scripts }}"
+    - "{{ ZABBIX_CONFIG.agent2.path_userparameters }}"
   when:
     - zbx2_agent_dir_script.stat.exists or zbx2_agent_dir_up.stat.exists
     - force_removal or zbx_agent_removal_prompt.user_input == 'yes'
