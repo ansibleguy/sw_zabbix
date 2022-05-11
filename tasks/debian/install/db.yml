@@ -14,7 +14,7 @@
     name: "{{ ZABBIX_HC.packages.mysql }}"
     state: present
 
-- name: Zabbix | Debian | Install | DB | Checking if schema is initialized
+- name: Zabbix | Debian | Install | DB | Checking if database is empty
   community.mysql.mysql_query:
     login_db: "{{ ZABBIX_CONFIG.database.name }}"
     query: "SELECT count(*) FROM information_schema.TABLES WHERE (TABLE_SCHEMA = '{{ ZABBIX_CONFIG.database.name }}') AND (TABLE_NAME = 'users')"
@@ -22,7 +22,7 @@
     login_user: "{{ ZABBIX_CONFIG.database.user.server_proxy }}"
     login_password: "{{ ZABBIX_CONFIG.database.pwd.server_proxy }}"
   ignore_errors: true
-  register: zbx_db_schema_init
+  register: zbx_db_empty
   when: ZABBIX_CONFIG.manage.db
 
 - name: Zabbix | Debian | Install | DB | Connection failed!
@@ -30,8 +30,8 @@
     msg: "The role was unable to connect to the database!
     Try setting a 'static' password in your configuration. (zabbix.database.pwd.server_proxy)"
   when:
-    - zbx_db_schema_init.failed is defined
-    - zbx_db_schema_init.failed
+    - zbx_db_empty.failed is defined
+    - zbx_db_empty.failed
 
 - name: Zabbix | Debian | Install | DB | Importing database schema
   community.mysql.mysql_db:
@@ -46,13 +46,12 @@
     login_password: "{{ ZABBIX_CONFIG.database.pwd.server_proxy }}"
   when:
     - ZABBIX_CONFIG.manage.db
-    - not zbx_db_schema_init['query_result'][0][0]['count(*)'] | bool
+    - not zbx_db_empty['query_result'][0][0]['count(*)'] | bool
 
 - name: Zabbix | Debian | Install | DB | Unmanaged DB
   ansible.builtin.pause:
     prompt: "Since this role is not managing the zabbix-database, you will need to import the database schema initially!
-    This can be done like this when using a local database: 'zcat {{ file_schema }} | mysql --socket /run/mysqld/mysqld.sock -uroot -p zabbix'.
+    This can be done like this when using a local database: 'zcat {{ file_schema }} 
+    | mysql --socket /run/mysqld/mysqld.sock -uroot -p {{ ZABBIX_CONFIG.database.name }}'.
     Make sure the schema is imported before continuing!"
-  when:
-    - not ZABBIX_CONFIG.manage.db
-    - not zbx_db_schema_init['query_result'][0][0]['count(*)'] | bool
+  when: not ZABBIX_CONFIG.manage.db

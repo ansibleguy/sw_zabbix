@@ -164,7 +164,7 @@ default_zabbix_config:
   apache:
     log:
       syslog: true
-      path: '/var/log/apache2'
+      # path: '/var/log/apache2'
 
     status_page:
       state: 'present'
