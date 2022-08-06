@@ -1,6 +1,6 @@
 ---
 
-- name: Zabbix | Debian | Install | All | Installing zabbix repository
+- name: "Zabbix | Debian | Install | All | Installing zabbix repository (release {{ ZABBIX_CONFIG.release }})"
   ansible.builtin.apt:
     deb: "{{ ZABBIX_HC.repo_deb.1 }}{{ ZABBIX_CONFIG.version }}{{ ZABBIX_HC.repo_deb.2 }}{{ ZABBIX_CONFIG.release }}{{ ZABBIX_HC.repo_deb.3 }}"
   when: >
