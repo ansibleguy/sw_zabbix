@@ -56,3 +56,6 @@
   loop:
     - "{{ tmp_pwd_file_prefix }}_ps"
     - "{{ tmp_pwd_file_prefix }}_agent"
+  delegate_to: localhost
+  become: false
+  changed_when: false
