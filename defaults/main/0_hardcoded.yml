@@ -1,0 +1,53 @@
+---
+
+force_removal: false  # don't prompt for removal
+random_pwd_length: '50'  # must be string-type
+tmp_pwd_file_prefix: '/tmp/.ansibleguy.sw_zabbix'
+NONE_VALUES: [none, '', ' ']
+SETTING_GRAYLIST: ['tls_psk']
+
+ZABBIX_HC:  # paths that are 'hardcoded' by zabbix itself
+  path_externalscripts: '/usr/lib/zabbix/externalscripts'
+  path_alertscripts: '/usr/lib/zabbix/alertscripts'
+  path_config: '/etc/zabbix'
+  path_run: '/run/zabbix'
+  user: 'zabbix'
+  group: 'zabbix'
+  user_web: 'www-data'
+  group_web: 'www-data'
+  file_config_agent: '/etc/zabbix/zabbix_agentd.conf'
+  file_config_agent2: '/etc/zabbix/zabbix_agent2.conf'
+  file_config_proxy: '/etc/zabbix/zabbix_proxy.conf'
+  file_config_server: '/etc/zabbix/zabbix_server.conf'
+  file_config_php: '/usr/share/zabbix/conf/zabbix.conf.php'  # since the nice path is not working for the setup: '/etc/zabbix/web/zabbix.conf.php'
+  file_mysql_proxy_lt6: '/usr/share/doc/zabbix-sql-scripts/mysql/schema.sql.gz'
+  file_mysql_server_lt6: '/usr/share/doc/zabbix-sql-scripts/mysql/schema.sql.gz'
+  file_mysql_proxy_ge6: '/usr/share/doc/zabbix-sql-scripts/mysql/proxy.sql.gz'
+  file_mysql_server_ge6: '/usr/share/doc/zabbix-sql-scripts/mysql/server.sql.gz'
+  repo_deb:
+    1: 'https://repo.zabbix.com/zabbix/'
+    # version (p.e. '5.4')
+    2: '/debian/pool/main/z/zabbix-release/zabbix-release_'
+    # release (p.e. '5.4-1')
+    3: "+{{ ansible_distribution|lower }}{{ ansible_distribution_major_version }}_all.deb"
+  packages:
+    dependencies_all: ['systemd']
+    agent1: 'zabbix-agent'
+    agent2: 'zabbix-agent2'
+    proxy:
+      mysql: ['zabbix-proxy-mysql', 'zabbix-sql-scripts']
+      sqlite: ['zabbix-proxy-sqlite3', 'zabbix-sql-scripts']
+    server: ['zabbix-server-mysql', 'zabbix-frontend-php', 'zabbix-sql-scripts', 'zabbix-apache-conf']
+    mysql: ['mariadb-client', 'python3-pymysql']
+    remove_mariadb: ['mariadb-server']
+    remove_nginx: ['nginx']
+
+  service:
+    agent1: 'zabbix-agent.service'
+    agent2: 'zabbix-agent2.service'
+    proxy: 'zabbix-proxy.service'
+    server: 'zabbix-server.service'
+
+  port:
+    passive: 10050
+    active: 10051

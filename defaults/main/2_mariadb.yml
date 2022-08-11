@@ -1,0 +1,24 @@
+---
+
+ZABBIX_MARIADB_INSTANCE: "{{ {
+    'dbs': {
+      ZABBIX_CONFIG.database.name: {
+        'encoding': 'utf8',
+        'collation': 'utf8_bin'
+      },
+    },
+    'users': {
+      ZABBIX_CONFIG.database.user.server_proxy: {
+        'priv': ZABBIX_CONFIG.database.name + '.*:ALL',
+        'pwd': ZABBIX_CONFIG.database.pwd.server_proxy,
+        'update_pwd': ZABBIX_CONFIG.database.update_password
+      },
+      ZABBIX_CONFIG.database.user.agent: {
+        'priv': '*.*:PROCESS,SHOW DATABASES,BINLOG MONITOR,SHOW VIEW',
+        'pwd': ZABBIX_CONFIG.database.pwd.agent,
+        'update_pwd': ZABBIX_CONFIG.database.update_password
+      },
+    },
+    'settings': ZABBIX_CONFIG.database.settings,
+    'socket': '/run/mysqld/mysqld_zabbix.sock'
+  } }}"  # DO NOT CHANGE!
