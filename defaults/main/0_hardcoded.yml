@@ -29,7 +29,7 @@ ZABBIX_HC:  # paths that are 'hardcoded' by zabbix itself
     # version (p.e. '5.4')
     2: '/debian/pool/main/z/zabbix-release/zabbix-release_'
     # release (p.e. '5.4-1')
-    3: "+{{ ansible_distribution|lower }}{{ ansible_distribution_major_version }}_all.deb"
+    3: "+{{ ansible_distribution | lower }}{{ ansible_distribution_major_version }}_all.deb"
   packages:
     dependencies_all: ['systemd']
     agent1: 'zabbix-agent'

@@ -3,7 +3,7 @@
 - name: Zabbix | Debian | Install | Agent V2 | Installing
   ansible.builtin.apt:
     name: "{{ ZABBIX_HC.packages.agent2 }}"
-    state: latest
+    state: present
 
 - name: Zabbix | Debian | Install | Agent V2 | Enabling service
   ansible.builtin.systemd:
