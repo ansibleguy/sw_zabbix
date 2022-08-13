@@ -33,10 +33,11 @@ defaults_zbx:
       server_proxy: "{{ lookup('password', tmp_pwd_file_prefix + '_ps chars=ascii_letters,digits length=' + random_pwd_length) }}"
       agent: "{{ lookup('password', tmp_pwd_file_prefix + '_agent chars=ascii_letters,digits length=' + random_pwd_length) }}"
 
-    update_password: 'always'  # or 'on_create'
+    update_password: 'on_create'  # or 'always'
     settings:
       innodb_log_file_size: 1G
       wait_timeout: 600
+    my_cnf: '/root/.my-zabbix.cnf'
 
   server:
     tls_cert_copy: ''  # local tls-certificate to copy to the target system (from 'files/certs'); must be for server-authentication
@@ -68,6 +69,7 @@ defaults_zbx:
       #   TLSCertFile:
       #   TLSKeyFile:
       StartPollersUnreachable: 20
+      FpingLocation: '/usr/bin/fping'
 
     php:
       # date.timezone: 'Europe/Vienna'  # if not defined => local timezone will be pulled from client
@@ -159,6 +161,7 @@ defaults_zbx:
       #   TLSCAFile:
       #   TLSCertFile:
       #   TLSKeyFile:
+      FpingLocation: '/usr/bin/fping'
 
   agent2:  # as the newer agent takes some other settings..
     tls_psk: ''  # tls-psk to add on the target system; must only be containing hexdigits (0-9 & a-f)

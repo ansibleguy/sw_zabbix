@@ -9,6 +9,38 @@
         zabbix: "{{ ZABBIX_MARIADB_INSTANCE }}"
   when: ZABBIX_CONFIG.manage.db
 
+- name: Zabbix | Debian | Install | DB | Checking for database config
+  ansible.builtin.stat:
+    path: '/etc/zm/conf.d/custom_db.conf'
+  register: zbx_db_cnf_file
+
+- name: Zabbix | Debian | Install | DB | Adding my.cnf
+  ansible.builtin.copy:
+    content: |
+      # ansible_managed
+
+      [client]
+      socket={{ ZABBIX_MARIADB_INSTANCE.socket }}
+      user={{ ZABBIX_CONFIG.database.user.server_proxy }}
+      password="{{ ZABBIX_CONFIG.database.pwd.server_proxy }}"
+
+    mode: 0640
+    dest: "{{ ZABBIX_CONFIG.database.my_cnf }}"
+    owner: 'root'
+    group: 'root'
+  when: >
+    ZABBIX_HC.database.update_password == 'always' or
+    (force_pwd_change is defined and force_pwd_change) or
+    not zbx_db_cnf_file.stat.exists
+
+- name: Zabbix | Debian | Install | DB | Pulling existing database password
+  ansible.builtin.shell:
+    cmd: "cat {{ ZABBIX_CONFIG.database.my_cnf }} | grep 'password' | cut -d '=' -f2"
+  register: zbx_db_pwd
+  when: zbx_db_cnf_file.stat.exists
+  check_mode: false
+  changed_when: false
+
 - name: Zabbix | Debian | Install | DB | Installing client
   ansible.builtin.apt:
     name: "{{ ZABBIX_HC.packages.mysql }}"
@@ -17,10 +49,10 @@
 - name: Zabbix | Debian | Install | DB | Checking if database is empty
   community.mysql.mysql_query:
     login_db: "{{ ZABBIX_CONFIG.database.name }}"
-    query: "SELECT count(*) FROM information_schema.TABLES WHERE (TABLE_SCHEMA = '{{ ZABBIX_CONFIG.database.name }}') AND (TABLE_NAME = 'users')"
+    query: "SELECT count(*) FROM information_schema.TABLES WHERE (TABLE_SCHEMA = '{{ ZABBIX_CONFIG.database.name }}')"
     login_unix_socket: "{{ ZABBIX_MARIADB_INSTANCE.socket }}"
     login_user: "{{ ZABBIX_CONFIG.database.user.server_proxy }}"
-    login_password: "{{ ZABBIX_CONFIG.database.pwd.server_proxy }}"
+    login_password: "{{ zbx_db_pwd.stdout | default(ZABBIX_CONFIG.database.pwd.server_proxy) }}"
   ignore_errors: true
   register: zbx_db_empty
   when: ZABBIX_CONFIG.manage.db
@@ -43,15 +75,15 @@
     target: "{{ file_schema }}"
     login_unix_socket: "{{ ZABBIX_MARIADB_INSTANCE.socket }}"
     login_user: "{{ ZABBIX_CONFIG.database.user.server_proxy }}"
-    login_password: "{{ ZABBIX_CONFIG.database.pwd.server_proxy }}"
+    login_password: "{{ zbx_db_pwd.stdout | default(ZABBIX_CONFIG.database.pwd.server_proxy) }}"
   when:
     - ZABBIX_CONFIG.manage.db
-    - not zbx_db_empty['query_result'][0][0]['count(*)'] | bool
+    - zbx_db_empty['query_result'][0][0]['count(*)'] | int == 0
 
 - name: Zabbix | Debian | Install | DB | Unmanaged DB
   ansible.builtin.pause:
     prompt: "Since this role is not managing the zabbix-database, you will need to import the database schema initially!
-    This can be done like this when using a local database: 'zcat {{ file_schema }} 
+    This can be done like this when using a local database: 'zcat {{ file_schema }}
     | mysql --socket /run/mysqld/mysqld.sock -uroot -p {{ ZABBIX_CONFIG.database.name }}'.
     Make sure the schema is imported before continuing!"
   when: not ZABBIX_CONFIG.manage.db
