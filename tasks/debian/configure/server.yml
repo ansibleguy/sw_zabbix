@@ -60,6 +60,8 @@
   changed_when: false
   check_mode: false
   become: false
+  args:
+    executable: '/bin/bash'
   when: "'date.timezone' not in ZABBIX_CONFIG.server.php"
 
 - name: Zabbix | Debian | Configure | Server | Configuring php timezone to locally used one
