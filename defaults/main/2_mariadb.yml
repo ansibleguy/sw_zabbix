@@ -3,8 +3,8 @@
 ZABBIX_MARIADB_INSTANCE: "{{ {
     'dbs': {
       ZABBIX_CONFIG.database.name: {
-        'encoding': 'utf8',
-        'collation': 'utf8_bin'
+        'encoding': 'utf8mb4',
+        'collation': 'utf8mb4_bin'
       },
     },
     'users': {

@@ -1,8 +1,13 @@
 ---
 
+- name: Zabbix | Debian | Installing dependencies
+  ansible.builtin.apt:
+    name: 'python3-apt'
+  tags: [config, install, uninstall, agent, proxy, server]
+
 - name: Zabbix | Debian | Getting installed packages
   ansible.builtin.package_facts:
-    manager: auto
+    manager: 'apt'
   tags: [config, install, uninstall, agent, proxy, server]
 
 - name: Zabbix | Debian | Installing basics

@@ -1,12 +1,17 @@
 ---
 
+no_prompts: false
+
 shared_settings:
   timeout: 10
   logfile_size: 30  # MB
 
 defaults_zbx:
-  version: '6.0'
-  release: '6.0-1'  # must exist in zabbix repository; per example: https://repo.zabbix.com/zabbix/5.4/debian/pool/main/z/zabbix-release
+  version: '6.2'
+  # for available releases check:
+  #  the download page: https://www.zabbix.com/download
+  #  the repo directly: https://repo.zabbix.com/zabbix/6.2/debian/pool/main/z/zabbix-release/ (replace version number..)
+  release: '6.2-1'  # must exist in zabbix repository; per example: https://repo.zabbix.com/zabbix/5.4/debian/pool/main/z/zabbix-release
   php_version: '7.4'
 
   state: 'present'
@@ -31,6 +36,7 @@ defaults_zbx:
 
     pwd:  # default => random pwd will be generated
       server_proxy: "{{ lookup('password', tmp_pwd_file_prefix + '_ps chars=ascii_letters,digits length=' + random_pwd_length) }}"
+      server_proxy_root:  # set if pwd for root-login is needed => only needed for db-schema import in >=V6.2
       agent: "{{ lookup('password', tmp_pwd_file_prefix + '_agent chars=ascii_letters,digits length=' + random_pwd_length) }}"
 
     update_password: 'on_create'  # or 'always'
@@ -70,6 +76,7 @@ defaults_zbx:
       #   TLSKeyFile:
       StartPollersUnreachable: 20
       FpingLocation: '/usr/bin/fping'
+      CacheSize: 256M
 
     php:
       # date.timezone: 'Europe/Vienna'  # if not defined => local timezone will be pulled from client

@@ -1,5 +1,13 @@
 ---
 
+- name: Zabbix | Debian | Install | Proxy | Applying fix
+  ansible.builtin.import_tasks: fix_20451.yml
+  when:
+    - ansible_virtualization_role is defined
+    - ansible_virtualization_role == 'guest'
+    - "'docker' in ansible_virtualization_tech_guest"
+  tags: molecule-notest
+
 - name: Zabbix | Debian | Install | Proxy | Checking if is installed
   ansible.builtin.apt:
     name: 'zabbix-proxy-mysql'
@@ -11,17 +19,25 @@
     name: "{{ ZABBIX_HC.packages.proxy[ZABBIX_CONFIG.proxy.database] }}"
     state: present
 
-- name: Zabbix | Debian | Install | Proxy | Database tasks (<V6)
-  ansible.builtin.import_tasks: db.yml
-  vars:
+- name: Zabbix | Debian | Install | Proxy | Setting db import-file (<V6 - schema.sql.gz)
+  ansible.builtin.set_fact:
     file_schema: "{{ ZABBIX_HC.file_mysql_proxy_lt6 }}"
-  when: ZABBIX_CONFIG.version[0]|int < 6
+  when: ZABBIX_CONFIG.version is version('6.0', '<')
 
-- name: Zabbix | Debian | Install | Proxy | Database tasks (V6+)
-  ansible.builtin.import_tasks: db.yml
-  vars:
+- name: Zabbix | Debian | Install | Proxy | Setting db import-file (V6.2 - proxy.sql)
+  ansible.builtin.set_fact:
+    file_schema: "{{ ZABBIX_HC.file_mysql_proxy_6_2 }}"
+  when: ZABBIX_CONFIG.version is version('6.2', '=')
+
+- name: Zabbix | Debian | Install | Proxy | Setting db import-file (V6,V6.3+ - proxy.sql.gz)
+  ansible.builtin.set_fact:
     file_schema: "{{ ZABBIX_HC.file_mysql_proxy_ge6 }}"
-  when: ZABBIX_CONFIG.version[0]|int >= 6
+  when: >
+    ZABBIX_CONFIG.version is version('6.0', '=') or
+    ZABBIX_CONFIG.version is version('6.2', '>')
+
+- name: Zabbix | Debian | Install | Proxy | Database tasks
+  ansible.builtin.import_tasks: db.yml
 
 - name: Zabbix | Debian | Install | Proxy | Enabling service
   ansible.builtin.systemd:

@@ -1,0 +1,135 @@
+---
+
+- name: Verify Server
+  hosts: test-ag-zbx-srv-{{ lookup('ansible.builtin.env', 'USER') }}
+  gather_facts: false
+  tasks:
+    - name: Checking that services are running and enabled
+      ansible.builtin.systemd:
+        name: "{{ item }}"
+        enabled: true
+        state: started
+      check_mode: true
+      register: svc_test
+      loop:
+        - 'mariadb@zabbix.service'
+        - 'zabbix-server.service'
+        - 'apache2.service'
+        - 'nginx.service'
+      failed_when: svc_test.changed
+
+    - name: Checking that services survive restart
+      ansible.builtin.systemd:
+        name: "{{ item }}"
+        state: restarted
+      loop:
+        - 'mariadb@zabbix.service'
+        - 'zabbix-server.service'
+        - 'apache2.service'
+        - 'nginx.service'
+
+    - name: Checking ports
+      ansible.builtin.wait_for:
+        port: "{{ item }}"
+        timeout: 1
+        msg: "Checking port {{ item }}"
+      loop:
+        - 80
+        - 443
+        - 10050
+        - 10051
+        - 3306
+
+- name: Verify Server remote
+  hosts: grp_tester
+  gather_facts: false
+  tasks:
+    - name: Checking if zabbix web-service is reachable
+      ansible.builtin.uri:
+        url: 'https://zabbix.test.ansibleguy.net'
+        return_content: yes
+        validate_certs: false
+      register: page
+      failed_when: "'Zabbix SIA' not in page.content"
+
+- name: Verify Proxy
+  hosts: test-ag-zbx-proxy-{{ lookup('ansible.builtin.env', 'USER') }}
+  gather_facts: false
+  tasks:
+    - name: Checking that services are running and enabled
+      ansible.builtin.systemd:
+        name: "{{ item }}"
+        enabled: true
+        state: started
+      check_mode: true
+      register: svc_test
+      loop:
+        - 'mariadb@zabbix.service'
+        - 'zabbix-proxy.service'
+      failed_when: svc_test.changed
+
+    - name: Checking that services survive restart
+      ansible.builtin.systemd:
+        name: "{{ item }}"
+        state: restarted
+      loop:
+        - 'mariadb@zabbix.service'
+        - 'zabbix-proxy.service'
+
+    - name: Checking ports
+      ansible.builtin.wait_for:
+        port: "{{ item }}"
+        timeout: 1
+        msg: "Checking port {{ item }}"
+      loop:
+        - 10050
+        - 10051
+        - 3306
+
+- name: Verify Agent V2
+  hosts: test-ag-zbx-a2-{{ lookup('ansible.builtin.env', 'USER') }}
+  gather_facts: false
+  tasks:
+    - name: Checking that services are running and enabled
+      ansible.builtin.systemd:
+        name: 'zabbix-agent2.service'
+        enabled: true
+        state: started
+      check_mode: true
+      register: svc_test
+      failed_when: svc_test.changed
+
+    - name: Checking that services survive restart
+      ansible.builtin.systemd:
+        name: 'zabbix-agent2.service'
+        state: restarted
+
+    - name: Checking ports
+      ansible.builtin.wait_for:
+        port: 10050
+        timeout: 1
+        msg: 'Checking port 10050'
+
+- name: Verify Agent V1
+  hosts: test-ag-zbx-a1-{{ lookup('ansible.builtin.env', 'USER') }}
+  gather_facts: false
+  tasks:
+    - name: Checking that services are running and enabled
+      ansible.builtin.systemd:
+        name: 'zabbix-agent.service'
+        enabled: true
+        state: started
+      check_mode: true
+      register: svc_test
+      failed_when: svc_test.changed
+
+    - name: Checking that services survive restart
+      ansible.builtin.systemd:
+        name: 'zabbix-agent.service'
+        state: restarted
+
+    - name: Checking ports
+      ansible.builtin.wait_for:
+        port: 10050
+        timeout: 1
+        msg: 'Checking port 10050'

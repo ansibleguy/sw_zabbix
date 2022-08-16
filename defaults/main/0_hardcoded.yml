@@ -24,6 +24,7 @@ ZABBIX_HC:  # paths that are 'hardcoded' by zabbix itself
   file_mysql_server_lt6: '/usr/share/doc/zabbix-sql-scripts/mysql/schema.sql.gz'
   file_mysql_proxy_ge6: '/usr/share/doc/zabbix-sql-scripts/mysql/proxy.sql.gz'
   file_mysql_server_ge6: '/usr/share/doc/zabbix-sql-scripts/mysql/server.sql.gz'
+  file_mysql_proxy_6_2: '/usr/share/doc/zabbix-sql-scripts/mysql/proxy.sql'  # WHY? - facepalm
   repo_deb:
     1: 'https://repo.zabbix.com/zabbix/'
     # version (p.e. '5.4')

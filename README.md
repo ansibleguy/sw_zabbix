@@ -3,7 +3,7 @@
 # Ansible Role - Zabbix deployment
 Ansible Role to deploy Zabbix Server/Proxy/Agent components on a linux server.
 
-This roles target is it to **configure the Zabbix components foundational**.
+The roles target is it to **configure the Zabbix components foundational**.
 
 You will need to manage the zabbix-agent integration(s) into your systems on your own! (_per example: adding MySQL users and client-config to monitor its status_)
 
@@ -40,6 +40,7 @@ You will need to manage the zabbix-agent integration(s) into your systems on you
       * certificates
 
     * .. to the target system; just put them in the prepared 'files' directory of this role!
+   
   * **Default config**:
     * Using ansible-hostnames as Zabbix hostnames
     * Traffic encryption using PSK
@@ -62,6 +63,9 @@ You will need to manage the zabbix-agent integration(s) into your systems on you
     * Traffic encryption per PSK or Certificate is **ENFORCED**
 
 ## Info
+
+* **Note:** The lowest version supported is 6.0!
+
 
 * **Warning:** The target server/os for the Zabbix server-component should host only this service! Else you might possibly run into configuration/compatibility issues!
 
@@ -102,7 +106,7 @@ Example for a zabbix server:
 ```yaml
 zabbix:
   manage:
-    agent2: true
+    agent2: true  # activated by default
     server: true
  
   server:
@@ -193,6 +197,19 @@ zabbix:
       Server: '172.16.0.54'
       TLSPSKIdentity: 'RandomIdentity_lUF(o3s4kjh3o'
       ListenIP: '172.16.0.80'
+```
+
+Example - if you don't want to use the ansible-managed nginx web-proxy:
+```yaml
+zabbix:
+  manage:
+    server: true
+    webserver: false  # <=
+ 
+  server:
+    ...
+    settings:
+      ...
 ```
 
 You might want to use 'ansible-vault' to encrypt your passwords:

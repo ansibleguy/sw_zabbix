@@ -1,5 +1,13 @@
 ---
 
+- name: Zabbix | Debian | Install | Server | Applying fix
+  ansible.builtin.import_tasks: fix_20451.yml
+  when:
+    - ansible_virtualization_role is defined
+    - ansible_virtualization_role == 'guest'
+    - "'docker' in ansible_virtualization_tech_guest"
+  tags: molecule-notest
+
 - name: Zabbix | Debian | Install | Server | Checking if is installed
   ansible.builtin.apt:
     name: 'zabbix-server-mysql'
@@ -11,17 +19,18 @@
     name: "{{ ZABBIX_HC.packages.server }}"
     state: present
 
-- name: Zabbix | Debian | Install | Server | Database tasks (<V6)
-  ansible.builtin.import_tasks: db.yml
-  vars:
-    file_schema: "{{ ZABBIX_HC.file_mysql_server_lt6 }}"
-  when: ZABBIX_CONFIG.version[0]|int < 6
+- name: Zabbix | Debian | Install | Server | Setting db import-file (<V6 - schema.sql.gz)
+  ansible.builtin.set_fact:
+    file_schema:  "{{ ZABBIX_HC.file_mysql_server_lt6 }}"
+  when: ZABBIX_CONFIG.version is version('6.0', '<')
+
+- name: Zabbix | Debian | Install | Server | Setting db import-file (V6+ - server.sql.gz)
+  ansible.builtin.set_fact:
+    file_schema: "{{ ZABBIX_HC.file_mysql_server_ge6 }}"
+  when: ZABBIX_CONFIG.version is version('6.0', '>=')
 
 - name: Zabbix | Debian | Install | Server | Database tasks (V6+)
   ansible.builtin.import_tasks: db.yml
-  vars:
-    file_schema: "{{ ZABBIX_HC.file_mysql_server_ge6 }}"
-  when: ZABBIX_CONFIG.version[0]|int >= 6
 
 - name: Zabbix | Debian | Install | Server | Enabling Zabbix service
   ansible.builtin.systemd:
