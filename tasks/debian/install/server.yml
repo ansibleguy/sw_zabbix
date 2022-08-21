@@ -21,7 +21,7 @@
 
 - name: Zabbix | Debian | Install | Server | Setting db import-file (<V6 - schema.sql.gz)
   ansible.builtin.set_fact:
-    file_schema:  "{{ ZABBIX_HC.file_mysql_server_lt6 }}"
+    file_schema: "{{ ZABBIX_HC.file_mysql_server_lt6 }}"
   when: ZABBIX_CONFIG.version is version('6.0', '<')
 
 - name: Zabbix | Debian | Install | Server | Setting db import-file (V6+ - server.sql.gz)
