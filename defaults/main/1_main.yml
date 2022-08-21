@@ -43,6 +43,7 @@ defaults_zbx:
     settings:
       innodb_log_file_size: 1G
       wait_timeout: 600
+      interactive_timeout: 600  # mysqldump's and so on
     my_cnf: '/root/.my-zabbix.cnf'
 
   server:
