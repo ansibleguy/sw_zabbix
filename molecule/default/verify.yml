@@ -24,7 +24,7 @@
         state: restarted
       loop:
         - 'mariadb@zabbix.service'
-        - 'zabbix-server.service'
+        - # 'zabbix-server.service'  # state is always 'activating' => will fail even if OK
         - 'apache2.service'
         - 'nginx.service'
 
