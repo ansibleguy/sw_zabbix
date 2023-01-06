@@ -1,7 +1,7 @@
 ---
 
 - name: Converge Server
-  hosts: test-ag-zbx-srv-{{ lookup('ansible.builtin.env', 'USER') }}
+  hosts: test-ag-zbx-srv
   vars:
     no_prompts: true
 
@@ -42,7 +42,7 @@
     - ansibleguy.sw_zabbix
 
 - name: Converge Proxy
-  hosts: test-ag-zbx-proxy-{{ lookup('ansible.builtin.env', 'USER') }}
+  hosts: test-ag-zbx-proxy
   vars:
     no_prompts: true
 
@@ -74,7 +74,7 @@
     - ansibleguy.sw_zabbix
 
 - name: Converge Agent V2
-  hosts: test-ag-zbx-a2-{{ lookup('ansible.builtin.env', 'USER') }}
+  hosts: test-ag-zbx-a2
   vars:
     no_prompts: true
 
@@ -94,7 +94,7 @@
     - ansibleguy.sw_zabbix
 
 - name: Converge Agent V1
-  hosts: test-ag-zbx-a1-{{ lookup('ansible.builtin.env', 'USER') }}
+  hosts: test-ag-zbx-a1
   vars:
     no_prompts: true
 

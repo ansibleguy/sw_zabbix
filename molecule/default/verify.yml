@@ -1,7 +1,7 @@
 ---
 
 - name: Verify Server
-  hosts: test-ag-zbx-srv-{{ lookup('ansible.builtin.env', 'USER') }}
+  hosts: test-ag-zbx-srv
   gather_facts: false
   tasks:
     - name: Checking that services are running and enabled
@@ -53,7 +53,7 @@
       failed_when: "'Zabbix SIA' not in page.content"
 
 - name: Verify Proxy
-  hosts: test-ag-zbx-proxy-{{ lookup('ansible.builtin.env', 'USER') }}
+  hosts: test-ag-zbx-proxy
   gather_facts: false
   tasks:
     - name: Checking that services are running and enabled
@@ -87,7 +87,7 @@
         - 3306
 
 - name: Verify Agent V2
-  hosts: test-ag-zbx-a2-{{ lookup('ansible.builtin.env', 'USER') }}
+  hosts: test-ag-zbx-a2
   gather_facts: false
   tasks:
     - name: Checking that services are running and enabled
@@ -111,7 +111,7 @@
         msg: 'Checking port 10050'
 
 - name: Verify Agent V1
-  hosts: test-ag-zbx-a1-{{ lookup('ansible.builtin.env', 'USER') }}
+  hosts: test-ag-zbx-a1
   gather_facts: false
   tasks:
     - name: Checking that services are running and enabled

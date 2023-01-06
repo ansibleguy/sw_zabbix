@@ -1,6 +1,6 @@
 ---
 
-references:
+_references:
   docker:
     all: &docker_all
       docker_host: 'tcp://molecule-docker.local:2375'
@@ -19,43 +19,43 @@ dependency:
 driver:
   name: docker
 platforms:
-  - name: test-ag-zbx-tester-${USER}
+  - name: test-ag-zbx-tester
     docker_networks:
-      - name: 'test-ag-zbx-${USER}'
+      - name: 'test-ag-zbx'
         ipam_config:
           - subnet: '192.168.8.0/24'
             gateway: '192.168.8.254'
     networks:
-      - name: 'test-ag-zbx-${USER}'
+      - name: 'test-ag-zbx'
         ipv4_address: '192.168.8.1'
     etc_hosts: {zabbix.test.ansibleguy.net: '192.168.8.2'}
     groups: [grp_tester]
     <<: *docker_all
 
-  - name: test-ag-zbx-srv-${USER}
+  - name: test-ag-zbx-srv
     networks:
-      - name: 'test-ag-zbx-${USER}'
+      - name: 'test-ag-zbx'
         ipv4_address: '192.168.8.2'
     groups: [grp_targets]
     <<: *docker_all
 
-  - name: test-ag-zbx-proxy-${USER}
+  - name: test-ag-zbx-proxy
     networks:
-      - name: 'test-ag-zbx-${USER}'
+      - name: 'test-ag-zbx'
         ipv4_address: '192.168.8.3'
     groups: [grp_targets]
     <<: *docker_all
 
-  - name: test-ag-zbx-a2-${USER}
+  - name: test-ag-zbx-a2
     networks:
-      - name: 'test-ag-zbx-${USER}'
+      - name: 'test-ag-zbx'
         ipv4_address: '192.168.8.4'
     groups: [grp_targets]
     <<: *docker_all
 
-  - name: test-ag-zbx-a1-${USER}
+  - name: test-ag-zbx-a1
     networks:
-      - name: 'test-ag-zbx-${USER}'
+      - name: 'test-ag-zbx'
         ipv4_address: '192.168.8.5'
     groups: [grp_targets]
     <<: *docker_all
