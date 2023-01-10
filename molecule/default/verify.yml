@@ -22,11 +22,31 @@
       ansible.builtin.systemd:
         name: "{{ item }}"
         state: restarted
+        no_block: true
       loop:
         - 'mariadb@zabbix.service'
-        # - 'zabbix-server.service'  # state is always 'activating' => will fail even if OK
+        - 'zabbix-server.service'  # state is always 'activating' => no_block
         - 'apache2.service'
         - 'nginx.service'
+
+    - name: Waiting for services to finish restart
+      ansible.builtin.pause:
+        seconds: 10
+      delegate_to: localhost
+      run_once: true
+
+    - name: Checking that services are running
+      ansible.builtin.systemd:
+        name: "{{ item }}"
+        state: started
+      check_mode: true
+      register: svc_test
+      loop:
+        - 'mariadb@zabbix.service'
+        - 'zabbix-server.service'
+        - 'apache2.service'
+        - 'nginx.service'
+      failed_when: svc_test.changed
 
     - name: Checking ports  # only working if service is listening on 0.0.0.0
       ansible.builtin.wait_for:
@@ -72,9 +92,27 @@
       ansible.builtin.systemd:
         name: "{{ item }}"
         state: restarted
+        no_block: true
+      loop:
+        - 'mariadb@zabbix.service'
+        - 'zabbix-proxy.service'  # state is always 'activating' => no_block
+
+    - name: Waiting for services to finish restart
+      ansible.builtin.pause:
+        seconds: 10
+      delegate_to: localhost
+      run_once: true
+
+    - name: Checking that services are running
+      ansible.builtin.systemd:
+        name: "{{ item }}"
+        state: started
+      check_mode: true
+      register: svc_test
       loop:
         - 'mariadb@zabbix.service'
         - 'zabbix-proxy.service'
+      failed_when: svc_test.changed
 
     - name: Checking ports
       ansible.builtin.wait_for:

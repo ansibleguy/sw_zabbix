@@ -59,7 +59,6 @@
           TLSConnect: 'psk'
           TLSAccept: 'psk'
           ConfigFrequency: 600
-          ListenIP: '192.168.8.3'
 
       agent2:
         tls_psk: 'testProxyAgent!!!'
