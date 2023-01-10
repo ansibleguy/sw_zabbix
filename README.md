@@ -89,6 +89,9 @@ Else incompatibilities would break future setups if Zabbix changes their config-
 
 * **Warning:** Not every setting/variable you provide will be checked for validity. Bad config might break the role!
 
+
+* **Info:** If you use PSKs to encrypt your traffic - it must be at least 32 hex-digits long!
+
 ## Setup
 For this role to work - you must install its dependencies first:
 

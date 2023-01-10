@@ -31,7 +31,7 @@
 
 - name: Zabbix | Debian | Configure | Agent V1 | Deploying tls-psk
   ansible.builtin.copy:
-    content: "{{ agent.tls_psk }}"
+    content: "{{ agent.tls_psk | zabbix_psk_hex }}"
     dest: "{{ ZABBIX_CONFIG.path_private }}/agent_psk.txt"
     owner: 'root'
     group: "{{ ZABBIX_HC.group }}"

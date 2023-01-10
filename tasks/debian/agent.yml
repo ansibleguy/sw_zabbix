@@ -20,7 +20,7 @@
 - name: "Zabbix | Debian | Agent V{{ vers }} | Verifying config"
   ansible.builtin.fail:
     msg: "Not all needed settings were provided! Zabbix-Agent cannot be configured!
-    We need: 'Server', 'TLSPSKIdentity or TLSCertFile', 'tls_psk or TLSKeyFile'!
+    We need: 'Server', 'TLSPSKIdentity or TLSCertFile', 'tls_psk (longer than {{ ZABBIX_HC.psk_min_length }} characters) or TLSKeyFile'!
     Also: unencrypted connections are not supported by this role!"
   when: >
     ZABBIX_CONFIG.state == 'present' and (
@@ -36,6 +36,8 @@
       ) or (
         agent.settings.TLSConnect == 'unencrypted' or
         agent.settings.TLSAccept == 'unencrypted'
+      ) or (
+        agent.tls_psk | zabbix_psk_hex | length < ZABBIX_HC.psk_min_length
       )
     )
   tags: [config, install, agent]

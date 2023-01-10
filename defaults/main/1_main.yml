@@ -162,7 +162,7 @@ defaults_zbx:
       # security
       EnableRemoteCommands: 0
       AllowRoot: 0
-      UnsafeUserParameters: 0
+      # UnsafeUserParameters: 0  # not recognized by proxy V6+
       User: "{{ ZABBIX_HC.user }}"
       TLSConnect: 'psk'  # or cert => you should never use 'unencrypted'
       TLSAccept: 'psk'  # or cert => you should never use 'unencrypted'

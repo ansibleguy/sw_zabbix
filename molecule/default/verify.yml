@@ -28,7 +28,7 @@
         - 'apache2.service'
         - 'nginx.service'
 
-    - name: Checking ports
+    - name: Checking ports  # only working if service is listening on 0.0.0.0
       ansible.builtin.wait_for:
         port: "{{ item }}"
         timeout: 1

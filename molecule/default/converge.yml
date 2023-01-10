@@ -23,7 +23,6 @@
               email: 'testmaster@ansibleguy.net'
 
         settings:
-          ListenIP: '192.168.8.2'
           ProxyDataFrequency: 10
           ProxyConfigFrequency: 600
           DebugLevel: 5
@@ -32,7 +31,7 @@
           max_execution_time: 900
 
       agent2:
-        tls_psk: 'testServerAgent!!!'
+        tls_psk: 'testServerAgentVeeeeeerrryyyyyLoooooooonnnnngGGGG!!!'
 
         settings:
           Server: '192.168.8.2'
@@ -52,16 +51,15 @@
         proxy: true
 
       proxy:
-        tls_psk: 'testProxy!!!'
+        tls_psk: 'testProxyVeeeeeerrryyyyyLoooooooonnnnngGGGG!!!'
 
         settings:
-          Server: '192.168.8.2'
+          Server: '192.168.8.2:10051'
           TLSPSKIdentity: 'testIdentity2'
           TLSConnect: 'psk'
           TLSAccept: 'psk'
           ConfigFrequency: 600
           ListenIP: '192.168.8.3'
-          UnsafeUserParameters: 1
 
       agent2:
         tls_psk: 'testProxyAgent!!!'
@@ -83,7 +81,7 @@
         agent2: true
 
       agent2:
-        tls_psk: 'testAgentV2!!!'
+        tls_psk: 'testAgentV2VeeeeeerrryyyyyLoooooooonnnnngGGGG!!!'
 
         settings:
           Server: '192.168.8.2'
@@ -103,7 +101,7 @@
         agent1: true
 
       agent1:
-        tls_psk: 'testAgentV1!!!'
+        tls_psk: 'testAgentV1VeeeeeerrryyyyyLoooooooonnnnngGGGG!!!'
 
         settings:
           Server: '192.168.8.2'

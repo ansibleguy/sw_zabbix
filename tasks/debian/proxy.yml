@@ -10,7 +10,7 @@
 - name: Zabbix | Debian | Proxy | Verifying config
   ansible.builtin.fail:
     msg: "Not all needed settings were provided! Zabbix-Proxy cannot be configured!
-    We need: 'Server', 'TLSPSKIdentity or TLSCertFile', 'tls_psk or TLSKeyFile',
+    We need: 'Server', 'TLSPSKIdentity or TLSCertFile', 'tls_psk (longer than {{ ZABBIX_HC.psk_min_length }} characters) or TLSKeyFile',
     db managed by role or 'DBName' and 'DBSocket' for a local database or 'DBHost' and 'DBPort' for a remote database!
     Also: unencrypted connections are not allowed!"
   when: >
@@ -36,6 +36,8 @@
         ) or (
           ZABBIX_CONFIG.proxy.settings.TLSConnect == 'unencrypted' or
           ZABBIX_CONFIG.proxy.settings.TLSAccept == 'unencrypted'
+        ) or (
+          ZABBIX_CONFIG.proxy.tls_psk | zabbix_psk_hex | length < ZABBIX_HC.psk_min_length
         )
       )
     )

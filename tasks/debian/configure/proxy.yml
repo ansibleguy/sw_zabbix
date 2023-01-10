@@ -11,7 +11,7 @@
 
 - name: Zabbix | Debian | Configure | Proxy | Deploying tls-psk
   ansible.builtin.copy:
-    content: "{{ ZABBIX_CONFIG.proxy.tls_psk }}"
+    content: "{{ ZABBIX_CONFIG.proxy.tls_psk | zabbix_psk_hex }}"
     dest: "{{ ZABBIX_CONFIG.path_private }}/proxy_psk.txt"
     owner: 'root'
     group: "{{ ZABBIX_HC.group }}"

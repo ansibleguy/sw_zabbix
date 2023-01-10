@@ -52,3 +52,5 @@ ZABBIX_HC:  # paths that are 'hardcoded' by zabbix itself
   port:
     passive: 10050
     active: 10051
+
+  psk_min_length: 32
