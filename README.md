@@ -7,9 +7,9 @@ The roles target is it to **configure the Zabbix components foundational**.
 
 You will need to manage the zabbix-agent integration(s) into your systems on your own! (_per example: adding MySQL users and client-config to monitor its status_)
 
-[![Molecule Test Status](https://badges.ansibleguy.net/sw_zabbix.molecule.svg)](https://molecule.readthedocs.io/en/latest/)
-[![YamlLint Test Status](https://badges.ansibleguy.net/sw_zabbix.yamllint.svg)](https://yamllint.readthedocs.io/en/stable/)
-[![Ansible-Lint Test Status](https://badges.ansibleguy.net/sw_zabbix.ansiblelint.svg)](https://ansible-lint.readthedocs.io/en/latest/)
+[![Molecule Test Status](https://badges.ansibleguy.net/sw_zabbix.molecule.svg)](https://github.com/ansibleguy/_meta_cicd/blob/latest/templates/usr/local/bin/cicd/molecule.sh.j2)
+[![YamlLint Test Status](https://badges.ansibleguy.net/sw_zabbix.yamllint.svg)](https://github.com/ansibleguy/_meta_cicd/blob/latest/templates/usr/local/bin/cicd/yamllint.sh.j2)
+[![Ansible-Lint Test Status](https://badges.ansibleguy.net/sw_zabbix.ansiblelint.svg)](https://github.com/ansibleguy/_meta_cicd/blob/latest/templates/usr/local/bin/cicd/ansiblelint.sh.j2)
 [![Ansible Galaxy](https://img.shields.io/ansible/role/57185)](https://galaxy.ansible.com/ansibleguy/sw_zabbix)
 [![Ansible Galaxy Downloads](https://img.shields.io/badge/dynamic/json?color=blueviolet&label=Galaxy%20Downloads&query=%24.download_count&url=https%3A%2F%2Fgalaxy.ansible.com%2Fapi%2Fv1%2Froles%2F57185%2F%3Fformat%3Djson)](https://galaxy.ansible.com/ansibleguy/sw_zabbix)
 
