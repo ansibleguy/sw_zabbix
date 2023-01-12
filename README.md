@@ -16,6 +16,17 @@ You will need to manage the zabbix-agent integration(s) into your systems on you
 **Tested:**
 * Debian 11
 
+## Install
+
+```bash
+ansible-galaxy install ansibleguy.sw_zabbix
+
+# or to custom role-path
+ansible-galaxy install ansibleguy.sw_zabbix --roles-path ./roles
+
+# install dependencies
+ansible-galaxy install -r requirements.yml
+```
 
 ## Functionality
 
@@ -92,12 +103,6 @@ Else incompatibilities would break future setups if Zabbix changes their config-
 
 * **Info:** If you use PSKs to encrypt your traffic - it must be at least 32 hex-digits long!
 
-## Setup
-For this role to work - you must install its dependencies first:
-
-```
-ansible-galaxy install -r requirements.yml
-```
 
 ## Usage
 
