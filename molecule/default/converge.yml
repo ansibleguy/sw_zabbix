@@ -1,94 +1,94 @@
 ---
 
-#- name: Converge Server
-#  hosts: test-ag-zbx-srv
-#  vars:
-#    no_prompts: true
-#
-#    zabbix:
-#      manage:
-#        agent2: true
-#        server: true
-#
-#      server:
-#        nginx:
-#          domain: 'zabbix.test.ansibleguy.net'
-#          ip: '192.168.8.2'
-#
-#          ssl:
-#            mode: 'ca'
-#            cert:
-#              cn: 'Zabbix'
-#              org: 'AnsibleGuy Test'
-#              email: 'testmaster@ansibleguy.net'
-#
-#        settings:
-#          ProxyDataFrequency: 10
-#          ProxyConfigFrequency: 600
-#          DebugLevel: 5
-#
-#        php:
-#          max_execution_time: 900
-#
-#      agent2:
-#        tls_psk: 'testServerAgentVeeeeeerrryyyyyLoooooooonnnnngGGGG!!!'
-#
-#        settings:
-#          Server: '192.168.8.2'
-#          TLSPSKIdentity: 'testIdentity1'
-#
-#  roles:
-#    - ansibleguy.sw_zabbix
-#
-#- name: Converge Proxy
-#  hosts: test-ag-zbx-proxy
-#  vars:
-#    no_prompts: true
-#
-#    zabbix:
-#      manage:
-#        agent2: true
-#        proxy: true
-#
-#      proxy:
-#        tls_psk: 'testProxyVeeeeeerrryyyyyLoooooooonnnnngGGGG!!!'
-#
-#        settings:
-#          Server: '192.168.8.2:10051'
-#          TLSPSKIdentity: 'testIdentity2'
-#          TLSConnect: 'psk'
-#          TLSAccept: 'psk'
-#          ConfigFrequency: 600
-#
-#      agent2:
-#        tls_psk: 'testProxyAgent!!!'
-#
-#        settings:
-#          Server: '192.168.8.2'
-#          TLSPSKIdentity: 'testIdentity3'
-#
-#  roles:
-#    - ansibleguy.sw_zabbix
-#
-#- name: Converge Agent V2
-#  hosts: test-ag-zbx-a2
-#  vars:
-#    no_prompts: true
-#
-#    zabbix:
-#      manage:
-#        agent2: true
-#
-#      agent2:
-#        tls_psk: 'testAgentV2VeeeeeerrryyyyyLoooooooonnnnngGGGG!!!'
-#
-#        settings:
-#          Server: '192.168.8.2'
-#          TLSPSKIdentity: 'testIdentity4'
-#          DebugLevel: 1
-#
-#  roles:
-#    - ansibleguy.sw_zabbix
+- name: Converge Server
+  hosts: test-ag-zbx-srv
+  vars:
+    no_prompts: true
+
+    zabbix:
+      manage:
+        agent2: true
+        server: true
+
+      server:
+        nginx:
+          domain: 'zabbix.test.ansibleguy.net'
+          ip: '192.168.8.2'
+
+          ssl:
+            mode: 'ca'
+            cert:
+              cn: 'Zabbix'
+              org: 'AnsibleGuy Test'
+              email: 'testmaster@ansibleguy.net'
+
+        settings:
+          ProxyDataFrequency: 10
+          ProxyConfigFrequency: 600
+          DebugLevel: 5
+
+        php:
+          max_execution_time: 900
+
+      agent2:
+        tls_psk: 'testServerAgentVeeeeeerrryyyyyLoooooooonnnnngGGGG!!!'
+
+        settings:
+          Server: '192.168.8.2'
+          TLSPSKIdentity: 'testIdentity1'
+
+  roles:
+    - ansibleguy.sw_zabbix
+
+- name: Converge Proxy
+  hosts: test-ag-zbx-proxy
+  vars:
+    no_prompts: true
+
+    zabbix:
+      manage:
+        agent2: true
+        proxy: true
+
+      proxy:
+        tls_psk: 'testProxyVeeeeeerrryyyyyLoooooooonnnnngGGGG!!!'
+
+        settings:
+          Server: '192.168.8.2:10051'
+          TLSPSKIdentity: 'testIdentity2'
+          TLSConnect: 'psk'
+          TLSAccept: 'psk'
+          ConfigFrequency: 600
+
+      agent2:
+        tls_psk: 'testProxyAgent!!!'
+
+        settings:
+          Server: '192.168.8.2'
+          TLSPSKIdentity: 'testIdentity3'
+
+  roles:
+    - ansibleguy.sw_zabbix
+
+- name: Converge Agent V2
+  hosts: test-ag-zbx-a2
+  vars:
+    no_prompts: true
+
+    zabbix:
+      manage:
+        agent2: true
+
+      agent2:
+        tls_psk: 'testAgentV2VeeeeeerrryyyyyLoooooooonnnnngGGGG!!!'
+
+        settings:
+          Server: '192.168.8.2'
+          TLSPSKIdentity: 'testIdentity4'
+          DebugLevel: 1
+
+  roles:
+    - ansibleguy.sw_zabbix
 
 - name: Converge Agent V1
   hosts: test-ag-zbx-a1
