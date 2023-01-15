@@ -128,7 +128,7 @@
   hosts: test-ag-zbx-a2
   gather_facts: false
   tasks:
-    - name: Checking that services are running and enabled
+    - name: Checking that service is running and enabled
       ansible.builtin.systemd:
         name: 'zabbix-agent2.service'
         enabled: true
@@ -137,7 +137,7 @@
       register: svc_test
       failed_when: svc_test.changed
 
-    - name: Checking that services survive restart
+    - name: Checking that service survives restart
       ansible.builtin.systemd:
         name: 'zabbix-agent2.service'
         state: restarted
@@ -152,7 +152,7 @@
   hosts: test-ag-zbx-a1
   gather_facts: false
   tasks:
-    - name: Checking that services are running and enabled
+    - name: Checking that service is running and enabled
       ansible.builtin.systemd:
         name: 'zabbix-agent.service'
         enabled: true
@@ -161,10 +161,25 @@
       register: svc_test
       failed_when: svc_test.changed
 
-    - name: Checking that services survive restart
+    - name: Checking that service survives restart
       ansible.builtin.systemd:
         name: 'zabbix-agent.service'
         state: restarted
+        no_block: true
+
+    - name: Waiting for service to finish restart
+      ansible.builtin.pause:
+        seconds: 5
+      delegate_to: localhost
+      run_once: true
+
+    - name: Checking that service is running
+      ansible.builtin.systemd:
+        name: 'zabbix-agent.service'
+        state: started
+      check_mode: true
+      register: svc_test
+      failed_when: svc_test.changed
 
     - name: Checking ports
       ansible.builtin.wait_for:
