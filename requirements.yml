@@ -8,6 +8,6 @@ roles:
   - src: 'ansibleguy.infra_mariadb'
 
 collections:
-  - name: 'community.mysql'
-  - name: 'ansible.posix'
-  - name: 'community.crypto'
+  - 'community.mysql'
+  - 'ansible.posix'
+  - 'community.crypto'
