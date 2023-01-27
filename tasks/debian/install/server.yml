@@ -55,7 +55,6 @@
   ansible.builtin.systemd:
     name: 'apache2.service'
     enabled: true
-    state: restarted
 
 - name: Zabbix | Debian | Install | Server | Configuring Nginx webserver (proxy)
   ansible.builtin.include_role:

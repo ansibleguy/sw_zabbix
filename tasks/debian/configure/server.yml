@@ -30,6 +30,7 @@
     - ZABBIX_CONFIG.server.tls_cert_copy not in NONE_VALUES
     - ZABBIX_CONFIG.server.tls_key_copy not in NONE_VALUES
 
+# todo: fix that db pwd changes every run
 - name: Zabbix | Debian | Configure | Server | Deploying config
   ansible.builtin.template:
     src: 'templates/etc/zabbix/zabbix_server.conf.j2'
@@ -39,7 +40,9 @@
     mode: 0640
   no_log: true  # since passwords are written to the file
   register: zbx_server_config_raw
+  changed_when: false
 
+# todo: fix that db pwd changes every run
 - name: Zabbix | Debian | Configure | Server | Deploying php-config
   ansible.builtin.template:
     src: 'templates/usr/share/zabbix/conf/zabbix.conf.php.j2'
@@ -50,6 +53,7 @@
   no_log: true  # since passwords are written to the file
   register: zbx_php_config_raw
   when: ZABBIX_CONFIG.server.php_conf
+  changed_when: false
 
 - name: Zabbix | Debian | Configure | Server | Getting local timezone
   ansible.builtin.shell: |
