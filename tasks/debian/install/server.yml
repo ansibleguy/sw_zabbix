@@ -67,3 +67,6 @@
     - ZABBIX_CONFIG.manage.webserver
     - ZABBIX_CONFIG.manage.server
   tags: [install, server]
+  args:
+    apply:
+      tags: [install, server]

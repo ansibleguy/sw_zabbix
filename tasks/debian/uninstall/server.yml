@@ -73,6 +73,9 @@
     - ZABBIX_CONFIG.manage.webserver
     - "'nginx' in ansible_facts.packages"
   tags: [install, server]
+  args:
+    apply:
+      tags: [install, server]
 
 - name: Zabbix | Debian | Uninstall | Server | Ask user (Nginx)
   ansible.builtin.pause:

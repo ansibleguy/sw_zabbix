@@ -38,6 +38,9 @@
   when:
     - ZABBIX_CONFIG.manage.agent1
   tags: [config, install, uninstall, agent]
+  args:
+    apply:
+      tags: [config, install, uninstall, agent]
 
 - name: Zabbix | Debian | Processing Zabbix Agent2
   ansible.builtin.include_tasks: agent.yml
@@ -48,6 +51,9 @@
     - ZABBIX_CONFIG.manage.agent2
     - not ZABBIX_CONFIG.manage.agent1
   tags: [config, install, uninstall, agent]
+  args:
+    apply:
+      tags: [config, install, uninstall, agent]
 
 - name: Zabbix | Debian | Uninstalling basics
   ansible.builtin.import_tasks: uninstall/all.yml
