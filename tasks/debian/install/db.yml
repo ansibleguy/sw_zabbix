@@ -34,8 +34,9 @@
     not zbx_db_cnf_file.stat.exists
 
 - name: Zabbix | Debian | Install | DB | Pulling existing database password
-  ansible.builtin.shell:
-    cmd: "cat {{ ZABBIX_CONFIG.database.my_cnf }} | grep 'password' | cut -d '=' -f2- | tr -d \\\""
+  ansible.builtin.shell: |
+    set -o pipefail
+    cat {{ ZABBIX_CONFIG.database.my_cnf }} | grep 'password' | cut -d '=' -f2- | tr -d \\\"
   register: zbx_db_pwd
   when: zbx_db_cnf_file.stat.exists
   check_mode: false

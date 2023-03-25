@@ -14,3 +14,7 @@ class FilterModule(object):
 
         except ValueError:
             return key.encode().hex()
+
+        except TypeError:
+            # key != str
+            return key
