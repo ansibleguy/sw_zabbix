@@ -1,11 +1,14 @@
 ---
 
 - name: Zabbix | Server | Uninstalling
-  ansible.builtin.import_tasks: uninstall/server.yml
+  ansible.builtin.include_tasks: uninstall/server.yml
   when:
     - ZABBIX_CONFIG.state != 'present'
     - "'zabbix-server-mysql' in ansible_facts.packages or 'zabbix-frontend-php' in ansible_facts.packages"
   tags: [uninstall, server]
+  args:
+    apply:
+      tags: [uninstall, server]
 
 - name: Zabbix | Server | Verifying config
   ansible.builtin.fail:
@@ -26,9 +29,12 @@
     )
 
 - name: Zabbix | Server | Installing
-  ansible.builtin.import_tasks: install/server.yml
+  ansible.builtin.include_tasks: install/server.yml
   when: ZABBIX_CONFIG.state == 'present'
   tags: [install, server]
+  args:
+    apply:
+      tags: [install, server]
 
 - name: Zabbix | Server | Configuring
   ansible.builtin.import_tasks: configure/server.yml

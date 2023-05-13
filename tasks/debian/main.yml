@@ -11,23 +11,35 @@
   tags: [config, install, uninstall, agent, proxy, server]
 
 - name: Zabbix | Installing basics
-  ansible.builtin.import_tasks: install/all.yml
+  ansible.builtin.include_tasks: install/all.yml
   tags: [install, agent, proxy, server]
+  args:
+    apply:
+      tags: [install, agent, proxy, server]
   when: ZABBIX_CONFIG.state == 'present'
 
 - name: Zabbix | Configuring basics
-  ansible.builtin.import_tasks: configure/all.yml
+  ansible.builtin.include_tasks: configure/all.yml
   when: ZABBIX_CONFIG.state == 'present'
+  args:
+    apply:
+      tags: [config, install, agent, proxy, server]
   tags: [config, install, agent, proxy, server]
 
 - name: Zabbix | Processing Zabbix Server
-  ansible.builtin.import_tasks: server.yml
+  ansible.builtin.include_tasks: server.yml
   when: ZABBIX_CONFIG.manage.server | bool
+  args:
+    apply:
+      tags: [config, install, uninstall, server]
   tags: [config, install, uninstall, server]
 
 - name: Zabbix | Processing Zabbix Proxy
-  ansible.builtin.import_tasks: proxy.yml
+  ansible.builtin.include_tasks: proxy.yml
   when: ZABBIX_CONFIG.manage.proxy | bool
+  args:
+    apply:
+      tags: [config, install, uninstall, proxy]
   tags: [config, install, uninstall, proxy]
 
 - name: Zabbix | Processing Zabbix Agent
@@ -55,8 +67,11 @@
       tags: [config, install, uninstall, agent]
 
 - name: Zabbix | Uninstalling basics
-  ansible.builtin.import_tasks: uninstall/all.yml
+  ansible.builtin.include_tasks: uninstall/all.yml
   when: ZABBIX_CONFIG.state != 'present'
+  args:
+    apply:
+      tags: [uninstall, agent, server, proxy]
   tags: [uninstall, agent, server, proxy]
 
 - name: Zabbix | Cleaning up temporary password files

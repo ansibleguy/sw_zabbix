@@ -1,21 +1,27 @@
 ---
 
 - name: "Zabbix | Agent V{{ vers }} | Uninstalling"
-  ansible.builtin.import_tasks: uninstall/agent1.yml
+  ansible.builtin.include_tasks: uninstall/agent1.yml
   when: >
     (ZABBIX_CONFIG.state != 'present' or
     not ZABBIX_CONFIG.manage.agent1 | bool) and
     ZABBIX_HC.packages.agent1 in ansible_facts.packages
   tags: [uninstall, agent]
+  args:
+    apply:
+      tags: [uninstall, agent]
 
 - name: "Zabbix | Agent V{{ vers }} | Uninstalling Agent2"
-  ansible.builtin.import_tasks: uninstall/agent2.yml
+  ansible.builtin.include_tasks: uninstall/agent2.yml
   when: >
     (ZABBIX_CONFIG.state != 'present' or
     not ZABBIX_CONFIG.manage.agent2 | bool or
     ZABBIX_CONFIG.manage.agent1 | bool) and
     ZABBIX_HC.packages.agent2 in ansible_facts.packages
   tags: [uninstall, agent]
+  args:
+    apply:
+      tags: [uninstall, agent]
 
 - name: "Zabbix | Agent V{{ vers }} | Verifying config"
   ansible.builtin.fail:
@@ -43,29 +49,41 @@
   tags: [config, install, agent]
 
 - name: "Zabbix | Agent V{{ vers }} | Installing"
-  ansible.builtin.import_tasks: install/agent1.yml
+  ansible.builtin.include_tasks: install/agent1.yml
   when:
     - ZABBIX_CONFIG.state == 'present'
     - vers == 1
   tags: [install, agent]
+  args:
+    apply:
+      tags: [install, agent]
 
 - name: "Zabbix | Agent V{{ vers }} | Configuring"
-  ansible.builtin.import_tasks: configure/agent1.yml
+  ansible.builtin.include_tasks: configure/agent1.yml
   tags: [config, install, agent]
+  args:
+    apply:
+      tags: [config, install, agent]
   when:
     - ZABBIX_CONFIG.state == 'present'
     - vers == 1
 
 - name: "Zabbix | Agent V{{ vers }} | Installing Agent2"
-  ansible.builtin.import_tasks: install/agent2.yml
+  ansible.builtin.include_tasks: install/agent2.yml
   tags: [install, agent]
+  args:
+    apply:
+      tags: [install, agent]
   when:
     - ZABBIX_CONFIG.state == 'present'
     - vers == 2
 
 - name: "Zabbix | Agent V{{ vers }} | Configuring Agent2"
-  ansible.builtin.import_tasks: configure/agent2.yml
+  ansible.builtin.include_tasks: configure/agent2.yml
   tags: [config, install, agent]
+  args:
+    apply:
+      tags: [config, install, agent]
   when:
     - ZABBIX_CONFIG.state == 'present'
     - vers == 2
