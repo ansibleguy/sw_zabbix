@@ -1,6 +1,6 @@
 ---
 
-- name: Zabbix | Debian | Configure | Proxy | Copying provided scripts
+- name: Zabbix | Configure | Proxy | Copying provided scripts
   ansible.builtin.copy:
     src: "{{ item }}"
     dest: "{{ ZABBIX_HC.path_externalscripts }}/"
@@ -9,7 +9,7 @@
     mode: "{{ ZABBIX_CONFIG.mode_scripts }}"
   with_fileglob: "files/server+proxy/externalscripts/*"
 
-- name: Zabbix | Debian | Configure | Proxy | Deploying tls-psk
+- name: Zabbix | Configure | Proxy | Deploying tls-psk
   ansible.builtin.copy:
     content: "{{ ZABBIX_CONFIG.proxy.tls_psk | zabbix_psk_hex }}"
     dest: "{{ ZABBIX_CONFIG.path_private }}/proxy_psk.txt"
@@ -18,7 +18,7 @@
     mode: 0640
   when: ZABBIX_CONFIG.proxy.tls_psk not in NONE_VALUES
 
-- name: Zabbix | Debian | Configure | Proxy | Deploying tls certificate
+- name: Zabbix | Configure | Proxy | Deploying tls certificate
   ansible.builtin.import_tasks: tls_cert.yml
   vars:
     config: "{{ ZABBIX_CONFIG.proxy }}"
@@ -29,7 +29,7 @@
     - ZABBIX_CONFIG.proxy.tls_key_copy not in NONE_VALUES
 
 # todo: fix that db pwd changes every run
-- name: Zabbix | Debian | Configure | Proxy | Deploying config
+- name: Zabbix | Configure | Proxy | Deploying config
   ansible.builtin.template:
     src: 'templates/etc/zabbix/zabbix_proxy.conf.j2'
     dest: "{{ ZABBIX_HC.file_config_proxy }}"
@@ -39,7 +39,7 @@
   no_log: true  # since passwords are written to the file
   changed_when: false
 
-- name: Zabbix | Debian | Configure | Proxy | Restarting service
+- name: Zabbix | Configure | Proxy | Restarting service
   ansible.builtin.systemd:
     name: "{{ ZABBIX_HC.service.proxy }}"
     state: restarted

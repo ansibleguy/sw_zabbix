@@ -1,36 +1,36 @@
 ---
 
-- name: Zabbix | Debian | Installing dependencies
+- name: Zabbix | Installing dependencies
   ansible.builtin.apt:
     name: 'python3-apt'
   tags: [config, install, uninstall, agent, proxy, server]
 
-- name: Zabbix | Debian | Getting installed packages
+- name: Zabbix | Getting installed packages
   ansible.builtin.package_facts:
     manager: 'apt'
   tags: [config, install, uninstall, agent, proxy, server]
 
-- name: Zabbix | Debian | Installing basics
+- name: Zabbix | Installing basics
   ansible.builtin.import_tasks: install/all.yml
   tags: [install, agent, proxy, server]
   when: ZABBIX_CONFIG.state == 'present'
 
-- name: Zabbix | Debian | Configuring basics
+- name: Zabbix | Configuring basics
   ansible.builtin.import_tasks: configure/all.yml
   when: ZABBIX_CONFIG.state == 'present'
   tags: [config, install, agent, proxy, server]
 
-- name: Zabbix | Debian | Processing Zabbix Server
+- name: Zabbix | Processing Zabbix Server
   ansible.builtin.import_tasks: server.yml
   when: ZABBIX_CONFIG.manage.server | bool
   tags: [config, install, uninstall, server]
 
-- name: Zabbix | Debian | Processing Zabbix Proxy
+- name: Zabbix | Processing Zabbix Proxy
   ansible.builtin.import_tasks: proxy.yml
   when: ZABBIX_CONFIG.manage.proxy | bool
   tags: [config, install, uninstall, proxy]
 
-- name: Zabbix | Debian | Processing Zabbix Agent
+- name: Zabbix | Processing Zabbix Agent
   ansible.builtin.include_tasks: agent.yml
   vars:
     agent: "{{ ZABBIX_CONFIG.agent1 }}"
@@ -41,7 +41,7 @@
     apply:
       tags: [config, install, uninstall, agent]
 
-- name: Zabbix | Debian | Processing Zabbix Agent2
+- name: Zabbix | Processing Zabbix Agent2
   ansible.builtin.include_tasks: agent.yml
   vars:
     agent: "{{ ZABBIX_CONFIG.agent2 }}"
@@ -54,12 +54,12 @@
     apply:
       tags: [config, install, uninstall, agent]
 
-- name: Zabbix | Debian | Uninstalling basics
+- name: Zabbix | Uninstalling basics
   ansible.builtin.import_tasks: uninstall/all.yml
   when: ZABBIX_CONFIG.state != 'present'
   tags: [uninstall, agent, server, proxy]
 
-- name: Zabbix | Debian | Cleaning up temporary password files
+- name: Zabbix | Cleaning up temporary password files
   ansible.builtin.file:
     path: "{{ item }}"
     state: absent

@@ -1,11 +1,11 @@
 ---
 
-- name: Zabbix | Debian | Install | Agent V2 | Installing
+- name: Zabbix | Install | Agent V2 | Installing
   ansible.builtin.apt:
     name: "{{ ZABBIX_HC.packages.agent2 }}"
     state: present
 
-- name: Zabbix | Debian | Install | Agent V2 | Enabling service
+- name: Zabbix | Install | Agent V2 | Enabling service
   ansible.builtin.systemd:
     name: "{{ ZABBIX_HC.service.agent2 }}"
     state: started

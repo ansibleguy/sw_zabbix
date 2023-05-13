@@ -1,7 +1,7 @@
 ---
 
 # https://support.zabbix.com/browse/ZBX-20451
-- name: Zabbix | Debian | Install | Fix | Fixing breaking APT config in docker (Ticket ZBX-20451)
+- name: Zabbix | Install | Fix | Fixing breaking APT config in docker (Ticket ZBX-20451)
   ansible.builtin.lineinfile:
     path: '/etc/dpkg/dpkg.cfg.d/docker'
     search_string: 'path-exclude /usr/share/doc/*'
@@ -9,7 +9,7 @@
   ignore_errors: true
   register: zbx_fix_20451
 
-- name: Zabbix | Debian | Install | Fix | Ask user
+- name: Zabbix | Install | Fix | Ask user
   ansible.builtin.pause:
     prompt: "You need to reboot the target system to apply the fix (else db import fails).
     If the target system is a docker-container - you may have to manually start it afterwards!
@@ -20,7 +20,7 @@
     - zbx_fix_20451.failed is undefined or not zbx_fix_20451.failed
     - zbx_fix_20451.changed
 
-- name: Zabbix | Debian | Install | Fix | Reboot to activate new config
+- name: Zabbix | Install | Fix | Reboot to activate new config
   ansible.builtin.reboot:
     reboot_timeout: 60
   when: >

@@ -1,18 +1,18 @@
 ---
 
-- name: "Zabbix | Debian | Install | All | Installing zabbix repository (release {{ ZABBIX_CONFIG.release }})"
+- name: "Zabbix | Install | All | Installing zabbix repository (release {{ ZABBIX_CONFIG.release }})"
   ansible.builtin.apt:
     deb: "{{ ZABBIX_HC.repo_deb.1 }}{{ ZABBIX_CONFIG.version }}{{ ZABBIX_HC.repo_deb.2 }}{{ ZABBIX_CONFIG.release }}{{ ZABBIX_HC.repo_deb.3 }}"
   when: >
     'zabbix-release' not in ansible_facts.packages or
     ZABBIX_CONFIG.release not in ansible_facts.packages['zabbix-release'][0]['version']
 
-- name: Zabbix | Debian | Install | All | Updating apt
+- name: Zabbix | Install | All | Updating apt
   ansible.builtin.apt:
     update_cache: yes
   changed_when: false
 
-- name: Zabbix | Debian | Install | All | Dependencies
+- name: Zabbix | Install | All | Dependencies
   ansible.builtin.apt:
     name: "{{ ZABBIX_HC.packages.dependencies_all }}"
     state: present

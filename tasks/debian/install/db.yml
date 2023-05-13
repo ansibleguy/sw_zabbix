@@ -1,6 +1,6 @@
 ---
 
-- name: Zabbix | Debian | Install | DB | Setting up MariaDB instance
+- name: Zabbix | Install | DB | Setting up MariaDB instance
   ansible.builtin.include_role:
     name: ansibleguy.infra_mariadb
   vars:
@@ -9,12 +9,12 @@
         zabbix: "{{ ZABBIX_MARIADB_INSTANCE }}"
   when: ZABBIX_CONFIG.manage.db | bool
 
-- name: Zabbix | Debian | Install | DB | Checking for database config
+- name: Zabbix | Install | DB | Checking for database config
   ansible.builtin.stat:
     path: "{{ ZABBIX_CONFIG.database.my_cnf }}"
   register: zbx_db_cnf_file
 
-- name: Zabbix | Debian | Install | DB | Adding my.cnf
+- name: Zabbix | Install | DB | Adding my.cnf
   ansible.builtin.copy:
     content: |
       # ansible_managed
@@ -33,7 +33,7 @@
     (force_pwd_change is defined and force_pwd_change) or
     not zbx_db_cnf_file.stat.exists
 
-- name: Zabbix | Debian | Install | DB | Pulling existing database password
+- name: Zabbix | Install | DB | Pulling existing database password
   ansible.builtin.shell: |
     set -o pipefail
     cat {{ ZABBIX_CONFIG.database.my_cnf }} | grep 'password' | cut -d '=' -f2- | tr -d \\\"
@@ -42,12 +42,12 @@
   check_mode: false
   changed_when: false
 
-- name: Zabbix | Debian | Install | DB | Installing client
+- name: Zabbix | Install | DB | Installing client
   ansible.builtin.apt:
     name: "{{ ZABBIX_HC.packages.mysql }}"
     state: present
 
-- name: Zabbix | Debian | Install | DB | Checking if database is empty
+- name: Zabbix | Install | DB | Checking if database is empty
   community.mysql.mysql_query:
     login_db: "{{ ZABBIX_CONFIG.database.name }}"
     query: "SELECT count(*) FROM information_schema.TABLES WHERE (TABLE_SCHEMA = '{{ ZABBIX_CONFIG.database.name }}')"
@@ -59,7 +59,7 @@
   when: ZABBIX_CONFIG.manage.db | bool
   check_mode: false
 
-- name: Zabbix | Debian | Install | DB | Connection failed!
+- name: Zabbix | Install | DB | Connection failed!
   ansible.builtin.fail:
     msg: "The role was unable to connect to the database!
     Try setting a 'static' password in your configuration. (zabbix.database.pwd.server_proxy)"
@@ -67,7 +67,7 @@
     - zbx_db_empty.failed is defined
     - zbx_db_empty.failed
 
-- name: Zabbix | Debian | Install | DB | Preparing for schema import
+- name: Zabbix | Install | DB | Preparing for schema import
   community.mysql.mysql_query:
     query: 'SET GLOBAL log_bin_trust_function_creators=1'
     login_unix_socket: "{{ ZABBIX_MARIADB_INSTANCE.socket }}"
@@ -78,7 +78,7 @@
     - zbx_db_empty['query_result'][0][0]['count(*)'] | int == 0
     - ZABBIX_CONFIG.version is version('6.2', '>=')
 
-- name: Zabbix | Debian | Install | DB | Importing database schema
+- name: Zabbix | Install | DB | Importing database schema
   community.mysql.mysql_db:
     name: "{{ ZABBIX_CONFIG.database.name }}"
     state: import
@@ -93,7 +93,7 @@
     - ZABBIX_CONFIG.manage.db | bool
     - zbx_db_empty['query_result'][0][0]['count(*)'] | int == 0
 
-- name: Zabbix | Debian | Install | DB | Post-import task
+- name: Zabbix | Install | DB | Post-import task
   community.mysql.mysql_query:
     query: 'SET GLOBAL log_bin_trust_function_creators=0'
     login_unix_socket: "{{ ZABBIX_MARIADB_INSTANCE.socket }}"
@@ -104,7 +104,7 @@
     - zbx_db_empty['query_result'][0][0]['count(*)'] | int == 0
     - ZABBIX_CONFIG.version is version('6.2', '>=')
 
-- name: Zabbix | Debian | Install | DB | Unmanaged DB
+- name: Zabbix | Install | DB | Unmanaged DB
   ansible.builtin.pause:
     prompt: "Since this role is not managing the zabbix-database, you will need to import the database schema initially!
     This can be done like this when using a local database: 'zcat {{ file_schema }}

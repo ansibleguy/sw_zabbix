@@ -2,7 +2,7 @@
 
 # /etc/apache/ports.conf => remove port 80; add port 8080
 
-- name: Zabbix | Debian | Configure | Server | Copying provided external-scripts
+- name: Zabbix | Configure | Server | Copying provided external-scripts
   ansible.builtin.copy:
     src: "{{ item }}"
     dest: "{{ ZABBIX_HC.path_externalscripts }}/"
@@ -11,7 +11,7 @@
     mode: "{{ ZABBIX_CONFIG.mode_scripts }}"
   with_fileglob: "files/server+proxy/externalscripts/*"
 
-- name: Zabbix | Debian | Configure | Server | Copying provided alert-scripts
+- name: Zabbix | Configure | Server | Copying provided alert-scripts
   ansible.builtin.copy:
     src: "{{ item }}"
     dest: "{{ ZABBIX_HC.path_alertscripts }}/"
@@ -20,7 +20,7 @@
     mode: "{{ ZABBIX_CONFIG.mode_scripts }}"
   with_fileglob: "files/server+proxy/alertscripts/*"
 
-- name: Zabbix | Debian | Configure | Server | Deploying tls certificate
+- name: Zabbix | Configure | Server | Deploying tls certificate
   ansible.builtin.import_tasks: tls_cert.yml
   vars:
     config: "{{ ZABBIX_CONFIG.server }}"
@@ -31,7 +31,7 @@
     - ZABBIX_CONFIG.server.tls_key_copy not in NONE_VALUES
 
 # todo: fix that db pwd changes every run
-- name: Zabbix | Debian | Configure | Server | Deploying config
+- name: Zabbix | Configure | Server | Deploying config
   ansible.builtin.template:
     src: 'templates/etc/zabbix/zabbix_server.conf.j2'
     dest: "{{ ZABBIX_HC.file_config_server }}"
@@ -43,7 +43,7 @@
   changed_when: false
 
 # todo: fix that db pwd changes every run
-- name: Zabbix | Debian | Configure | Server | Deploying php-config
+- name: Zabbix | Configure | Server | Deploying php-config
   ansible.builtin.template:
     src: 'templates/usr/share/zabbix/conf/zabbix.conf.php.j2'
     dest: "{{ ZABBIX_HC.file_config_php }}"
@@ -55,7 +55,7 @@
   when: ZABBIX_CONFIG.server.php_conf
   changed_when: false
 
-- name: Zabbix | Debian | Configure | Server | Getting local timezone
+- name: Zabbix | Configure | Server | Getting local timezone
   ansible.builtin.shell: |
     set -o pipefail
     timedatectl | grep 'Time zone' | cut -d':' -f2 | cut -d' ' -f2
@@ -68,7 +68,7 @@
     executable: '/bin/bash'
   when: "'date.timezone' not in ZABBIX_CONFIG.server.php"
 
-- name: Zabbix | Debian | Configure | Server | Configuring php timezone to locally used one
+- name: Zabbix | Configure | Server | Configuring php timezone to locally used one
   ansible.builtin.lineinfile:
     path: "/etc/php/{{ ZABBIX_CONFIG.php_version }}/apache2/php.ini"
     line: "date.timezone = {{ controller_tz.stdout }}"
@@ -76,7 +76,7 @@
   register: zbx_server_php_tz_raw
   when: "'date.timezone' not in ZABBIX_CONFIG.server.php"
 
-- name: Zabbix | Debian | Configure | Server | Configuring database socket
+- name: Zabbix | Configure | Server | Configuring database socket
   ansible.builtin.lineinfile:
     path: "/etc/php/{{ ZABBIX_CONFIG.php_version }}/apache2/php.ini"
     line: "{{ item.line }}"
@@ -90,7 +90,7 @@
     ZABBIX_CONFIG.manage.db | bool or
     'socket' in ZABBIX_CONFIG.database
 
-- name: Zabbix | Debian | Configure | Server | Configuring php settings
+- name: Zabbix | Configure | Server | Configuring php settings
   ansible.builtin.lineinfile:
     path: "/etc/php/{{ ZABBIX_CONFIG.php_version }}/apache2/php.ini"
     line: "{{ item.key }} = {{ item.value }}"

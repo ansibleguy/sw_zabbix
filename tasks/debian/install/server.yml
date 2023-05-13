@@ -1,6 +1,6 @@
 ---
 
-- name: Zabbix | Debian | Install | Server | Applying fix
+- name: Zabbix | Install | Server | Applying fix
   ansible.builtin.import_tasks: fix_20451.yml
   when:
     - ansible_virtualization_role is defined
@@ -8,31 +8,31 @@
     - "'docker' in ansible_virtualization_tech_guest"
   tags: molecule-notest
 
-- name: Zabbix | Debian | Install | Server | Checking if is installed
+- name: Zabbix | Install | Server | Checking if is installed
   ansible.builtin.apt:
     name: 'zabbix-server-mysql'
     state: present
   check_mode: true
 
-- name: Zabbix | Debian | Install | Server | Installing
+- name: Zabbix | Install | Server | Installing
   ansible.builtin.apt:
     name: "{{ ZABBIX_HC.packages.server }}"
     state: present
 
-- name: Zabbix | Debian | Install | Server | Setting db import-file (<V6 - schema.sql.gz)
+- name: Zabbix | Install | Server | Setting db import-file (<V6 - schema.sql.gz)
   ansible.builtin.set_fact:
     file_schema: "{{ ZABBIX_HC.file_mysql_server_lt6 }}"
   when: ZABBIX_CONFIG.version is version('6.0', '<')
 
-- name: Zabbix | Debian | Install | Server | Setting db import-file (V6+ - server.sql.gz)
+- name: Zabbix | Install | Server | Setting db import-file (V6+ - server.sql.gz)
   ansible.builtin.set_fact:
     file_schema: "{{ ZABBIX_HC.file_mysql_server_ge6 }}"
   when: ZABBIX_CONFIG.version is version('6.0', '>=')
 
-- name: Zabbix | Debian | Install | Server | Database tasks (V6+)
+- name: Zabbix | Install | Server | Database tasks (V6+)
   ansible.builtin.import_tasks: db.yml
 
-- name: Zabbix | Debian | Install | Server | Enabling Zabbix service
+- name: Zabbix | Install | Server | Enabling Zabbix service
   ansible.builtin.systemd:
     name: "{{ ZABBIX_HC.service.server }}"
     state: started
@@ -40,23 +40,23 @@
     daemon_reload: yes
     no_block: true
 
-- name: Zabbix | Debian | Install | Server | Removing default apache2 site
+- name: Zabbix | Install | Server | Removing default apache2 site
   ansible.builtin.file:
     dest: '000-default.conf'
     state: absent
 
-- name: Zabbix | Debian | Install | Server | Configuring apache2 listen-port
+- name: Zabbix | Install | Server | Configuring apache2 listen-port
   ansible.builtin.lineinfile:
     path: '/etc/apache2/ports.conf'
     line: "Listen {{ ZABBIX_CONFIG.server.nginx.proxy.port }}"
     regexp: '^Listen\s80$'
 
-- name: Zabbix | Debian | Install | Server | Enabling apache2 service
+- name: Zabbix | Install | Server | Enabling apache2 service
   ansible.builtin.systemd:
     name: 'apache2.service'
     enabled: true
 
-- name: Zabbix | Debian | Install | Server | Configuring Nginx webserver (proxy)
+- name: Zabbix | Install | Server | Configuring Nginx webserver (proxy)
   ansible.builtin.include_role:
     name: ansibleguy.infra_nginx
   vars:

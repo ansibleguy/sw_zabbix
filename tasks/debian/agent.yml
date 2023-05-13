@@ -1,6 +1,6 @@
 ---
 
-- name: "Zabbix | Debian | Agent V{{ vers }} | Uninstalling"
+- name: "Zabbix | Agent V{{ vers }} | Uninstalling"
   ansible.builtin.import_tasks: uninstall/agent1.yml
   when: >
     (ZABBIX_CONFIG.state != 'present' or
@@ -8,7 +8,7 @@
     ZABBIX_HC.packages.agent1 in ansible_facts.packages
   tags: [uninstall, agent]
 
-- name: "Zabbix | Debian | Agent V{{ vers }} | Uninstalling Agent2"
+- name: "Zabbix | Agent V{{ vers }} | Uninstalling Agent2"
   ansible.builtin.import_tasks: uninstall/agent2.yml
   when: >
     (ZABBIX_CONFIG.state != 'present' or
@@ -17,7 +17,7 @@
     ZABBIX_HC.packages.agent2 in ansible_facts.packages
   tags: [uninstall, agent]
 
-- name: "Zabbix | Debian | Agent V{{ vers }} | Verifying config"
+- name: "Zabbix | Agent V{{ vers }} | Verifying config"
   ansible.builtin.fail:
     msg: "Not all needed settings were provided! Zabbix-Agent cannot be configured!
     We need: 'Server', 'TLSPSKIdentity or TLSCertFile', 'tls_psk (longer than {{ ZABBIX_HC.psk_min_length }} characters) or TLSKeyFile'!
@@ -42,28 +42,28 @@
     )
   tags: [config, install, agent]
 
-- name: "Zabbix | Debian | Agent V{{ vers }} | Installing"
+- name: "Zabbix | Agent V{{ vers }} | Installing"
   ansible.builtin.import_tasks: install/agent1.yml
   when:
     - ZABBIX_CONFIG.state == 'present'
     - vers == 1
   tags: [install, agent]
 
-- name: "Zabbix | Debian | Agent V{{ vers }} | Configuring"
+- name: "Zabbix | Agent V{{ vers }} | Configuring"
   ansible.builtin.import_tasks: configure/agent1.yml
   tags: [config, install, agent]
   when:
     - ZABBIX_CONFIG.state == 'present'
     - vers == 1
 
-- name: "Zabbix | Debian | Agent V{{ vers }} | Installing Agent2"
+- name: "Zabbix | Agent V{{ vers }} | Installing Agent2"
   ansible.builtin.import_tasks: install/agent2.yml
   tags: [install, agent]
   when:
     - ZABBIX_CONFIG.state == 'present'
     - vers == 2
 
-- name: "Zabbix | Debian | Agent V{{ vers }} | Configuring Agent2"
+- name: "Zabbix | Agent V{{ vers }} | Configuring Agent2"
   ansible.builtin.import_tasks: configure/agent2.yml
   tags: [config, install, agent]
   when:

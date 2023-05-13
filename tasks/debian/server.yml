@@ -1,13 +1,13 @@
 ---
 
-- name: Zabbix | Debian | Server | Uninstalling
+- name: Zabbix | Server | Uninstalling
   ansible.builtin.import_tasks: uninstall/server.yml
   when:
     - ZABBIX_CONFIG.state != 'present'
     - "'zabbix-server-mysql' in ansible_facts.packages or 'zabbix-frontend-php' in ansible_facts.packages"
   tags: [uninstall, server]
 
-- name: Zabbix | Debian | Server | Verifying config
+- name: Zabbix | Server | Verifying config
   ansible.builtin.fail:
     msg: "Not all needed settings were provided! Zabbix-Server cannot be configured!
     We need: db managed by role or 'DBName' and 'DBSocket' for a local database or 'DBHost' and 'DBPort' for a remote database!
@@ -25,12 +25,12 @@
       )
     )
 
-- name: Zabbix | Debian | Server | Installing
+- name: Zabbix | Server | Installing
   ansible.builtin.import_tasks: install/server.yml
   when: ZABBIX_CONFIG.state == 'present'
   tags: [install, server]
 
-- name: Zabbix | Debian | Server | Configuring
+- name: Zabbix | Server | Configuring
   ansible.builtin.import_tasks: configure/server.yml
   when: ZABBIX_CONFIG.state == 'present'
   tags: [config, server]
