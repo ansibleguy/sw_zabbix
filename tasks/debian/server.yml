@@ -14,13 +14,13 @@
     Also: unencrypted connections are not allowed!"
   when: >
     ZABBIX_CONFIG.state == 'present' and (
-      not ZABBIX_CONFIG.manage.db and (
+      not ZABBIX_CONFIG.manage.db | bool and (
         ZABBIX_CONFIG.server.settings.DBSocket in NONE_VALUES or (
           ZABBIX_CONFIG.server.settings.DBHost in NONE_VALUES and
           ZABBIX_CONFIG.server.settings.DBPort in NONE_VALUES
         )
       ) or (
-        not ZABBIX_CONFIG.manage.db and
+        not ZABBIX_CONFIG.manage.db | bool and
         ZABBIX_CONFIG.server.settings.DBName in NONE_VALUES
       )
     )

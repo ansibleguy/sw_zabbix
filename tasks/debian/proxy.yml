@@ -24,14 +24,14 @@
           ZABBIX_CONFIG.proxy.tls_key_copy in NONE_VALUES or
           ZABBIX_CONFIG.proxy.tls_ca_copy in NONE_VALUES
         ) or (
-          not ZABBIX_CONFIG.manage.db and (
+          not ZABBIX_CONFIG.manage.db | bool and (
             ZABBIX_CONFIG.proxy.settings.DBSocket in NONE_VALUES or (
               ZABBIX_CONFIG.proxy.settings.DBHost in NONE_VALUES and
               ZABBIX_CONFIG.proxy.settings.DBPort in NONE_VALUES
             )
           )
         ) or (
-          not ZABBIX_CONFIG.manage.db and
+          not ZABBIX_CONFIG.manage.db | bool and
           ZABBIX_CONFIG.proxy.settings.DBName in NONE_VALUES
         ) or (
           ZABBIX_CONFIG.proxy.settings.TLSConnect == 'unencrypted' or

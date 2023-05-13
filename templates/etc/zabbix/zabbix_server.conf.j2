@@ -7,7 +7,7 @@
 {%   endif %}
 {% endfor %}
 
-{% if ZABBIX_CONFIG.manage.db %}
+{% if ZABBIX_CONFIG.manage.db | bool %}
 # ansibleguy.infra_mariadb - db settings
 {%   if 'DBUser' not in ZABBIX_CONFIG.server.settings %}
 DBUser={{ ZABBIX_CONFIG.database.user.server_proxy }}

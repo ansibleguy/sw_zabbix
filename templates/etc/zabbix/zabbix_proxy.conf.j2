@@ -18,7 +18,7 @@ TLSCertFile={{ ZABBIX_CONFIG.path_private }}/proxy_cert.crt
 TLSKeyFile={{ ZABBIX_CONFIG.path_private }}/proxy_cert.key
 {% endif %}
 
-{% if ZABBIX_CONFIG.manage.db %}
+{% if ZABBIX_CONFIG.manage.db | bool %}
 # ansibleguy.infra_mariadb - db settings
 {%   if 'DBUser' not in ZABBIX_CONFIG.proxy.settings %}
 DBUser={{ ZABBIX_CONFIG.database.user.server_proxy }}

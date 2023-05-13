@@ -4,7 +4,7 @@
   ansible.builtin.import_tasks: uninstall/agent1.yml
   when: >
     (ZABBIX_CONFIG.state != 'present' or
-    not ZABBIX_CONFIG.manage.agent1) and
+    not ZABBIX_CONFIG.manage.agent1 | bool) and
     ZABBIX_HC.packages.agent1 in ansible_facts.packages
   tags: [uninstall, agent]
 
@@ -12,8 +12,8 @@
   ansible.builtin.import_tasks: uninstall/agent2.yml
   when: >
     (ZABBIX_CONFIG.state != 'present' or
-    not ZABBIX_CONFIG.manage.agent2 or
-    ZABBIX_CONFIG.manage.agent1) and
+    not ZABBIX_CONFIG.manage.agent2 | bool or
+    ZABBIX_CONFIG.manage.agent1 | bool) and
     ZABBIX_HC.packages.agent2 in ansible_facts.packages
   tags: [uninstall, agent]
 

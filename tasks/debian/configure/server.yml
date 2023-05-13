@@ -87,7 +87,7 @@
     - line: "pdo_mysql.default_socket = {{ ZABBIX_CONFIG.database.socket | default(ZABBIX_MARIADB_INSTANCE.socket) }}"
       reg: '^pdo_mysql.default_socket'
   when: >
-    ZABBIX_CONFIG.manage.db or
+    ZABBIX_CONFIG.manage.db | bool or
     'socket' in ZABBIX_CONFIG.database
 
 - name: Zabbix | Debian | Configure | Server | Configuring php settings

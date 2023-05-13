@@ -22,12 +22,12 @@
 
 - name: Zabbix | Debian | Processing Zabbix Server
   ansible.builtin.import_tasks: server.yml
-  when: ZABBIX_CONFIG.manage.server
+  when: ZABBIX_CONFIG.manage.server | bool
   tags: [config, install, uninstall, server]
 
 - name: Zabbix | Debian | Processing Zabbix Proxy
   ansible.builtin.import_tasks: proxy.yml
-  when: ZABBIX_CONFIG.manage.proxy
+  when: ZABBIX_CONFIG.manage.proxy | bool
   tags: [config, install, uninstall, proxy]
 
 - name: Zabbix | Debian | Processing Zabbix Agent
@@ -35,8 +35,7 @@
   vars:
     agent: "{{ ZABBIX_CONFIG.agent1 }}"
     vers: 1
-  when:
-    - ZABBIX_CONFIG.manage.agent1
+  when: ZABBIX_CONFIG.manage.agent1 | bool
   tags: [config, install, uninstall, agent]
   args:
     apply:
@@ -48,8 +47,8 @@
     agent: "{{ ZABBIX_CONFIG.agent2 }}"
     vers: 2
   when:
-    - ZABBIX_CONFIG.manage.agent2
-    - not ZABBIX_CONFIG.manage.agent1
+    - ZABBIX_CONFIG.manage.agent2 | bool
+    - not ZABBIX_CONFIG.manage.agent1 | bool
   tags: [config, install, uninstall, agent]
   args:
     apply:

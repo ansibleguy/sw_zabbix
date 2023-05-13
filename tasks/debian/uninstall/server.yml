@@ -70,7 +70,7 @@
       sites:
         zabbix: "{{ ZABBIX_CONFIG.server.nginx | combine({'state': 'absent'}) }}"
   when:
-    - ZABBIX_CONFIG.manage.webserver
+    - ZABBIX_CONFIG.manage.webserver | bool
     - "'nginx' in ansible_facts.packages"
   tags: [install, server]
   args:
