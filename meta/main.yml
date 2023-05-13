@@ -5,7 +5,7 @@ galaxy_info:
   namespace: 'ansibleguy'
   license: 'GPLv3'
   issue_tracker_url: 'https://github.com/ansibleguy/sw_zabbix/issues'
-  min_ansible_version: 2.9.10
+  min_ansible_version: 2.14
   description: 'Role to install Zabbix-Agent/Proxy/server on linux servers'
   platforms:
     - name: Debian
