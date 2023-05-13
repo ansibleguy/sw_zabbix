@@ -235,5 +235,3 @@ defaults_zbx:
       #   TLSCAFile:
       #   TLSCertFile:
       #   TLSKeyFile:
-
-ZABBIX_CONFIG: "{{ defaults_zbx | combine(zabbix, recursive=true) }}"
