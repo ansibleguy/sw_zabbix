@@ -1,6 +1,6 @@
 ---
 
-- name: Zabbix | Debian | Uninstall | DB | Ask user
+- name: Zabbix | Uninstall | DB | Ask user
   ansible.builtin.pause:
     prompt: "Do you want to remove the existing zabbix database instance? [yes/NO]!"
   register: zbx_db_removal_prompt
@@ -9,7 +9,7 @@
     - ZABBIX_CONFIG.manage.db | bool
     - "'mariadb-server' in ansible_facts.packages"
 
-- name: Zabbix | Debian | Uninstall | DB | Removing MariaDB instance
+- name: Zabbix | Uninstall | DB | Removing MariaDB instance
   ansible.builtin.include_role:
     name: ansibleguy.infra_mariadb
   vars:
@@ -22,7 +22,7 @@
     - "'mariadb-server' in ansible_facts.packages"
     - force_removal or zbx_db_removal_prompt.user_input == 'yes'
 
-- name: Zabbix | Debian | Uninstall | DB | Notify user
+- name: Zabbix | Uninstall | DB | Notify user
   ansible.builtin.pause:
     prompt: "Since this role is not managing the zabbix-database, you may remove the zabbix database yourself!"
     seconds: 5

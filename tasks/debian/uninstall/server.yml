@@ -1,6 +1,6 @@
 ---
 
-- name: Zabbix | Debian | Uninstall | Server | Disabling service
+- name: Zabbix | Uninstall | Server | Disabling service
   ansible.builtin.systemd:
     name: "{{ ZABBIX_HC.service.server }}"
     state: stopped
@@ -8,13 +8,13 @@
   ignore_errors: true
   failed_when: false
 
-- name: Zabbix | Debian | Uninstall | Server | Removing packages
+- name: Zabbix | Uninstall | Server | Removing packages
   ansible.builtin.apt:
     name: "{{ ZABBIX_HC.packages.server }}"
     state: absent
     purge: true
 
-- name: Zabbix | Debian | Uninstall | Server | Removing files
+- name: Zabbix | Uninstall | Server | Removing files
   ansible.builtin.file:
     dest: "{{ item }}"
     state: absent
@@ -24,13 +24,13 @@
     - "{{ ZABBIX_CONFIG.path_private }}/server_cert.crt"
     - "{{ ZABBIX_CONFIG.path_private }}/server_cert.key"
 
-- name: Zabbix | Debian | Uninstall | Server | Ask user
+- name: Zabbix | Uninstall | Server | Ask user
   ansible.builtin.pause:
     prompt: "Do you want to remove the scripts directories? ({{ ZABBIX_HC.path_externalscripts }}, {{ ZABBIX_HC.path_alertscripts }}) [yes/NO]!"
   register: zbx_server_removal_prompt
   when: not force_removal
 
-- name: Zabbix | Debian | Uninstall | Server | Removing directories
+- name: Zabbix | Uninstall | Server | Removing directories
   ansible.builtin.file:
     dest: "{{ item }}"
     state: absent
@@ -42,10 +42,10 @@
     force_removal or
     zbx_server_removal_prompt.user_input == 'yes'
 
-- name: Zabbix | Debian | Uninstall | Server | Database tasks
+- name: Zabbix | Uninstall | Server | Database tasks
   ansible.builtin.import_tasks: db.yml
 
-- name: Zabbix | Debian | Uninstall | Server | Ask user (MariaDB)
+- name: Zabbix | Uninstall | Server | Ask user (MariaDB)
   ansible.builtin.pause:
     prompt: "Do you want to uninstall the MariaDB database completely? [yes/NO]!"
   register: zbx_mariadb_removal_prompt
@@ -53,7 +53,7 @@
     - not force_removal
     - "'mariadb-server' in ansible_facts.packages"
 
-- name: Zabbix | Debian | Uninstall | Server | Removing packages
+- name: Zabbix | Uninstall | Server | Removing packages
   ansible.builtin.apt:
     name: "{{ ZABBIX_HC.packages.remove_mariadb + ZABBIX_HC.packages.mysql }}"
     state: absent
@@ -62,7 +62,7 @@
     - "'mariadb-server' in ansible_facts.packages"
     - force_removal or zbx_mariadb_removal_prompt.user_input == 'yes'
 
-- name: Zabbix | Debian | Uninstall | Server | Removing Nginx webserver config
+- name: Zabbix | Uninstall | Server | Removing Nginx webserver config
   ansible.builtin.include_role:
     name: ansibleguy.infra_nginx
   vars:
@@ -77,7 +77,7 @@
     apply:
       tags: [install, server]
 
-- name: Zabbix | Debian | Uninstall | Server | Ask user (Nginx)
+- name: Zabbix | Uninstall | Server | Ask user (Nginx)
   ansible.builtin.pause:
     prompt: "Do you want to uninstall the NGINX web server completely? [yes/NO]!"
   register: zbx_nginx_removal_prompt
@@ -85,7 +85,7 @@
     - not force_removal
     - "'nginx' in ansible_facts.packages"
 
-- name: Zabbix | Debian | Uninstall | Server | Disabling nginx service
+- name: Zabbix | Uninstall | Server | Disabling nginx service
   ansible.builtin.systemd:
     name: 'nginx.service'
     state: stopped
@@ -96,7 +96,7 @@
     - "'nginx' in ansible_facts.packages"
     - force_removal or zbx_nginx_removal_prompt.user_input == 'yes'
 
-- name: Zabbix | Debian | Uninstall | Server | Removing nginx package
+- name: Zabbix | Uninstall | Server | Removing nginx package
   ansible.builtin.apt:
     name: "{{ ZABBIX_HC.packages.remove_nginx }}"
     state: absent

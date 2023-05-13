@@ -7,6 +7,7 @@
       - ZABBIX_CONFIG.version in ZABBIX_CONFIG.release
       - not ZABBIX_CONFIG.manage.server | bool or ZABBIX_CONFIG.server.nginx.domain is defined
       - ZABBIX_CONFIG.version is version('6.0', '>=')
+  tags: always
 
 - name: Zabbix | Processing debian config
   ansible.builtin.import_tasks: debian/main.yml

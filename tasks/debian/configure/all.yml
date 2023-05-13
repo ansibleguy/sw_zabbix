@@ -1,17 +1,17 @@
 ---
 
-- name: Zabbix | Debian | Configure | All | Creating service group
+- name: Zabbix | Configure | All | Creating service group
   ansible.builtin.group:
     name: "{{ ZABBIX_HC.group }}"
 
-- name: Zabbix | Debian | Configure | All | Creating service user
+- name: Zabbix | Configure | All | Creating service user
   ansible.builtin.user:
     name: "{{ ZABBIX_HC.user }}"
     group: "{{ ZABBIX_HC.group }}"
     shell: '/usr/sbin/nologin'
     comment: 'Zabbix Service User'
 
-- name: Zabbix | Debian | Configure | All | Creating private directory
+- name: Zabbix | Configure | All | Creating private directory
   ansible.builtin.file:
     state: directory
     path: "{{ ZABBIX_CONFIG.path_private }}"
@@ -19,7 +19,7 @@
     group: "{{ ZABBIX_HC.group }}"
     mode: 0750
 
-- name: Zabbix | Debian | Configure | All | Creating run directory
+- name: Zabbix | Configure | All | Creating run directory
   ansible.builtin.file:
     state: directory
     path: "{{ ZABBIX_HC.path_run }}"

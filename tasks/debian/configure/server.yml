@@ -98,14 +98,14 @@
   with_dict: "{{ ZABBIX_CONFIG.server.php }}"
   register: zbx_server_php_config_raw
 
-- name: Zabbix | Debian | Configure | Server | Configuring apache2 listen-port
+- name: Zabbix | Configure | Server | Configuring apache2 listen-port
   ansible.builtin.lineinfile:
     path: '/etc/apache2/ports.conf'
     line: "Listen {{ ZABBIX_CONFIG.server.nginx.proxy.port }}"
     regexp: '^Listen\s80$'
   register: zbx_server_a2port_raw
 
-- name: Zabbix | Debian | Configure | Server | Removing apache2 status page
+- name: Zabbix | Configure | Server | Removing apache2 status page
   ansible.builtin.file:
     path: "{{ item }}"
     state: absent
@@ -115,11 +115,11 @@
   register: zbx_server_a2status_rm
   when: ZABBIX_CONFIG.apache.status_page.state != 'present'
 
-- name: Zabbix | Debian | Configure | Server | Adding apache2 status page
+- name: Zabbix | Configure | Server | Adding apache2 status page
   ansible.builtin.import_tasks: apache_add_status.yml
   when: ZABBIX_CONFIG.apache.status_page.state == 'present'
 
-- name: Zabbix | Debian | Configure | Server | Restarting Zabbix-Server service
+- name: Zabbix | Configure | Server | Restarting Zabbix-Server service
   ansible.builtin.systemd:
     name: "{{ ZABBIX_HC.service.server }}"
     state: restarted
@@ -132,7 +132,7 @@
     zbx_server_php_config_raw.changed or
     zbx_php_config_raw.changed
 
-- name: Zabbix | Debian | Configure | Server | Restarting Apache2 service
+- name: Zabbix | Configure | Server | Restarting Apache2 service
   ansible.builtin.systemd:
     name: 'apache2.service'
     state: restarted

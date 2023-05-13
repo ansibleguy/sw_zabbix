@@ -1,23 +1,23 @@
 ---
 
-- name: Zabbix | Debian | Uninstall | All | Removing repository
+- name: Zabbix | Uninstall | All | Removing repository
   ansible.builtin.apt:
     name: 'zabbix-release=*'
     state: absent
     purge: true
 
-- name: Zabbix | Debian | Uninstall | All | Removing service user
+- name: Zabbix | Uninstall | All | Removing service user
   ansible.builtin.user:
     name: "{{ ZABBIX_HC.user }}"
     state: absent
 
-- name: Zabbix | Debian | Uninstall | All | Ask user
+- name: Zabbix | Uninstall | All | Ask user
   ansible.builtin.pause:
     prompt: "Do you want to remove the private directory? ({{ ZABBIX_CONFIG.path_private }}) [yes/NO]!"
   register: zbx_all_removal_prompt
   when: not force_removal
 
-- name: Zabbix | Debian | Uninstall | All | Removing private directory
+- name: Zabbix | Uninstall | All | Removing private directory
   ansible.builtin.file:
     state: absent
     path: "{{ ZABBIX_CONFIG.path_private }}"
