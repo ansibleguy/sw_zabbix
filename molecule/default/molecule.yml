@@ -98,7 +98,6 @@ verifier:
 scenario:
   name: default
   test_sequence:
-    - lint
     - destroy
     - syntax
     - create
