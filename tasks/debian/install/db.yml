@@ -37,6 +37,8 @@
   ansible.builtin.shell: |
     set -o pipefail
     cat {{ ZABBIX_CONFIG.database.my_cnf }} | grep 'password' | cut -d '=' -f2- | tr -d \\\"
+  args:
+    executable: '/bin/bash'
   register: zbx_db_pwd
   when: zbx_db_cnf_file.stat.exists
   check_mode: false

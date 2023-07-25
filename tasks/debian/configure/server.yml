@@ -59,13 +59,13 @@
   ansible.builtin.shell: |
     set -o pipefail
     timedatectl | grep 'Time zone' | cut -d':' -f2 | cut -d' ' -f2
+  args:
+    executable: '/bin/bash'
   register: controller_tz
   delegate_to: localhost
   changed_when: false
   check_mode: false
   become: false
-  args:
-    executable: '/bin/bash'
   when: "'date.timezone' not in ZABBIX_CONFIG.server.php"
 
 - name: Zabbix | Configure | Server | Configuring php timezone to locally used one
