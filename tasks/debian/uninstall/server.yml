@@ -5,8 +5,11 @@
     name: "{{ ZABBIX_HC.service.server }}"
     state: stopped
     enabled: false
-  ignore_errors: true
-  failed_when: false
+  register: zbx_srv_disable
+  failed_when:
+    - zbx_srv_disable.failed
+    - "'does not exist' not in zbx_srv_disable.msg"
+    - "'Could not find' not in zbx_srv_disable.msg"
 
 - name: Zabbix | Uninstall | Server | Removing packages
   ansible.builtin.apt:
@@ -90,11 +93,14 @@
     name: 'nginx.service'
     state: stopped
     enabled: false
-  ignore_errors: true
-  failed_when: false
   when:
     - "'nginx' in ansible_facts.packages"
     - force_removal or zbx_nginx_removal_prompt.user_input == 'yes'
+  register: zbx_nginx_disable
+  failed_when:
+    - zbx_nginx_disable.failed
+    - "'does not exist' not in zbx_nginx_disable.msg"
+    - "'Could not find' not in zbx_nginx_disable.msg"
 
 - name: Zabbix | Uninstall | Server | Removing nginx package
   ansible.builtin.apt:

@@ -5,8 +5,11 @@
     name: "{{ ZABBIX_HC.service.agent2 }}"
     state: stopped
     enabled: false
-  ignore_errors: true
-  failed_when: false
+  register: zbx_av2_disable
+  failed_when:
+    - zbx_av2_disable.failed
+    - "'does not exist' not in zbx_av2_disable.msg"
+    - "'Could not find' not in zbx_av2_disable.msg"
 
 - name: Zabbix | Uninstall | Agent V2 | Removing package
   ansible.builtin.apt:
