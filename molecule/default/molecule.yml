@@ -59,6 +59,22 @@ platforms:
     privileged: true
     command: '/sbin/init'
 
+  - name: test-ag-zbx-proxy2
+    networks:
+      - name: 'test-ag-zbx'
+        ipv4_address: '192.168.8.6'
+    groups: [grp_targets]
+
+    # docker config
+    docker_host: 'tcp://molecule-docker.local:2375'
+    purge_networks: true
+    image: 'debian:11-slim'
+    dockerfile: 'Dockerfile_debian11_systemd.j2'
+    build_image: yes
+    tmpfs: ['/tmp', '/run', '/run/lock']
+    privileged: true
+    command: '/sbin/init'
+
   - name: test-ag-zbx-a2
     networks:
       - name: 'test-ag-zbx'

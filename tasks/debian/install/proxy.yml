@@ -22,22 +22,34 @@
 - name: Zabbix | Install | Proxy | Setting db import-file (<V6 - schema.sql.gz)
   ansible.builtin.set_fact:
     file_schema: "{{ ZABBIX_HC.file_mysql_proxy_lt6 }}"
-  when: ZABBIX_CONFIG.version is version('6.0', '<')
+  when:
+    - ZABBIX_CONFIG.proxy.database == 'mysql'
+    - ZABBIX_CONFIG.version is version('6.0', '<')
 
 - name: Zabbix | Install | Proxy | Setting db import-file (V6.2 - proxy.sql)
   ansible.builtin.set_fact:
     file_schema: "{{ ZABBIX_HC.file_mysql_proxy_6_2 }}"
-  when: ZABBIX_CONFIG.version is version('6.2', '=')
+  when:
+    - ZABBIX_CONFIG.proxy.database == 'mysql'
+    - ZABBIX_CONFIG.version is version('6.2', '=')
 
 - name: Zabbix | Install | Proxy | Setting db import-file (V6,V6.3+ - proxy.sql.gz)
   ansible.builtin.set_fact:
     file_schema: "{{ ZABBIX_HC.file_mysql_proxy_ge6 }}"
   when: >
-    ZABBIX_CONFIG.version is version('6.0', '=') or
-    ZABBIX_CONFIG.version is version('6.2', '>')
+    ZABBIX_CONFIG.proxy.database == 'mysql' and
+    (ZABBIX_CONFIG.version is version('6.0', '=') or
+    ZABBIX_CONFIG.version is version('6.2', '>'))
 
 - name: Zabbix | Install | Proxy | Database tasks
   ansible.builtin.import_tasks: db.yml
+  when: ZABBIX_CONFIG.proxy.database == 'mysql'
+
+- name: Zabbix | Install | Proxy | SQLite Database
+  ansible.builtin.shell: "sqlite3 {{ ZABBIX_CONFIG.proxy.settings.DBName | default('/usr/lib/zabbix/proxy.db', true) }} < {{ ZABBIX_HC.file_sqlite }}"
+  when: >
+    ZABBIX_CONFIG.proxy.database == 'sqlite' and
+    (ZABBIX_CONFIG.version is version('6.0', '<') or
 
 - name: Zabbix | Install | Proxy | Enabling service
   ansible.builtin.systemd:

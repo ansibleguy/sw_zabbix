@@ -70,6 +70,37 @@
   roles:
     - ansibleguy.sw_zabbix
 
+- name: Converge Proxy SQLite
+  hosts: test-ag-zbx-proxy2
+  vars:
+    no_prompts: true
+
+    zabbix:
+      manage:
+        agent2: true
+        proxy: true
+
+      proxy:
+        database: 'sqlite'
+        tls_psk: 'testProxyVeeeeeerrryyyyyLoooooooonnnnngGGGG!!!'
+
+        settings:
+          Server: '192.168.8.2:10051'
+          TLSPSKIdentity: 'testIdentity2'
+          TLSConnect: 'psk'
+          TLSAccept: 'psk'
+          ConfigFrequency: 600
+
+      agent2:
+        tls_psk: 'testProxyAgent!!!'
+
+        settings:
+          Server: '192.168.8.2'
+          TLSPSKIdentity: 'testIdentity3'
+
+  roles:
+    - ansibleguy.sw_zabbix
+
 - name: Converge Agent V2
   hosts: test-ag-zbx-a2
   vars:
