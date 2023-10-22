@@ -11,8 +11,7 @@ You will need to manage the zabbix-agent integration(s) into your systems on you
 [![YamlLint Test Status](https://badges.ansibleguy.net/sw_zabbix.yamllint.svg)](https://github.com/ansibleguy/_meta_cicd/blob/latest/templates/usr/local/bin/cicd/yamllint.sh.j2)
 [![PyLint Test Status](https://badges.ansibleguy.net/sw_zabbix.pylint.svg)](https://github.com/ansibleguy/_meta_cicd/blob/latest/templates/usr/local/bin/cicd/pylint.sh.j2)
 [![Ansible-Lint Test Status](https://badges.ansibleguy.net/sw_zabbix.ansiblelint.svg)](https://github.com/ansibleguy/_meta_cicd/blob/latest/templates/usr/local/bin/cicd/ansiblelint.sh.j2)
-[![Ansible Galaxy](https://img.shields.io/ansible/role/62784)](https://galaxy.ansible.com/ansibleguy/sw_zabbix)
-[![Ansible Galaxy Downloads](https://img.shields.io/badge/dynamic/json?color=blueviolet&label=Galaxy%20Downloads&query=%24.download_count&url=https%3A%2F%2Fgalaxy.ansible.com%2Fapi%2Fv1%2Froles%2F62784%2F%3Fformat%3Djson)](https://galaxy.ansible.com/ansibleguy/sw_zabbix)
+[![Ansible Galaxy](https://badges.ansibleguy.net/galaxy.badge.svg)](https://galaxy.ansible.com/ui/standalone/roles/ansibleguy/sw_zabbix)
 
 **Tested:**
 * Debian 11
