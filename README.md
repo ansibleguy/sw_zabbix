@@ -19,6 +19,10 @@ You will need to manage the zabbix-agent integration(s) into your systems on you
 ## Install
 
 ```bash
+# latest
+ansible-galaxy role install git+https://github.com/ansibleguy/sw_zabbix
+
+# from galaxy
 ansible-galaxy install ansibleguy.sw_zabbix
 
 # or to custom role-path
