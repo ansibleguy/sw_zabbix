@@ -112,6 +112,8 @@ Else incompatibilities would break future setups if Zabbix changes their config-
 
 ## Usage
 
+You want a simple Ansible GUI? Check-out my [Ansible WebUI](https://github.com/ansibleguy/webui)
+
 ### Config
 
 Define the zabbix dictionary as needed.
