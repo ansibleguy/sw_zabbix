@@ -20,6 +20,7 @@ platforms:
     image: 'ansible0guy/molecule:debian-latest'
     tmpfs: ['/tmp', '/run', '/run/lock']
     privileged: true
+    command: '/sbin/init'
 
   - name: test-ag-zbx-srv
     networks:
@@ -30,6 +31,7 @@ platforms:
     image: 'ansible0guy/molecule:debian-latest'
     tmpfs: ['/tmp', '/run', '/run/lock']
     privileged: true
+    command: '/sbin/init'
 
   - name: test-ag-zbx-proxy
     networks:
@@ -40,6 +42,7 @@ platforms:
     image: 'ansible0guy/molecule:debian-latest'
     tmpfs: ['/tmp', '/run', '/run/lock']
     privileged: true
+    command: '/sbin/init'
 
   - name: test-ag-zbx-proxy2
     networks:
@@ -50,6 +53,7 @@ platforms:
     image: 'ansible0guy/molecule:debian-latest'
     tmpfs: ['/tmp', '/run', '/run/lock']
     privileged: true
+    command: '/sbin/init'
 
   - name: test-ag-zbx-a2
     networks:
@@ -60,6 +64,7 @@ platforms:
     image: 'ansible0guy/molecule:debian-latest'
     tmpfs: ['/tmp', '/run', '/run/lock']
     privileged: true
+    command: '/sbin/init'
 
   - name: test-ag-zbx-a1
     networks:
@@ -70,6 +75,7 @@ platforms:
     image: 'ansible0guy/molecule:debian-latest'
     tmpfs: ['/tmp', '/run', '/run/lock']
     privileged: true
+    command: '/sbin/init'
 
 provisioner:
   name: ansible
