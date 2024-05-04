@@ -24,4 +24,4 @@
     force: true
   when: >
     force_removal or
-    zbx_all_removal_prompt.user_input == 'yes'
+    zbx_all_removal_prompt.user_input | bool

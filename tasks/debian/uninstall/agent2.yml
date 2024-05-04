@@ -57,4 +57,4 @@
     - "{{ ZABBIX_CONFIG.agent2.path_userparameters }}"
   when:
     - zbx2_agent_dir_script.stat.exists or zbx2_agent_dir_up.stat.exists
-    - force_removal or zbx_agent_removal_prompt.user_input == 'yes'
+    - force_removal or zbx_agent_removal_prompt.user_input | bool

@@ -20,7 +20,7 @@
   when:
     - ZABBIX_CONFIG.manage.db | bool
     - "'mariadb-server' in ansible_facts.packages"
-    - force_removal or zbx_db_removal_prompt.user_input == 'yes'
+    - force_removal or zbx_db_removal_prompt.user_input | bool
 
 - name: Zabbix | Uninstall | DB | Notify user
   ansible.builtin.pause:

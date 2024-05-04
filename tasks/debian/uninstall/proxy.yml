@@ -44,7 +44,7 @@
     - "{{ ZABBIX_HC.path_alertscripts }}"
   when: >
     force_removal or
-    zbx_proxy_removal_prompt.user_input == 'yes'
+    zbx_proxy_removal_prompt.user_input | bool
 
 - name: Zabbix | Uninstall | Proxy | Database tasks
   ansible.builtin.import_tasks: db.yml

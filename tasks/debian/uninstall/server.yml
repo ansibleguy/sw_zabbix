@@ -43,7 +43,7 @@
     - "{{ ZABBIX_HC.path_alertscripts }}"
   when: >
     force_removal or
-    zbx_server_removal_prompt.user_input == 'yes'
+    zbx_server_removal_prompt.user_input | bool
 
 - name: Zabbix | Uninstall | Server | Database tasks
   ansible.builtin.import_tasks: db.yml
@@ -63,7 +63,7 @@
     purge: true
   when:
     - "'mariadb-server' in ansible_facts.packages"
-    - force_removal or zbx_mariadb_removal_prompt.user_input == 'yes'
+    - force_removal or zbx_mariadb_removal_prompt.user_input | bool
 
 - name: Zabbix | Uninstall | Server | Removing Nginx webserver config
   ansible.builtin.include_role:
@@ -95,7 +95,7 @@
     enabled: false
   when:
     - "'nginx' in ansible_facts.packages"
-    - force_removal or zbx_nginx_removal_prompt.user_input == 'yes'
+    - force_removal or zbx_nginx_removal_prompt.user_input | bool
   register: zbx_nginx_disable
   failed_when:
     - zbx_nginx_disable.failed
@@ -109,4 +109,4 @@
     purge: true
   when:
     - "'nginx' in ansible_facts.packages"
-    - force_removal or zbx_nginx_removal_prompt.user_input == 'yes'
+    - force_removal or zbx_nginx_removal_prompt.user_input | bool
