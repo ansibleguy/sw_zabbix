@@ -133,8 +133,8 @@ zabbix:
       aliases: ['zbx.template.ansibleguy.net']
  
       ssl:
-        mode: 'letsencrypt'  # or selfsigned/ca
-        #  if you use 'selfsigned' or 'ca':
+        mode: 'letsencrypt'  # or snakeoil/selfsigned/ca
+        #  if you use 'selfsigned', 'snakeoil' or 'ca':
         #    cert:
         #      cn: 'Zabbix Server'
         #      org: 'AnsibleGuy'

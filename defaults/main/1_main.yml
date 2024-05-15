@@ -101,7 +101,7 @@ defaults_zbx:
         port: 8080  # may not be 80 and/or 443 !
 
       ssl:
-        mode: 'ca'
+        mode: 'snakeoil'
         cert:
           cn: 'Zabbix Server'
           org: 'AnsibleGuy'
