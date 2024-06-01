@@ -7,6 +7,8 @@
       - ZABBIX_CONFIG.version in ZABBIX_CONFIG.release
       - not ZABBIX_CONFIG.manage.server | bool or ZABBIX_CONFIG.server.nginx.domain is defined
       - ZABBIX_CONFIG.version is version('6.0', '>=')
+      - not ZABBIX_CONFIG.manage.agent1 or ZABBIX_CONFIG.agent1.settings.Server | default(none, true) is not none or ZABBIX_CONFIG.agent1.settings.ServerActive | default(none, true) is not none
+      - not ZABBIX_CONFIG.manage.agent2 or ZABBIX_CONFIG.agent2.settings.Server | default(none, true) is not none or ZABBIX_CONFIG.agent2.settings.ServerActive | default(none, true) is not none
   tags: always
 
 - name: Zabbix | Processing debian config
