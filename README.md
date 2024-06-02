@@ -36,81 +36,7 @@ ansible-galaxy install ansibleguy.sw_zabbix --roles-path ./roles
 ansible-galaxy install -r requirements.yml
 ```
 
-## Functionality
-
-* **Package installation**
-  * Zabbix server
-    * Dependencies (_php, ..._)
-    * Apache2 => configured by Zabbix-Server package
-    * Nginx => using [THIS Role](https://github.com/ansibleguy/infra_nginx)
-    * MariaDB => using [THIS Role](https://github.com/ansibleguy/infra_mariadb)
-
-  * Zabbix proxy
-    * MariaDB => using [THIS Role](https://github.com/ansibleguy/infra_mariadb)
-
-  * Zabbix agent
-
-
-* **Configuration**
-  * **Features**:
-    * Copying your..
-      * scripts (_agent scripts, externalscripts, alertscripts_)
-      * userparameters
-      * certificates
-
-    * .. to the target system; just put them in the prepared 'files' directory of this role!
-   
-  * **Default config**:
-    * Using ansible-hostnames as Zabbix hostnames
-    * Traffic encryption using PSK
-    * Using a Self-Signed certificate for the Zabbix server
-    * not running as root
-    * Webserver best-practices => see: [THIS Role](https://github.com/ansibleguy/infra_nginx)
-    * Agent/Proxy/Server listening on all interfaces
-
-  * **Default opt-ins**:
-    * Logging to syslog
-    * Zabbix agent installation
-    * MariaDB setup for Zabbix proxy and server
-    * Nginx setup for Zabbix server
-
-  * **Default opt-outs**:
-    * Zabbix proxy and server installation
-    * Settings: UnsafeUserParameters, EnableRemoteCommands
-
-  * **Security**:
-    * Traffic encryption per PSK or Certificate is **ENFORCED**
-
-## Info
-
-* **Note:** The lowest version supported is 6.0!
-
-
-* **Warning:** The target server/os for the Zabbix server-component should host only this service! Else you might possibly run into configuration/compatibility issues!
-
-
-* **Note:** this role currently only supports debian-based systems
-
-
-* **Info:** We chose to use Nginx and Apache2 so that the configuration managed by Zabbix (_Apache2_) and the one we manage using this role (_Nginx_) can co-exist safely.
-This may be important in the future.
-Else incompatibilities would break future setups if Zabbix changes their config-handling.
-
-
-* **Info:** Zabbix-Server apache2 config is stored at: /etc/zabbix/apache.conf (_default_)
-
-
-* **Info:** The default login for the Zabbix server is: **User = Admin | Password = zabbix**
-
-
-* **Info:** If the server installation fails for some reason you might want to uninstall the 'zabbix-server-mysql' package before re-running this role!
-
-
-* **Warning:** Not every setting/variable you provide will be checked for validity. Bad config might break the role!
-
-
-* **Info:** If you use PSKs to encrypt your traffic - it must be at least 32 hex-digits long!
-
+----
 
 ## Usage
 
@@ -249,3 +175,83 @@ There are also some useful **tags** available:
 * agent
 * proxy
 * server
+
+----
+
+## Functionality
+
+* **Package installation**
+  * Zabbix server
+    * Dependencies (_php, ..._)
+    * Apache2 => configured by Zabbix-Server package
+    * Nginx => using [THIS Role](https://github.com/ansibleguy/infra_nginx)
+    * MariaDB => using [THIS Role](https://github.com/ansibleguy/infra_mariadb)
+
+  * Zabbix proxy
+    * MariaDB => using [THIS Role](https://github.com/ansibleguy/infra_mariadb)
+
+  * Zabbix agent
+
+
+* **Configuration**
+  * **Features**:
+    * Copying your..
+      * scripts (_agent scripts, externalscripts, alertscripts_)
+      * userparameters
+      * certificates
+
+    * .. to the target system; just put them in the prepared 'files' directory of this role!
+   
+  * **Default config**:
+    * Using ansible-hostnames as Zabbix hostnames
+    * Traffic encryption using PSK
+    * Using a Self-Signed certificate for the Zabbix server
+    * not running as root
+    * Webserver best-practices => see: [THIS Role](https://github.com/ansibleguy/infra_nginx)
+    * Agent/Proxy/Server listening on all interfaces
+
+  * **Default opt-ins**:
+    * Logging to syslog
+    * Zabbix agent installation
+    * MariaDB setup for Zabbix proxy and server
+    * Nginx setup for Zabbix server
+
+  * **Default opt-outs**:
+    * Zabbix proxy and server installation
+    * Settings: UnsafeUserParameters, EnableRemoteCommands
+
+  * **Security**:
+    * Traffic encryption per PSK or Certificate is **ENFORCED**
+
+----
+
+## Info
+
+* **Note:** The lowest version supported is 6.0!
+
+
+* **Warning:** The target server/os for the Zabbix server-component should host only this service! Else you might possibly run into configuration/compatibility issues!
+
+
+* **Note:** this role currently only supports debian-based systems
+
+
+* **Info:** We chose to use Nginx and Apache2 so that the configuration managed by Zabbix (_Apache2_) and the one we manage using this role (_Nginx_) can co-exist safely.
+This may be important in the future.
+Else incompatibilities would break future setups if Zabbix changes their config-handling.
+
+
+* **Info:** Zabbix-Server apache2 config is stored at: /etc/zabbix/apache.conf (_default_)
+
+
+* **Info:** The default login for the Zabbix server is: **User = Admin | Password = zabbix**
+
+
+* **Info:** If the server installation fails for some reason you might want to uninstall the 'zabbix-server-mysql' package before re-running this role!
+
+
+* **Warning:** Not every setting/variable you provide will be checked for validity. Bad config might break the role!
+
+
+* **Info:** If you use PSKs to encrypt your traffic - it must be at least 32 hex-digits long!
+
