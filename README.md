@@ -1,11 +1,14 @@
 [![Zabbix](https://assets.zabbix.com/img/logo/zabbix_logo_313x82.png)](https://www.zabbix.com)
 
 # Ansible Role - Zabbix deployment
+
 Ansible Role to deploy Zabbix Server/Proxy/Agent components on a linux server.
 
 The roles target is it to **configure the Zabbix components foundational**.
 
 You will need to manage the zabbix-agent integration(s) into your systems on your own! (_per example: adding MySQL users and client-config to monitor its status_)
+
+**NOTE:** Check out the [Zabbix Server dockerized](https://github.com/ansibleguy/sw_zabbix_server) Role if you prefer Docker setups.
 
 <a href='https://ko-fi.com/ansible0guy' target='_blank'><img height='35' style='border:0px;height:46px;' src='https://az743702.vo.msecnd.net/cdn/kofi3.png?v=0' border='0' alt='Buy me a coffee' />
 
