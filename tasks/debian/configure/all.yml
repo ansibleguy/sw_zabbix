@@ -11,11 +11,19 @@
     shell: '/usr/sbin/nologin'
     comment: 'Zabbix Service User'
 
+- name: Zabbix | Configure | All | Creating config directory
+  ansible.builtin.file:
+    state: directory
+    path: "{{ ZABBIX_HC.path_config }}"
+    owner: 'root'
+    group: "{{ ZABBIX_HC.group }}"
+    mode: 0750
+
 - name: Zabbix | Configure | All | Creating private directory
   ansible.builtin.file:
     state: directory
-    path: "{{ ZABBIX_CONFIG.path_private }}"
-    owner: "{{ ZABBIX_HC.user }}"
+    path: "{{ ZABBIX_CNF.path_private }}"
+    owner: 'root'
     group: "{{ ZABBIX_HC.group }}"
     mode: 0750
 

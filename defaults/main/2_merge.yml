@@ -1,3 +1,3 @@
 ---
 
-ZABBIX_CONFIG: "{{ defaults_zbx | combine(zabbix, recursive=true) }}"
+ZABBIX_CNF: "{{ defaults_zbx | combine(zabbix, recursive=true) }}"

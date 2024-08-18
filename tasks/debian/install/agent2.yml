@@ -3,7 +3,8 @@
 - name: Zabbix | Install | Agent V2 | Installing
   ansible.builtin.apt:
     name: "{{ ZABBIX_HC.packages.agent2 }}"
-    state: present
+    state: latest
+  tags: [skip_ansible_lint]  # latest
 
 - name: Zabbix | Install | Agent V2 | Enabling service
   ansible.builtin.systemd:

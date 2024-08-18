@@ -5,6 +5,9 @@ no_prompts: false
 shared_settings:
   timeout: 10
   logfile_size: 30  # MB
+  port:
+    passive: 10050
+    active: 10051
 
 defaults_zbx:
   version: '6.4'
@@ -57,7 +60,7 @@ defaults_zbx:
       #   DBSocket:
       #   DBHost:
       # defaults
-      ListenPort: "{{ ZABBIX_CONFIG.port.active }}"
+      ListenPort: "{{ shared_settings.port.active }}"
       ListenIP: '0.0.0.0'  # any
       #   SourceIP:
       Timeout: "{{ shared_settings.timeout }}"
@@ -92,6 +95,7 @@ defaults_zbx:
     # you might need to add the database config if you manage it by yourself
     php_settings:
       ZBX_SERVER_NAME: 'Monitoring'
+      ZBX_SERVER_PORT: "{{ shared_settings.port.active }}"
       # you could set the php key-value pairs here!
 
     nginx:  # see: https://github.com/ansibleguy/infra_nginx
@@ -147,8 +151,8 @@ defaults_zbx:
       #   DBSocket:
       #   DBHost:
       # defaults
-      ServerPort: "{{ ZABBIX_CONFIG.port.active }}"
-      ListenPort: "{{ ZABBIX_CONFIG.port.active }}"
+      ServerPort: "{{ shared_settings.port.active }}"
+      ListenPort: "{{ shared_settings.port.active }}"
       ListenIP: '0.0.0.0'  # any
       #   SourceIP:
       Hostname: "{{ ansible_hostname }}"
@@ -183,7 +187,7 @@ defaults_zbx:
       Server:
       TLSPSKIdentity:
       # defaults
-      ListenPort: "{{ ZABBIX_CONFIG.port.passive }}"
+      ListenPort: "{{ shared_settings.port.passive }}"
       ListenIP: '0.0.0.0'  # any
       #   SourceIP:
       Hostname: "{{ ansible_hostname }}"
@@ -215,7 +219,7 @@ defaults_zbx:
       Server:
       TLSPSKIdentity:
       # defaults
-      ListenPort: "{{ ZABBIX_CONFIG.port.passive }}"
+      ListenPort: "{{ shared_settings.port.passive }}"
       ListenIP: '0.0.0.0'  # any
       #   SourceIP:
       Hostname: "{{ ansible_hostname }}"
@@ -237,5 +241,5 @@ defaults_zbx:
       #   TLSKeyFile:
 
   port:
-    passive: 10050
-    active: 10051
+    passive: "{{ shared_settings.port.passive }}"
+    active: "{{ shared_settings.port.active }}"

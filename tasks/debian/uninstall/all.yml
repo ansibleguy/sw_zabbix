@@ -13,14 +13,14 @@
 
 - name: Zabbix | Uninstall | All | Ask user
   ansible.builtin.pause:
-    prompt: "Do you want to remove the private directory? ({{ ZABBIX_CONFIG.path_private }}) [yes/NO]!"
+    prompt: "Do you want to remove the private directory? ({{ ZABBIX_CNF.path_private }}) [yes/NO]!"
   register: zbx_all_removal_prompt
   when: not force_removal
 
 - name: Zabbix | Uninstall | All | Removing private directory
   ansible.builtin.file:
     state: absent
-    path: "{{ ZABBIX_CONFIG.path_private }}"
+    path: "{{ ZABBIX_CNF.path_private }}"
     force: true
   when: >
     force_removal or

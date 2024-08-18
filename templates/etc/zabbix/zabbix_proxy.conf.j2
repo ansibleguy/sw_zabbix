@@ -1,35 +1,35 @@
 # {{ ansible_managed }}
 # ansibleguy.sw_zabbix
 
-{% for setting, value in ZABBIX_CONFIG.proxy.settings.items() %}
+{% for setting, value in ZABBIX_CNF.proxy.settings.items() %}
 {%   if value not in NONE_VALUES and setting not in SETTING_GRAYLIST %}
 {{ setting }}={{ value }}
 {%   endif %}
 {% endfor %}
 
 # tls config
-{% if ZABBIX_CONFIG.proxy.tls_psk not in NONE_VALUES %}
-TLSPSKFile={{ ZABBIX_CONFIG.path_private }}/proxy_psk.txt
+{% if ZABBIX_CNF.proxy.tls_psk not in NONE_VALUES %}
+TLSPSKFile={{ ZABBIX_CNF.path_private }}/proxy_psk.txt
 {% endif %}
 
-{% if ZABBIX_CONFIG.proxy.tls_ca_copy not in NONE_VALUES and ZABBIX_CONFIG.proxy.tls_cert_copy not in NONE_VALUES and ZABBIX_CONFIG.proxy.tls_key_copy not in NONE_VALUES %}
-TLSCAFile={{ ZABBIX_CONFIG.path_private }}/proxy_ca.crt
-TLSCertFile={{ ZABBIX_CONFIG.path_private }}/proxy_cert.crt
-TLSKeyFile={{ ZABBIX_CONFIG.path_private }}/proxy_cert.key
+{% if ZABBIX_CNF.proxy.tls_ca_copy not in NONE_VALUES and ZABBIX_CNF.proxy.tls_cert_copy not in NONE_VALUES and ZABBIX_CNF.proxy.tls_key_copy not in NONE_VALUES %}
+TLSCAFile={{ ZABBIX_CNF.path_private }}/proxy_ca.crt
+TLSCertFile={{ ZABBIX_CNF.path_private }}/proxy_cert.crt
+TLSKeyFile={{ ZABBIX_CNF.path_private }}/proxy_cert.key
 {% endif %}
 
-{% if ZABBIX_CONFIG.manage.db | bool %}
+{% if ZABBIX_CNF.manage.db | bool %}
 # ansibleguy.infra_mariadb - db settings
-{%   if 'DBUser' not in ZABBIX_CONFIG.proxy.settings %}
-DBUser={{ ZABBIX_CONFIG.database.user.server_proxy }}
+{%   if 'DBUser' not in ZABBIX_CNF.proxy.settings %}
+DBUser={{ ZABBIX_CNF.database.user.server_proxy }}
 {%   endif %}
-{%   if 'DBPassword' not in ZABBIX_CONFIG.proxy.settings %}
-DBPassword={{ ZABBIX_CONFIG.database.pwd.server_proxy }}
+{%   if 'DBPassword' not in ZABBIX_CNF.proxy.settings %}
+DBPassword={{ ZABBIX_CNF.database.pwd.server_proxy }}
 {%   endif %}
-{%   if 'DBSocket' not in ZABBIX_CONFIG.proxy.settings %}
+{%   if 'DBSocket' not in ZABBIX_CNF.proxy.settings %}
 DBSocket={{ ZABBIX_MARIADB_INSTANCE.socket }}
 {%   endif %}
-{%   if 'DBName' not in ZABBIX_CONFIG.proxy.settings %}
-DBName={{ ZABBIX_CONFIG.database.name }}
+{%   if 'DBName' not in ZABBIX_CNF.proxy.settings %}
+DBName={{ ZABBIX_CNF.database.name }}
 {%   endif %}
 {% endif %}

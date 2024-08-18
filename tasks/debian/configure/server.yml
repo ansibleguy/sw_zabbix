@@ -8,7 +8,7 @@
     dest: "{{ ZABBIX_HC.path_externalscripts }}/"
     owner: 'root'
     group: "{{ ZABBIX_HC.group }}"
-    mode: "{{ ZABBIX_CONFIG.mode_scripts }}"
+    mode: "{{ ZABBIX_CNF.mode_scripts }}"
   with_fileglob: "files/server+proxy/externalscripts/*"
 
 - name: Zabbix | Configure | Server | Copying provided alert-scripts
@@ -17,18 +17,18 @@
     dest: "{{ ZABBIX_HC.path_alertscripts }}/"
     owner: 'root'
     group: "{{ ZABBIX_HC.group }}"
-    mode: "{{ ZABBIX_CONFIG.mode_scripts }}"
+    mode: "{{ ZABBIX_CNF.mode_scripts }}"
   with_fileglob: "files/server+proxy/alertscripts/*"
 
 - name: Zabbix | Configure | Server | Deploying tls certificate
   ansible.builtin.import_tasks: tls_cert.yml
   vars:
-    config: "{{ ZABBIX_CONFIG.server }}"
+    config: "{{ ZABBIX_CNF.server }}"
     prefix: 'server'
   when:
-    - ZABBIX_CONFIG.server.tls_ca_copy not in NONE_VALUES
-    - ZABBIX_CONFIG.server.tls_cert_copy not in NONE_VALUES
-    - ZABBIX_CONFIG.server.tls_key_copy not in NONE_VALUES
+    - ZABBIX_CNF.server.tls_ca_copy not in NONE_VALUES
+    - ZABBIX_CNF.server.tls_cert_copy not in NONE_VALUES
+    - ZABBIX_CNF.server.tls_key_copy not in NONE_VALUES
 
 # todo: fix that db pwd changes every run
 - name: Zabbix | Configure | Server | Deploying config
@@ -52,7 +52,7 @@
     mode: 0750
   no_log: true  # since passwords are written to the file
   register: zbx_php_config_raw
-  when: ZABBIX_CONFIG.server.php_conf
+  when: ZABBIX_CNF.server.php_conf
   changed_when: false
 
 - name: Zabbix | Configure | Server | Getting local timezone
@@ -66,42 +66,42 @@
   changed_when: false
   check_mode: false
   become: false
-  when: "'date.timezone' not in ZABBIX_CONFIG.server.php"
+  when: "'date.timezone' not in ZABBIX_CNF.server.php"
 
 - name: Zabbix | Configure | Server | Configuring php timezone to locally used one
   ansible.builtin.lineinfile:
-    path: "/etc/php/{{ ZABBIX_CONFIG.php_version }}/apache2/php.ini"
+    path: "/etc/php/{{ ZABBIX_CNF.php_version }}/apache2/php.ini"
     line: "date.timezone = {{ controller_tz.stdout }}"
     regexp: "^date.timezone"
   register: zbx_server_php_tz_raw
-  when: "'date.timezone' not in ZABBIX_CONFIG.server.php"
+  when: "'date.timezone' not in ZABBIX_CNF.server.php"
 
 - name: Zabbix | Configure | Server | Configuring database socket
   ansible.builtin.lineinfile:
-    path: "/etc/php/{{ ZABBIX_CONFIG.php_version }}/apache2/php.ini"
+    path: "/etc/php/{{ ZABBIX_CNF.php_version }}/apache2/php.ini"
     line: "{{ item.line }}"
     regexp: "{{ item.reg }}"
   loop:
-    - line: "mysqli.default_socket = {{ ZABBIX_CONFIG.database.socket | default(ZABBIX_MARIADB_INSTANCE.socket) }}"
+    - line: "mysqli.default_socket = {{ ZABBIX_CNF.database.socket | default(ZABBIX_MARIADB_INSTANCE.socket) }}"
       reg: '^mysqli.default_socket'
-    - line: "pdo_mysql.default_socket = {{ ZABBIX_CONFIG.database.socket | default(ZABBIX_MARIADB_INSTANCE.socket) }}"
+    - line: "pdo_mysql.default_socket = {{ ZABBIX_CNF.database.socket | default(ZABBIX_MARIADB_INSTANCE.socket) }}"
       reg: '^pdo_mysql.default_socket'
   when: >
-    ZABBIX_CONFIG.manage.db | bool or
-    'socket' in ZABBIX_CONFIG.database
+    ZABBIX_CNF.manage.db | bool or
+    'socket' in ZABBIX_CNF.database
 
 - name: Zabbix | Configure | Server | Configuring php settings
   ansible.builtin.lineinfile:
-    path: "/etc/php/{{ ZABBIX_CONFIG.php_version }}/apache2/php.ini"
+    path: "/etc/php/{{ ZABBIX_CNF.php_version }}/apache2/php.ini"
     line: "{{ item.key }} = {{ item.value }}"
     regexp: "^{{ item.key }}"
-  with_dict: "{{ ZABBIX_CONFIG.server.php }}"
+  with_dict: "{{ ZABBIX_CNF.server.php }}"
   register: zbx_server_php_config_raw
 
 - name: Zabbix | Configure | Server | Configuring apache2 listen-port
   ansible.builtin.lineinfile:
     path: '/etc/apache2/ports.conf'
-    line: "Listen {{ ZABBIX_CONFIG.server.nginx.proxy.port }}"
+    line: "Listen {{ ZABBIX_CNF.server.nginx.proxy.port }}"
     regexp: '^Listen\s80$'
   register: zbx_server_a2port_raw
 
@@ -113,11 +113,11 @@
     - '/etc/apache2/sites-enabled/status.conf'
     - '/etc/apache2/sites-available/status.conf'
   register: zbx_server_a2status_rm
-  when: ZABBIX_CONFIG.apache.status_page.state != 'present'
+  when: ZABBIX_CNF.apache.status_page.state != 'present'
 
 - name: Zabbix | Configure | Server | Adding apache2 status page
   ansible.builtin.import_tasks: apache_add_status.yml
-  when: ZABBIX_CONFIG.apache.status_page.state == 'present'
+  when: ZABBIX_CNF.apache.status_page.state == 'present'
 
 - name: Zabbix | Configure | Server | Restarting Zabbix-Server service
   ansible.builtin.systemd:

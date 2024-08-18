@@ -3,7 +3,7 @@
 - name: Zabbix | Proxy | Uninstalling
   ansible.builtin.include_tasks: uninstall/proxy.yml
   when:
-    - ZABBIX_CONFIG.state != 'present'
+    - ZABBIX_CNF.state != 'present'
     - "'zabbix-proxy-mysql' in ansible_facts.packages"
   args:
     apply:
@@ -17,37 +17,37 @@
     db managed by role or 'DBName' and 'DBSocket' for a local database or 'DBHost' and 'DBPort' for a remote database!
     Also: unencrypted connections are not allowed!"
   when: >
-    ZABBIX_CONFIG.state == 'present' and (
-      ZABBIX_CONFIG.proxy.settings.Server in NONE_VALUES or (
-        ZABBIX_CONFIG.proxy.settings.TLSPSKIdentity in NONE_VALUES and
-        ZABBIX_CONFIG.proxy.settings.TLSCertFile in NONE_VALUES
+    ZABBIX_CNF.state == 'present' and (
+      ZABBIX_CNF.proxy.settings.Server in NONE_VALUES or (
+        ZABBIX_CNF.proxy.settings.TLSPSKIdentity in NONE_VALUES and
+        ZABBIX_CNF.proxy.settings.TLSCertFile in NONE_VALUES
       ) or (
-        ZABBIX_CONFIG.proxy.tls_psk in NONE_VALUES and (
-          ZABBIX_CONFIG.proxy.tls_cert_copy in NONE_VALUES or
-          ZABBIX_CONFIG.proxy.tls_key_copy in NONE_VALUES or
-          ZABBIX_CONFIG.proxy.tls_ca_copy in NONE_VALUES
+        ZABBIX_CNF.proxy.tls_psk in NONE_VALUES and (
+          ZABBIX_CNF.proxy.tls_cert_copy in NONE_VALUES or
+          ZABBIX_CNF.proxy.tls_key_copy in NONE_VALUES or
+          ZABBIX_CNF.proxy.tls_ca_copy in NONE_VALUES
         ) or (
-          not ZABBIX_CONFIG.manage.db | bool and (
-            ZABBIX_CONFIG.proxy.settings.DBSocket in NONE_VALUES or (
-              ZABBIX_CONFIG.proxy.settings.DBHost in NONE_VALUES and
-              ZABBIX_CONFIG.proxy.settings.DBPort in NONE_VALUES
+          not ZABBIX_CNF.manage.db | bool and (
+            ZABBIX_CNF.proxy.settings.DBSocket in NONE_VALUES or (
+              ZABBIX_CNF.proxy.settings.DBHost in NONE_VALUES and
+              ZABBIX_CNF.proxy.settings.DBPort in NONE_VALUES
             )
           )
         ) or (
-          not ZABBIX_CONFIG.manage.db | bool and
-          ZABBIX_CONFIG.proxy.settings.DBName in NONE_VALUES
+          not ZABBIX_CNF.manage.db | bool and
+          ZABBIX_CNF.proxy.settings.DBName in NONE_VALUES
         ) or (
-          ZABBIX_CONFIG.proxy.settings.TLSConnect == 'unencrypted' or
-          ZABBIX_CONFIG.proxy.settings.TLSAccept == 'unencrypted'
+          ZABBIX_CNF.proxy.settings.TLSConnect == 'unencrypted' or
+          ZABBIX_CNF.proxy.settings.TLSAccept == 'unencrypted'
         ) or (
-          ZABBIX_CONFIG.proxy.tls_psk | zabbix_psk_hex | length < ZABBIX_HC.psk_min_length
+          ZABBIX_CNF.proxy.tls_psk | zabbix_psk_hex | length < ZABBIX_HC.psk_min_length
         )
       )
     )
 
 - name: Zabbix | Proxy | Installing
   ansible.builtin.include_tasks: install/proxy.yml
-  when: ZABBIX_CONFIG.state == 'present'
+  when: ZABBIX_CNF.state == 'present'
   args:
     apply:
       tags: [install, proxy]
@@ -55,4 +55,4 @@
 
 - name: Zabbix | Proxy | Configuring
   ansible.builtin.import_tasks: configure/proxy.yml
-  when: ZABBIX_CONFIG.state == 'present'
+  when: ZABBIX_CNF.state == 'present'

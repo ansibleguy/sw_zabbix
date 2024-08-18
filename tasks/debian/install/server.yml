@@ -22,12 +22,12 @@
 - name: Zabbix | Install | Server | Setting db import-file (<V6 - schema.sql.gz)
   ansible.builtin.set_fact:
     file_schema: "{{ ZABBIX_HC.file_mysql_server_lt6 }}"
-  when: ZABBIX_CONFIG.version is version('6.0', '<')
+  when: ZABBIX_CNF.version is version('6.0', '<')
 
 - name: Zabbix | Install | Server | Setting db import-file (V6+ - server.sql.gz)
   ansible.builtin.set_fact:
     file_schema: "{{ ZABBIX_HC.file_mysql_server_ge6 }}"
-  when: ZABBIX_CONFIG.version is version('6.0', '>=')
+  when: ZABBIX_CNF.version is version('6.0', '>=')
 
 - name: Zabbix | Install | Server | Database tasks (V6+)
   ansible.builtin.import_tasks: db.yml
@@ -48,7 +48,7 @@
 - name: Zabbix | Install | Server | Configuring apache2 listen-port
   ansible.builtin.lineinfile:
     path: '/etc/apache2/ports.conf'
-    line: "Listen {{ ZABBIX_CONFIG.server.nginx.proxy.port }}"
+    line: "Listen {{ ZABBIX_CNF.server.nginx.proxy.port }}"
     regexp: '^Listen\s80$'
 
 - name: Zabbix | Install | Server | Enabling apache2 service
@@ -62,10 +62,10 @@
   vars:
     nginx:
       sites:
-        zabbix: "{{ ZABBIX_CONFIG.server.nginx }}"
+        zabbix: "{{ ZABBIX_CNF.server.nginx }}"
   when:
-    - ZABBIX_CONFIG.manage.webserver | bool
-    - ZABBIX_CONFIG.manage.server | bool
+    - ZABBIX_CNF.manage.webserver | bool
+    - ZABBIX_CNF.manage.server | bool
   tags: [install, server]
   args:
     apply:

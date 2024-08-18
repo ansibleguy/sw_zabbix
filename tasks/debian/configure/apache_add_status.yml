@@ -3,7 +3,7 @@
 - name: Zabbix | Configure | Apache2 status page | Configuring listen-port
   ansible.builtin.lineinfile:
     path: '/etc/apache2/ports.conf'
-    line: "Listen {{ ZABBIX_CONFIG.apache.status_page.port }}"
+    line: "Listen {{ ZABBIX_CNF.apache.status_page.port }}"
   ignore_errors: true
 
 - name: Zabbix | Configure | Apache2 status page | Configuring site

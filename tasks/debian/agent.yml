@@ -3,8 +3,8 @@
 - name: "Zabbix | Agent V{{ vers }} | Uninstalling"
   ansible.builtin.include_tasks: uninstall/agent1.yml
   when: >
-    (ZABBIX_CONFIG.state != 'present' or
-    not ZABBIX_CONFIG.manage.agent1 | bool) and
+    (ZABBIX_CNF.state != 'present' or
+    not ZABBIX_CNF.manage.agent1 | bool) and
     ZABBIX_HC.packages.agent1 in ansible_facts.packages
   tags: [uninstall, agent]
   args:
@@ -14,9 +14,9 @@
 - name: "Zabbix | Agent V{{ vers }} | Uninstalling Agent2"
   ansible.builtin.include_tasks: uninstall/agent2.yml
   when: >
-    (ZABBIX_CONFIG.state != 'present' or
-    not ZABBIX_CONFIG.manage.agent2 | bool or
-    ZABBIX_CONFIG.manage.agent1 | bool) and
+    (ZABBIX_CNF.state != 'present' or
+    not ZABBIX_CNF.manage.agent2 | bool or
+    ZABBIX_CNF.manage.agent1 | bool) and
     ZABBIX_HC.packages.agent2 in ansible_facts.packages
   tags: [uninstall, agent]
   args:
@@ -29,7 +29,7 @@
     We need: 'Server', 'TLSPSKIdentity or TLSCertFile', 'tls_psk (longer than {{ ZABBIX_HC.psk_min_length }} characters) or TLSKeyFile'!
     Also: unencrypted connections are not supported by this role!"
   when: >
-    ZABBIX_CONFIG.state == 'present' and (
+    ZABBIX_CNF.state == 'present' and (
       agent.settings.Server in NONE_VALUES or (
         agent.settings.TLSPSKIdentity in NONE_VALUES and
         agent.settings.TLSCertFile in NONE_VALUES
@@ -51,7 +51,7 @@
 - name: "Zabbix | Agent V{{ vers }} | Installing"
   ansible.builtin.include_tasks: install/agent1.yml
   when:
-    - ZABBIX_CONFIG.state == 'present'
+    - ZABBIX_CNF.state == 'present'
     - vers == 1
   tags: [install, agent]
   args:
@@ -65,7 +65,7 @@
     apply:
       tags: [config, install, agent]
   when:
-    - ZABBIX_CONFIG.state == 'present'
+    - ZABBIX_CNF.state == 'present'
     - vers == 1
 
 - name: "Zabbix | Agent V{{ vers }} | Installing Agent2"
@@ -75,7 +75,7 @@
     apply:
       tags: [install, agent]
   when:
-    - ZABBIX_CONFIG.state == 'present'
+    - ZABBIX_CNF.state == 'present'
     - vers == 2
 
 - name: "Zabbix | Agent V{{ vers }} | Configuring Agent2"
@@ -85,5 +85,5 @@
     apply:
       tags: [config, install, agent]
   when:
-    - ZABBIX_CONFIG.state == 'present'
+    - ZABBIX_CNF.state == 'present'
     - vers == 2

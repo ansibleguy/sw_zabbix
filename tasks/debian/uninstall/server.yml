@@ -23,9 +23,9 @@
     state: absent
   loop:
     - "{{ ZABBIX_HC.file_config_server }}"
-    - "{{ ZABBIX_CONFIG.path_private }}/server_ca.crt"
-    - "{{ ZABBIX_CONFIG.path_private }}/server_cert.crt"
-    - "{{ ZABBIX_CONFIG.path_private }}/server_cert.key"
+    - "{{ ZABBIX_CNF.path_private }}/server_ca.crt"
+    - "{{ ZABBIX_CNF.path_private }}/server_cert.crt"
+    - "{{ ZABBIX_CNF.path_private }}/server_cert.key"
 
 - name: Zabbix | Uninstall | Server | Ask user
   ansible.builtin.pause:
@@ -71,9 +71,9 @@
   vars:
     nginx:
       sites:
-        zabbix: "{{ ZABBIX_CONFIG.server.nginx | combine({'state': 'absent'}) }}"
+        zabbix: "{{ ZABBIX_CNF.server.nginx | combine({'state': 'absent'}) }}"
   when:
-    - ZABBIX_CONFIG.manage.webserver | bool
+    - ZABBIX_CNF.manage.webserver | bool
     - "'nginx' in ansible_facts.packages"
   tags: [install, server]
   args:

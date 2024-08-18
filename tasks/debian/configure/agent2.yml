@@ -17,7 +17,7 @@
     dest: "{{ agent.path_scripts }}/"
     owner: 'root'
     group: "{{ ZABBIX_HC.group }}"
-    mode: "{{ ZABBIX_CONFIG.mode_scripts }}"
+    mode: "{{ ZABBIX_CNF.mode_scripts }}"
   with_fileglob: "files/agent2/scripts/*"
 
 - name: Zabbix | Configure | Agent V2 | Copying provided userparameters
@@ -32,7 +32,7 @@
 - name: Zabbix | Configure | Agent V2 | Deploying tls-psk
   ansible.builtin.copy:
     content: "{{ agent.tls_psk | zabbix_psk_hex }}"
-    dest: "{{ ZABBIX_CONFIG.path_private }}/agent2_psk.txt"
+    dest: "{{ ZABBIX_CNF.path_private }}/agent2_psk.txt"
     owner: 'root'
     group: "{{ ZABBIX_HC.group }}"
     mode: 0640

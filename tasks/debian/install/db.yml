@@ -7,11 +7,11 @@
     mariadb:
       instances:
         zabbix: "{{ ZABBIX_MARIADB_INSTANCE }}"
-  when: ZABBIX_CONFIG.manage.db | bool
+  when: ZABBIX_CNF.manage.db | bool
 
 - name: Zabbix | Install | DB | Checking for database config
   ansible.builtin.stat:
-    path: "{{ ZABBIX_CONFIG.database.my_cnf }}"
+    path: "{{ ZABBIX_CNF.database.my_cnf }}"
   register: zbx_db_cnf_file
 
 - name: Zabbix | Install | DB | Adding my.cnf
@@ -21,22 +21,22 @@
 
       [client]
       socket={{ ZABBIX_MARIADB_INSTANCE.socket }}
-      user={{ ZABBIX_CONFIG.database.user.server_proxy }}
-      password="{{ ZABBIX_CONFIG.database.pwd.server_proxy }}"
+      user={{ ZABBIX_CNF.database.user.server_proxy }}
+      password="{{ ZABBIX_CNF.database.pwd.server_proxy }}"
 
     mode: 0640
-    dest: "{{ ZABBIX_CONFIG.database.my_cnf }}"
+    dest: "{{ ZABBIX_CNF.database.my_cnf }}"
     owner: 'root'
     group: 'root'
   when: >
-    ZABBIX_CONFIG.database.update_password == 'always' or
+    ZABBIX_CNF.database.update_password == 'always' or
     (force_pwd_change is defined and force_pwd_change) or
     not zbx_db_cnf_file.stat.exists
 
 - name: Zabbix | Install | DB | Pulling existing database password
   ansible.builtin.shell: |
     set -o pipefail
-    cat {{ ZABBIX_CONFIG.database.my_cnf }} | grep 'password' | cut -d '=' -f2- | tr -d \\\"
+    cat {{ ZABBIX_CNF.database.my_cnf }} | grep 'password' | cut -d '=' -f2- | tr -d \\\"
   args:
     executable: '/bin/bash'
   register: zbx_db_pwd
@@ -51,14 +51,14 @@
 
 - name: Zabbix | Install | DB | Checking if database is empty
   community.mysql.mysql_query:
-    login_db: "{{ ZABBIX_CONFIG.database.name }}"
-    query: "SELECT count(*) FROM information_schema.TABLES WHERE (TABLE_SCHEMA = '{{ ZABBIX_CONFIG.database.name }}')"
+    login_db: "{{ ZABBIX_CNF.database.name }}"
+    query: "SELECT count(*) FROM information_schema.TABLES WHERE (TABLE_SCHEMA = '{{ ZABBIX_CNF.database.name }}')"
     login_unix_socket: "{{ ZABBIX_MARIADB_INSTANCE.socket }}"
-    login_user: "{{ ZABBIX_CONFIG.database.user.server_proxy }}"
-    login_password: "{{ zbx_db_pwd.stdout | default(ZABBIX_CONFIG.database.pwd.server_proxy) }}"
+    login_user: "{{ ZABBIX_CNF.database.user.server_proxy }}"
+    login_password: "{{ zbx_db_pwd.stdout | default(ZABBIX_CNF.database.pwd.server_proxy) }}"
   ignore_errors: true
   register: zbx_db_empty
-  when: ZABBIX_CONFIG.manage.db | bool
+  when: ZABBIX_CNF.manage.db | bool
   check_mode: false
 
 - name: Zabbix | Install | DB | Connection failed!
@@ -74,25 +74,25 @@
     query: 'SET GLOBAL log_bin_trust_function_creators=1'
     login_unix_socket: "{{ ZABBIX_MARIADB_INSTANCE.socket }}"
     login_user: 'root'
-    login_password: "{{ ZABBIX_CONFIG.database.pwd.server_proxy_root | default(omit) }}"
+    login_password: "{{ ZABBIX_CNF.database.pwd.server_proxy_root | default(omit) }}"
   when:
-    - ZABBIX_CONFIG.manage.db | bool
+    - ZABBIX_CNF.manage.db | bool
     - zbx_db_empty['query_result'][0][0]['count(*)'] | int == 0
-    - ZABBIX_CONFIG.version is version('6.2', '>=')
+    - ZABBIX_CNF.version is version('6.2', '>=')
 
 - name: Zabbix | Install | DB | Importing database schema
   community.mysql.mysql_db:
-    name: "{{ ZABBIX_CONFIG.database.name }}"
+    name: "{{ ZABBIX_CNF.database.name }}"
     state: import
     force: true
     single_transaction: true
     use_shell: true  # else it will fail
     target: "{{ file_schema }}"
     login_unix_socket: "{{ ZABBIX_MARIADB_INSTANCE.socket }}"
-    login_user: "{{ ZABBIX_CONFIG.database.user.server_proxy }}"
-    login_password: "{{ zbx_db_pwd.stdout | default(ZABBIX_CONFIG.database.pwd.server_proxy) }}"
+    login_user: "{{ ZABBIX_CNF.database.user.server_proxy }}"
+    login_password: "{{ zbx_db_pwd.stdout | default(ZABBIX_CNF.database.pwd.server_proxy) }}"
   when:
-    - ZABBIX_CONFIG.manage.db | bool
+    - ZABBIX_CNF.manage.db | bool
     - zbx_db_empty['query_result'][0][0]['count(*)'] | int == 0
 
 - name: Zabbix | Install | DB | Post-import task
@@ -100,16 +100,16 @@
     query: 'SET GLOBAL log_bin_trust_function_creators=0'
     login_unix_socket: "{{ ZABBIX_MARIADB_INSTANCE.socket }}"
     login_user: 'root'
-    login_password: "{{ ZABBIX_CONFIG.database.pwd.server_proxy_root | default(omit) }}"
+    login_password: "{{ ZABBIX_CNF.database.pwd.server_proxy_root | default(omit) }}"
   when:
-    - ZABBIX_CONFIG.manage.db | bool
+    - ZABBIX_CNF.manage.db | bool
     - zbx_db_empty['query_result'][0][0]['count(*)'] | int == 0
-    - ZABBIX_CONFIG.version is version('6.2', '>=')
+    - ZABBIX_CNF.version is version('6.2', '>=')
 
 - name: Zabbix | Install | DB | Unmanaged DB
   ansible.builtin.pause:
     prompt: "Since this role is not managing the zabbix-database, you will need to import the database schema initially!
     This can be done like this when using a local database: 'zcat {{ file_schema }}
-    | mysql --socket /run/mysqld/mysqld.sock -uroot -p {{ ZABBIX_CONFIG.database.name }}'.
+    | mysql --socket /run/mysqld/mysqld.sock -uroot -p {{ ZABBIX_CNF.database.name }}'.
     Make sure the schema is imported before continuing!"
-  when: not ZABBIX_CONFIG.manage.db | bool
+  when: not ZABBIX_CNF.manage.db | bool

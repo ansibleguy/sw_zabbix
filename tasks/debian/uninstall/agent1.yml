@@ -23,25 +23,25 @@
     state: absent
   loop:
     - "{{ ZABBIX_HC.file_config_agent }}"
-    - "{{ ZABBIX_CONFIG.path_private }}/agent_psk.txt"
-    - "{{ ZABBIX_CONFIG.path_private }}/agent_ca.crt"
-    - "{{ ZABBIX_CONFIG.path_private }}/agent_cert.crt"
-    - "{{ ZABBIX_CONFIG.path_private }}/agent_cert.key"
+    - "{{ ZABBIX_CNF.path_private }}/agent_psk.txt"
+    - "{{ ZABBIX_CNF.path_private }}/agent_ca.crt"
+    - "{{ ZABBIX_CNF.path_private }}/agent_cert.crt"
+    - "{{ ZABBIX_CNF.path_private }}/agent_cert.key"
 
 - name: Zabbix | Uninstall | Agent V1 | Checking for script directory
   ansible.builtin.stat:
-    path: "{{ ZABBIX_CONFIG.agent1.path_scripts }}"
+    path: "{{ ZABBIX_CNF.agent1.path_scripts }}"
   register: zbx_agent_dir_script
 
 - name: Zabbix | Uninstall | Agent V1 | Checking for userparameter directory
   ansible.builtin.stat:
-    path: "{{ ZABBIX_CONFIG.agent1.path_userparameters }}"
+    path: "{{ ZABBIX_CNF.agent1.path_userparameters }}"
   register: zbx_agent_dir_up
 
 - name: Zabbix | Uninstall | Agent V1 | Ask user
   ansible.builtin.pause:
     prompt: "Do you want to remove the scripts and userparameters directories?
-    ({{ ZABBIX_CONFIG.agent1.path_scripts }}, {{ ZABBIX_CONFIG.agent1.path_userparameters }}) [yes/NO]!"
+    ({{ ZABBIX_CNF.agent1.path_scripts }}, {{ ZABBIX_CNF.agent1.path_userparameters }}) [yes/NO]!"
   register: zbx_agent_removal_prompt
   when:
     - not force_removal
@@ -53,8 +53,8 @@
     state: absent
     force: true
   loop:
-    - "{{ ZABBIX_CONFIG.agent1.path_scripts }}"
-    - "{{ ZABBIX_CONFIG.agent1.path_userparameters }}"
+    - "{{ ZABBIX_CNF.agent1.path_scripts }}"
+    - "{{ ZABBIX_CNF.agent1.path_userparameters }}"
   when:
     - zbx_agent_dir_script.stat.exists or zbx_agent_dir_up.stat.exists
     - force_removal or zbx_agent_removal_prompt.user_input | bool
