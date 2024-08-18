@@ -4,7 +4,7 @@
 
 <?php
 $ZBX_SERVER = '{{ ZABBIX_CONFIG.server.php_settings.ZBX_SERVER | default('localhost') }}';
-$ZBX_SERVER_PORT = '{{ ZABBIX_HC.port.active }}';
+$ZBX_SERVER_PORT = '{{ ZABBIX_CONFIG.port.active }}';
 $ZBX_SERVER_NAME = '{{ ZABBIX_CONFIG.server.php_settings.ZBX_SERVER_NAME }}';
 
 $DB['TYPE'] = 'MYSQL';

@@ -57,7 +57,7 @@ defaults_zbx:
       #   DBSocket:
       #   DBHost:
       # defaults
-      ListenPort: "{{ ZABBIX_HC.port.active }}"
+      ListenPort: "{{ ZABBIX_CONFIG.port.active }}"
       ListenIP: '0.0.0.0'  # any
       #   SourceIP:
       Timeout: "{{ shared_settings.timeout }}"
@@ -147,8 +147,8 @@ defaults_zbx:
       #   DBSocket:
       #   DBHost:
       # defaults
-      ServerPort: "{{ ZABBIX_HC.port.active }}"
-      ListenPort: "{{ ZABBIX_HC.port.active }}"
+      ServerPort: "{{ ZABBIX_CONFIG.port.active }}"
+      ListenPort: "{{ ZABBIX_CONFIG.port.active }}"
       ListenIP: '0.0.0.0'  # any
       #   SourceIP:
       Hostname: "{{ ansible_hostname }}"
@@ -183,7 +183,7 @@ defaults_zbx:
       Server:
       TLSPSKIdentity:
       # defaults
-      ListenPort: "{{ ZABBIX_HC.port.passive }}"
+      ListenPort: "{{ ZABBIX_CONFIG.port.passive }}"
       ListenIP: '0.0.0.0'  # any
       #   SourceIP:
       Hostname: "{{ ansible_hostname }}"
@@ -215,7 +215,7 @@ defaults_zbx:
       Server:
       TLSPSKIdentity:
       # defaults
-      ListenPort: "{{ ZABBIX_HC.port.passive }}"
+      ListenPort: "{{ ZABBIX_CONFIG.port.passive }}"
       ListenIP: '0.0.0.0'  # any
       #   SourceIP:
       Hostname: "{{ ansible_hostname }}"
@@ -235,3 +235,7 @@ defaults_zbx:
       #   TLSCAFile:
       #   TLSCertFile:
       #   TLSKeyFile:
+
+  port:
+    passive: 10050
+    active: 10051
