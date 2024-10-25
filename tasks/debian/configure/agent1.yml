@@ -37,6 +37,7 @@
     group: "{{ ZABBIX_HC.group }}"
     mode: 0640
   when: agent.tls_psk not in NONE_VALUES
+  no_log: true
 
 - name: Zabbix | Configure | Agent V1 | Deploying tls certificate
   ansible.builtin.import_tasks: tls_cert.yml
