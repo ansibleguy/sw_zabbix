@@ -47,6 +47,7 @@
 
 - name: Zabbix | Install | Proxy | SQLite Database
   ansible.builtin.shell: "sqlite3 {{ ZABBIX_CNF.proxy.settings.DBName | default('/usr/lib/zabbix/proxy.db', true) }} < {{ ZABBIX_HC.file_sqlite }}"
+  changed_when: false
   when: >
     ZABBIX_CNF.proxy.database == 'sqlite' and
     (ZABBIX_CNF.version is version('6.0', '<') or
