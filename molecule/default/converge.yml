@@ -12,7 +12,7 @@
 
       server:
         nginx:
-          domain: 'zabbix.test.ansibleguy.net'
+          domain: 'zabbix.test.oxl.at'
           ip: '192.168.8.2'
 
           ssl:
@@ -20,7 +20,7 @@
             cert:
               cn: 'Zabbix'
               org: 'AnsibleGuy Test'
-              email: 'testmaster@ansibleguy.net'
+              email: 'testmaster@oxl.at'
 
         settings:
           ProxyDataFrequency: 10
@@ -38,7 +38,7 @@
           TLSPSKIdentity: 'testIdentity1'
 
   roles:
-    - ansibleguy.sw_zabbix
+    - oxlorg.zabbix
 
 - name: Converge Proxy
   hosts: test-ag-zbx-proxy
@@ -68,7 +68,7 @@
           TLSPSKIdentity: 'testIdentity3'
 
   roles:
-    - ansibleguy.sw_zabbix
+    - oxlorg.zabbix
 
 - name: Converge Proxy SQLite
   hosts: test-ag-zbx-proxy2
@@ -99,7 +99,7 @@
           TLSPSKIdentity: 'testIdentity3'
 
   roles:
-    - ansibleguy.sw_zabbix
+    - oxlorg.zabbix
 
 - name: Converge Agent V2
   hosts: test-ag-zbx-a2
@@ -119,7 +119,7 @@
           DebugLevel: 1
 
   roles:
-    - ansibleguy.sw_zabbix
+    - oxlorg.zabbix
 
 - name: Converge Agent V1
   hosts: test-ag-zbx-a1
@@ -140,4 +140,4 @@
           EnableRemoteCommands: 1
 
   roles:
-    - ansibleguy.sw_zabbix
+    - oxlorg.zabbix

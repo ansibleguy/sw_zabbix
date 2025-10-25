@@ -34,6 +34,7 @@
       tags: [config, install, uninstall, server]
   tags: [config, install, uninstall, server]
 
+# todo: sqlite not working, deprecated parameters for v7 ...
 - name: Zabbix | Processing Zabbix Proxy
   ansible.builtin.include_tasks: proxy.yml
   when: ZABBIX_CNF.manage.proxy | bool

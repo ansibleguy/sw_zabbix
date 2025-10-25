@@ -67,7 +67,7 @@
 
 - name: Zabbix | Uninstall | Server | Removing Nginx webserver config
   ansible.builtin.include_role:
-    name: ansibleguy.infra_nginx
+    name: oxlorg.nginx
   vars:
     nginx:
       sites:

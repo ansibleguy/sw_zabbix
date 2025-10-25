@@ -11,7 +11,7 @@
 
 - name: Zabbix | Uninstall | DB | Removing MariaDB instance
   ansible.builtin.include_role:
-    name: ansibleguy.infra_mariadb
+    name: oxlorg.mariadb
   vars:
     mariadb:
       instances:

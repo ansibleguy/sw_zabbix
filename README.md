@@ -8,18 +8,18 @@ The roles target is it to **configure the Zabbix components foundational**.
 
 You will need to manage the zabbix-agent integration(s) into your systems on your own! (_per example: adding MySQL users and client-config to monitor its status_)
 
-**NOTE:** Check out the [Zabbix Server dockerized](https://github.com/ansibleguy/sw_zabbix_server) Role if you prefer Docker setups.
+**NOTE:** Check out the [Zabbix Server dockerized](https://github.com/O-X-L/ansible-role-zabbix-server) Role if you prefer Docker setups.
 
-[![Lint](https://github.com/ansibleguy/sw_zabbix/actions/workflows/lint.yml/badge.svg)](https://github.com/ansibleguy/sw_zabbix/actions/workflows/lint.yml)
-[![Ansible Galaxy](https://badges.ansibleguy.net/galaxy.badge.svg)](https://galaxy.ansible.com/ui/standalone/roles/ansibleguy/sw_zabbix)
+[![Lint](https://github.com/O-X-L/ansible-role-zabbix/actions/workflows/lint.yml/badge.svg)](https://github.com/O-X-L/ansible-role-zabbix/actions/workflows/lint.yml)
+[![Ansible Galaxy](https://badges.oss.oxl.app/galaxy.badge.svg)](https://galaxy.ansible.com/ui/standalone/roles/oxlorg/zabbix)
 
 **Molecule Integration-Tests**:
 
-* Status: [![Molecule Test Status](https://badges.ansibleguy.net/sw_zabbix.molecule.svg)](https://github.com/ansibleguy/_meta_cicd/blob/latest/templates/usr/local/bin/cicd/molecule.sh.j2) |
-[![Functional-Tests](https://github.com/ansibleguy/sw_zabbix/actions/workflows/integration_test_result.yml/badge.svg)](https://github.com/ansibleguy/sw_zabbix/actions/workflows/integration_test_result.yml)
-* Logs: [API](https://ci.ansibleguy.net/api/job/ansible-test-molecule-sw_zabbix/logs?token=2b7bba30-9a37-4b57-be8a-99e23016ce70&lines=1000) | [Short](https://badges.ansibleguy.net/log/molecule_sw_zabbix_test_short.log) | [Full](https://badges.ansibleguy.net/log/molecule_sw_zabbix_test.log)
+* Status: [![Molecule Test Status](https://badges.oss.oxl.app/sw_zabbix.molecule.svg)](https://github.com/O-X-L/ansible-role-oxl-cicd/blob/latest/templates/usr/local/bin/cicd/molecule.sh.j2) |
+[![Functional-Tests](https://github.com/O-X-L/ansible-role-zabbix/actions/workflows/integration_test_result.yml/badge.svg)](https://github.com/O-X-L/ansible-role-zabbix/actions/workflows/integration_test_result.yml)
+* Logs: [API](https://ci.oss.oxl.app/api/job/ansible-test-molecule-sw_zabbix/logs?token=2b7bba30-9a37-4b57-be8a-99e23016ce70&lines=1000) | [Short](https://badges.oss.oxl.app/log/molecule_sw_zabbix_test_short.log) | [Full](https://badges.oss.oxl.app/log/molecule_sw_zabbix_test.log)
 
-Internal CI: [Tester Role](https://github.com/ansibleguy/_meta_cicd) | [Jobs API](https://github.com/O-X-L/github-self-hosted-jobs-systemd)
+Internal CI: [Tester Role](https://github.com/O-X-L/ansible-role-oxl-cicd) | [Jobs API](https://github.com/O-X-L/github-self-hosted-jobs-systemd)
 
 **Tested:**
 * Debian 11
@@ -31,13 +31,13 @@ Internal CI: [Tester Role](https://github.com/ansibleguy/_meta_cicd) | [Jobs API
 
 ```bash
 # latest
-ansible-galaxy role install git+https://github.com/ansibleguy/sw_zabbix
+ansible-galaxy role install git+https://github.com/O-X-L/ansible-role-zabbix
 
 # from galaxy
-ansible-galaxy install ansibleguy.sw_zabbix
+ansible-galaxy install oxlorg.zabbix
 
 # or to custom role-path
-ansible-galaxy install ansibleguy.sw_zabbix --roles-path ./roles
+ansible-galaxy install oxlorg.zabbix --roles-path ./roles
 
 # install dependencies
 ansible-galaxy install -r requirements.yml
@@ -59,7 +59,7 @@ ansible-galaxy install -r requirements.yml
 
 * You want a simple **Ansible GUI**?
 
-  Check-out this [Ansible WebUI](https://github.com/ansibleguy/webui)
+  Check-out this [Ansible WebUI](https://github.com/O-X-L/ansible-webui)
 
 ----
 
@@ -77,9 +77,9 @@ zabbix:
     server: true
  
   server:
-    nginx:  # configure the webserver settings => see: https://github.com/ansibleguy/infra_nginx
-      domain: 'zabbix.template.ansibleguy.net'
-      aliases: ['zbx.template.ansibleguy.net']
+    nginx:  # configure the webserver settings => see: https://github.com/O-X-L/ansible-role-nginx
+      domain: 'zabbix.template.oxl.at'
+      aliases: ['zbx.template.oxl.at']
  
       ssl:
         mode: 'letsencrypt'  # or snakeoil/selfsigned/ca
@@ -87,9 +87,9 @@ zabbix:
         #    cert:
         #      cn: 'Zabbix Server'
         #      org: 'AnsibleGuy'
-        #      email: 'zabbix@template.ansibleguy.net'
+        #      email: 'zabbix@template.oxl.at'
       letsencrypt:
-        email: 'zabbix@template.ansibleguy.net'
+        email: 'zabbix@template.oxl.at'
 
     tls_cert_copy: 'server.crt'  # will be copied from the roles 'files/certs' directory to the target system
     tls_key_copy: 'server.key'  # must be configured for server-authentication
@@ -207,11 +207,11 @@ There are also some useful **tags** available:
   * Zabbix server
     * Dependencies (_php, ..._)
     * Apache2 => configured by Zabbix-Server package
-    * Nginx => using [THIS Role](https://github.com/ansibleguy/infra_nginx)
-    * MariaDB => using [THIS Role](https://github.com/ansibleguy/infra_mariadb)
+    * Nginx => using [THIS Role](https://github.com/O-X-L/ansible-role-nginx)
+    * MariaDB => using [THIS Role](https://github.com/O-X-L/ansible-role-mariadb)
 
   * Zabbix proxy
-    * MariaDB => using [THIS Role](https://github.com/ansibleguy/infra_mariadb)
+    * MariaDB => using [THIS Role](https://github.com/O-X-L/ansible-role-mariadb)
 
   * Zabbix agent
 
@@ -230,7 +230,7 @@ There are also some useful **tags** available:
     * Traffic encryption using PSK
     * Using a Self-Signed certificate for the Zabbix server
     * not running as root
-    * Webserver best-practices => see: [THIS Role](https://github.com/ansibleguy/infra_nginx)
+    * Webserver best-practices => see: [THIS Role](https://github.com/O-X-L/ansible-role-nginx)
     * Agent/Proxy/Server listening on all interfaces
 
   * **Default opt-ins**:

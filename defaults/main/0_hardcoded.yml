@@ -2,7 +2,7 @@
 
 force_removal: false  # don't prompt for removal
 random_pwd_length: '50'  # must be string-type
-tmp_pwd_file_prefix: '/tmp/.ansibleguy.sw_zabbix'
+tmp_pwd_file_prefix: '/tmp/.oxlorg.zabbix'
 NONE_VALUES: [none, '', ' ']
 SETTING_GRAYLIST: ['tls_psk']
 

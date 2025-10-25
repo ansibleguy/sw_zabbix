@@ -10,4 +10,4 @@
     zabbix:
 
   roles:
-    - ansibleguy.sw_zabbix
+    - oxlorg.zabbix

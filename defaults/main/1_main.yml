@@ -24,9 +24,9 @@ defaults_zbx:
     agent2: true
     server: false
     proxy: false
-    db: true  # if enabled => will use 'ansibleguy.infra_mariadb' role
+    db: true  # if enabled => will use 'oxlorg.mariadb' role
     # to install and configure mariadb-database to use with zabbix server and/or proxy
-    webserver: true  # if enabled => will use 'ansibleguy.infra_nginx' role to install and configure the needed webserver to use with zabbix server
+    webserver: true  # if enabled => will use 'oxlorg.nginx' role to install and configure the needed webserver to use with zabbix server
 
   path_private: "{{ ZABBIX_HC.path_config }}/private"
   mode_scripts: '0750'  # owner=root, group=zabbix; zabbix should not have write-privileges
@@ -98,7 +98,7 @@ defaults_zbx:
       ZBX_SERVER_PORT: "{{ shared_settings.port.active }}"
       # you could set the php key-value pairs here!
 
-    nginx:  # see: https://github.com/ansibleguy/infra_nginx
+    nginx:  # see: https://github.com/O-X-L/ansible-role-nginx
       mode: 'proxy'
       proxy:
         ip: '127.0.0.1'
@@ -109,7 +109,7 @@ defaults_zbx:
         cert:
           cn: 'Zabbix Server'
           org: 'AnsibleGuy'
-          email: 'zabbix@template.ansibleguy.net'
+          email: 'zabbix@template.oxl.at'
 
       # DO NOT CHANGE
       config_additions:

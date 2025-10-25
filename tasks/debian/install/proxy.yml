@@ -10,7 +10,7 @@
 
 - name: Zabbix | Install | Proxy | Checking if is installed
   ansible.builtin.apt:
-    name: 'zabbix-proxy-mysql'
+    name: "{{ ZABBIX_HC.packages.proxy[ZABBIX_CNF.proxy.database] }}"
     state: present
   check_mode: true
 
